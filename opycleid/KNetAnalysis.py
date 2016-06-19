@@ -7,14 +7,13 @@ import numpy as np
 ###
 
 class KNet:
-	def __init__(self,category=None):
-		self.vertices = {}
-		self.edges = {}
-		self.category = category
-
-	def add_category(self,category):
-		self.category = category
-
+	def __init__(self,category):
+		if not "MonoidAction" in str(category.__class__.__bases__):
+			raise Exception("Not a valid category action\n")
+		else:
+			self.vertices = {}
+			self.edges = {}
+			self.category = category
 
 	def add_vertices(self,list_vertices):
 		for x in list_vertices:
@@ -23,30 +22,30 @@ class KNet:
 			else:
 				raise Exception("Element "+str(x)+" is not in the category action\n")
 
-	def add_edge(self,id_vertex_A,id_vertex_B,operation):
-	
-		if not operation in self.category.operations.keys():
-			raise Exception(str(operation)+" is not a valid operation in the category\n")
-			
-		if operation in self.category.get_transform(self.vertices[id_vertex_A],self.vertices[id_vertex_B]):
-			self.edges[len(self.edges)] = (id_vertex_A,id_vertex_B,operation)
-		else:
-			raise Exception(str(operation)+" is not a valid operation for the corresponding vertices\n")
+	def add_edges(self,list_edges):
+		for id_vertex_A,id_vertex_B,operation in list_edges:
+			if not operation in self.category.operations.keys():
+				raise Exception(str(operation)+" is not a valid operation in the category\n")
+				
+			if operation in self.category.get_operation(self.vertices[id_vertex_A],self.vertices[id_vertex_B]):
+				self.edges[len(self.edges)] = (id_vertex_A,id_vertex_B,operation)
+			else:
+				raise Exception(str(operation)+" is not a valid operation for the corresponding vertices\n")
 			
 	def pathKNet_from_vertices(self):
 		if not self.category.SIMPLY_TRANSITIVE:
-			raise Exception("The category does not act in a simple transitive way: ambiguous determination of transformations")
+			raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
 		else:
 			for i in range(len(self.vertices)-1):
-				self.add_edge(i,i+1,self.category.get_transform(self.vertices[i],self.vertices[i+1])[0])
+				self.add_edges([(i,i+1,self.category.get_operation(self.vertices[i],self.vertices[i+1])[0])])
 
 	def completeKNet_from_vertices(self):
 		if not self.category.SIMPLY_TRANSITIVE:
-			raise Exception("The category does not act in a simple transitive way: ambiguous determination of transformations")
+			raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
 		else:
 			for i in range(len(self.vertices)):
 				for j in range(i+1,len(self.vertices)):
-					self.add_edge(i,j,self.category.get_transform(self.vertices[i],self.vertices[j])[0])
+					self.add_edges([(i,j,self.category.get_operation(self.vertices[i],self.vertices[j])[0])])
 
 
 	def print_KNet(self):
@@ -73,6 +72,7 @@ class KNet:
 		## Get all top elements
 		top_elements = np.where(np.sum(adj_matrix,axis=1)==0)[0]
 		
+		## Perform propagation of operations along vertices starting from a top element
 		for top_idx in top_elements:
 			list_prop=[(top_idx,"e",0)]
 			flag=1
