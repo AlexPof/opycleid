@@ -58,7 +58,7 @@ class MonoidAction:
                         self.operations[elem_name] = elem_matrix
             new_liste = added_liste
 
-    def is_cosieve(self,S):
+    def is_leftIdeal(self,S):
         for m in S.keys():
             for f in self.operations.keys():
                 t = self.mult(f,m)
@@ -73,7 +73,6 @@ class MonoidAction:
 class Noll_Monoid(MonoidAction):
     def __init__(self):
         self.objects = {"C":0,"Cs":1,"D":2,"Eb":3,"E":4,"F":5,"Fs":6,"G":7,"Gs":8,"A":9,"Bb":10,"B":11}
-        self.SIMPLY_TRANSITIVE=False
 
         F = np.zeros((12,12))
         for i in range(12):
@@ -132,7 +131,7 @@ class TI_Group_Triads(MonoidAction):
         I = np.zeros((24,24))
         for i in range(12):
                 I[(5-i)%12 + 12,i]=True
-                I[i,(5-i)%12 +12]=True
+                I[(5-i)%12, i+12]=True
         
         self.generators = {"T":T,"I^0":I}
         self.operations = {"e":np.eye(24),"I^0":I}
@@ -177,3 +176,61 @@ class PRL_Group(MonoidAction):
                         x = x.dot(RL)
                 self.operations["(RL)^"+str(i)] = x
                 self.operations["(RL)^"+str(i)+"R"] = x.dot(R)
+
+################################################
+###### LEFT Z3Q8 GROUP FOR TRIADS
+###
+
+class Left_Z3Q8_Group(MonoidAction):
+    def __init__(self):
+        self.objects = {"C":0,"Cs":1,"D":2,"Eb":3,"E":4,"F":5,"Fs":6,"G":7,"Gs":8,"A":9,"Bb":10,"B":11,
+                                        "c":12,"cs":13,"d":14,"eb":15,"e":16,"f":17,"fs":18,"g":19,"gs":20,"a":21,"bb":22,"b":23}
+        self.SIMPLY_TRANSITIVE=True
+
+        T = np.zeros((24,24))
+        for i in range(12):
+                T[(i+1)%12,i]=True
+                T[12+(i+1)%12,i+12]=True
+
+        J = np.zeros((24,24))
+        for i in range(12):
+                J[(-i)%12 + 12,i]=True
+                J[(-i+6)%12, i+12]=True
+        
+        self.generators = {"T":T,"J^0":J}
+        self.operations = {"e":np.eye(24),"J^0":J}
+        for i in range(1,12):
+                x = self.operations['e']
+                for j in range(i):
+                        x = x.dot(T)
+                self.operations["T^"+str(i)] = x
+                self.operations["J^"+str(i)] = x.dot(J)
+
+################################################
+###### RIGHT Z3Q8 GROUP FOR TRIADS
+###
+
+class Right_Z3Q8_Group(MonoidAction):
+    def __init__(self):
+        self.objects = {"C":0,"Cs":1,"D":2,"Eb":3,"E":4,"F":5,"Fs":6,"G":7,"Gs":8,"A":9,"Bb":10,"B":11,
+                                        "c":12,"cs":13,"d":14,"eb":15,"e":16,"f":17,"fs":18,"g":19,"gs":20,"a":21,"bb":22,"b":23}
+        self.SIMPLY_TRANSITIVE=True
+
+        T = np.zeros((24,24))
+        for i in range(12):
+                T[(i+1)%12,i]=True
+                T[12+(i-1)%12,i+12]=True
+
+        J = np.zeros((24,24))
+        for i in range(12):
+                J[i + 12,i]=True
+                J[(i+6)%12, i+12]=True
+        
+        self.generators = {"T":T,"J^0":J}
+        self.operations = {"e":np.eye(24),"J^0":J}
+        for i in range(1,12):
+                x = self.operations['e']
+                for j in range(i):
+                        x = x.dot(T)
+                self.operations["T^"+str(i)] = x
+                self.operations["J^"+str(i)] = x.dot(J)
