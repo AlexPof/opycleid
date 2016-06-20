@@ -13,15 +13,8 @@ class MonoidAction:
         self.operations = {}
         self.SIMPLY_TRANSITIVE=None
 
-    def add_generator(self,gen_name,gen_matrix):
-        self.generators[gen_name] = gen_matrix
-
-
-    def mult(self,op_2,op_1):
-        m = (self.operations[op_2].dot(self.operations[op_1])>0)
-        for x in self.operations:
-            if np.array_equal(m,self.operations[x]):
-                return x
+	############
+	###### TRANSFORMATIONAL MUSIC THEORY METHODS
 
     def apply_operation(self,operation_name,element_name):
         idx_element = self.objects[element_name]
@@ -34,6 +27,18 @@ class MonoidAction:
         idx_2 = self.objects[elem_2]
 
         return [op for op in self.operations if self.operations[op][idx_2,idx_1] ]
+
+	############
+	###### MONOID STRUCTURE
+
+    def add_generator(self,gen_name,gen_matrix):
+        self.generators[gen_name] = gen_matrix
+
+    def mult(self,op_2,op_1):
+        m = (self.operations[op_2].dot(self.operations[op_1])>0)
+        for x in self.operations:
+            if np.array_equal(m,self.operations[x]):
+                return x
 
     def generate_monoid(self):
         self.operations = self.generators
@@ -56,6 +61,10 @@ class MonoidAction:
                         self.operations[elem_name] = elem_matrix
             new_liste = added_liste
 
+
+	############
+	###### ALGEBRAIC STRUCTURE AND GREEN'S RELATIONS
+
     def is_leftIdeal(self,S):
         for m in S.keys():
             for f in self.operations.keys():
@@ -63,6 +72,45 @@ class MonoidAction:
                 if not t in S:
                     return False
         return True
+	
+    def element_Rclass(self,op_name):
+        list_Req = []
+        I1 = np.unique([self.mult(op_name,x) for x in self.operations.keys()])
+        for op in self.operations.keys():
+            I2 = np.unique([self.mult(op,x) for x in self.operations.keys()])
+            if sorted(I2) == sorted(I1):
+                list_Req.append(op)
+        return list_Req
+
+    def element_Lclass(self,op_name):
+        list_Req = []
+        I1 = np.unique([self.mult(x,op_name) for x in self.operations.keys()])
+        for op in self.operations.keys():
+            I2 = np.unique([self.mult(x,op) for x in self.operations.keys()])
+            if sorted(I2) == sorted(I1):
+                list_Req.append(op)
+        return list_Req
+
+    def get_Rclasses(self):
+        list_op = self.operations.keys()
+        R_classes = []
+        for x in list_op:
+            R_class = self.element_Rclass(x)
+            R_classes.append(R_class)
+            for y in R_class:
+                list_op.remove(y)
+        return R_classes
+
+    def get_Lclasses(self):
+        list_op = self.operations.keys()
+        L_classes = []
+        for x in list_op:
+            L_class = self.element_Lclass(x)
+            L_classes.append(L_class)
+            for y in L_class:
+                list_op.remove(y)
+        return L_classes
+
 
 ################################################
 ###### NOLL MONOID
