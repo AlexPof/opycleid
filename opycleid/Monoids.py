@@ -96,23 +96,27 @@ class MonoidAction:
         return list_Req
 
     def get_Rclasses(self):
-        list_op = self.operations.keys()
+        list_op = zip(self.operations.keys(),[0]*len(self.operations.keys()))
         R_classes = []
-        for x in list_op:
-            R_class = self.element_Rclass(x)
-            R_classes.append(R_class)
-            for y in R_class:
-                list_op.remove(y)
+        for x,visited in list_op:
+            if not visited:
+                R_class = self.element_Rclass(x)
+                R_classes.append(R_class)
+                for i,(y,flag) in enumerate(list_op):
+                    if y in R_class:
+                        list_op[i]=(y,1)
         return R_classes
 
     def get_Lclasses(self):
-        list_op = self.operations.keys()
+        list_op = zip(self.operations.keys(),[0]*len(self.operations.keys()))
         L_classes = []
-        for x in list_op:
-            L_class = self.element_Lclass(x)
-            L_classes.append(L_class)
-            for y in L_class:
-                list_op.remove(y)
+        for x,visited in list_op:
+            if not visited:
+                L_class = self.element_Lclass(x)
+                L_classes.append(L_class)
+                for i,(y,flag) in enumerate(list_op):
+                    if y in L_class:
+                        list_op[i]=(y,1)
         return L_classes
 
 
