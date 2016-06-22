@@ -45,10 +45,10 @@ class MonoidAction:
                 return x
 
     def generate_monoid(self):
-        self.operations = self.generators
+        self.operations = self.generators.copy()
         self.operations["e"] = np.eye(len(self.objects),dtype=bool)
-        new_liste = self.generators
-        added_liste = self.generators
+        new_liste = self.generators.copy()
+        added_liste = self.generators.copy()
 
         while(len(added_liste)>0):
             added_liste = {}
