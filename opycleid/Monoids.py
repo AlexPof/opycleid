@@ -66,6 +66,56 @@ class MonoidAction:
             new_liste = added_liste
 
 
+    def get_autormorphisms(self):
+        ## Returns all automorphisms of the monoid as a list of dictionaries.
+        ## Each dictionary maps the generators (the keys) to their image in the monoid (the values) 
+
+        l1 = self.generators.keys()
+        l2 = self.operations.keys()
+        list_automorphisms = []
+        
+        ## Get all maps from the generator set to itself
+        for mapping in itertools.permutations(l2,len(l1)):
+            ## Builds a dictionary representing the map...
+            autom_dict={}
+            for x,y in zip(l1,mapping):
+                autom_dict[x]=y
+            ## Tests if the given map of generators is indeed an automorphism...
+            if self.check_automorphism(autom_dict):
+                list_automorphisms.append(autom_dict)
+        return list_automorphisms
+
+    def check_automorphism(self,autom_dict):
+        new_liste = self.generators.keys()
+        added_liste = self.generators.keys()
+        full_mapping = autom_dict.copy()
+        full_mapping["e"]="e"
+
+        ## This is a variant of the monoid generation method.
+        ## It generates the monoid and their images by the map of generators.
+        ## If it does not give a multi-valued function, and if it generates the same number of elements
+        ## then it is a bijection, hence a valid automorphism
+
+        while(len(added_liste)>0):
+            added_liste = []
+            for name_x in new_liste:
+                for name_g in self.generators.keys():
+                    name_product = self.mult(name_g,name_x)
+                    name_imageproduct = self.mult(full_mapping[name_g],full_mapping[name_x])
+                    if not name_product in full_mapping.keys():
+                        added_liste.append(name_product)
+                        full_mapping[name_product] = name_imageproduct
+                    else:
+                        ## If the generated element already exists, we check that its existing image corresponds
+                        ## to the image which has just been calculated
+                        if not full_mapping[name_product] == name_imageproduct:
+                            ## We have a multi-valued function so the algorithm stops there
+                            return False
+            new_liste = added_liste[:]
+
+        return len(np.unique(full_mapping.values()))==len(self.operations.keys())
+
+
 	############
 	###### ALGEBRAIC STRUCTURE AND GREEN'S RELATIONS
 
@@ -157,7 +207,7 @@ class TI_Group_PC(MonoidAction):
         for i in range(12):
                 I[(-i)%12,i]=True
         
-        self.generators = {"T":T,"I^0":I}
+        self.generators = {"T^1":T,"I^0":I}
         self.operations = {"e":np.eye(12,dtype=bool),"I^0":I}
         for i in range(1,12):
                 x = self.operations['e']
@@ -187,7 +237,7 @@ class TI_Group_Triads(MonoidAction):
                 I[(5-i)%12 + 12,i]=True
                 I[(5-i)%12, i+12]=True
         
-        self.generators = {"T":T,"I^0":I}
+        self.generators = {"T^1":T,"I^0":I}
         self.operations = {"e":np.eye(24,dtype=bool),"I^0":I}
         for i in range(1,12):
                 x = self.operations['e']
@@ -246,7 +296,7 @@ class Left_Z3Q8_Group(MonoidAction):
                 J[(-i)%12 + 12,i]=True
                 J[(-i+6)%12, i+12]=True
         
-        self.generators = {"T":T,"J^0":J}
+        self.generators = {"T^1":T,"J^0":J}
         self.operations = {"e":np.eye(24,dtype=bool),"J^0":J}
         for i in range(1,12):
                 x = self.operations['e']
@@ -275,7 +325,7 @@ class Right_Z3Q8_Group(MonoidAction):
                 J[i + 12,i]=True
                 J[(i+6)%12, i+12]=True
         
-        self.generators = {"T":T,"J^0":J}
+        self.generators = {"T^1":T,"J^0":J}
         self.operations = {"e":np.eye(24,dtype=bool),"J^0":J}
         for i in range(1,12):
                 x = self.operations['e']
