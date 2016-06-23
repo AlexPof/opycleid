@@ -66,7 +66,7 @@ class MonoidAction:
             new_liste = added_liste
 
 
-    def get_autormorphisms(self):
+    def get_automorphisms(self):
         ## Returns all automorphisms of the monoid as a list of dictionaries.
         ## Each dictionary maps the generators (the keys) to their image in the monoid (the values) 
 
