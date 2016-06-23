@@ -5,6 +5,7 @@
 ###
 
 import numpy as np
+import itertools
 
 ################################################
 ###### GENERIC CLASS FOR MONOID ACTION
