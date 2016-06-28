@@ -86,7 +86,7 @@ class MonoidAction:
                 list_automorphisms.append(autom_dict)
         return list_automorphisms
 
-    def check_automorphism(self,autom_dict):
+    def check_automorphism(self,autom_dict,full_map=False):
         new_liste = self.generators.keys()
         added_liste = self.generators.keys()
         full_mapping = autom_dict.copy()
@@ -111,10 +111,17 @@ class MonoidAction:
                         ## to the image which has just been calculated
                         if not full_mapping[name_product] == name_imageproduct:
                             ## We have a multi-valued function so the algorithm stops there
-                            return False
+                            return (False,None)
             new_liste = added_liste[:]
 
-        return len(np.unique(full_mapping.values()))==len(self.operations.keys())
+        is_automorphism =  len(np.unique(full_mapping.values()))==len(self.operations.keys())
+        if not is_automorphism:
+            return (False,None)
+        else:
+            if full_map:
+                return (True,full_mapping)
+            else:
+                return (True,None)
 
 
 	############
