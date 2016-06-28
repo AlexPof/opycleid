@@ -19,6 +19,9 @@ class KNet:
 			self.edges = {}
 			self.category = category
 
+	################################################
+	## KNet construction methods
+
 	def add_vertices(self,list_vertices):
 		for x in list_vertices:
 			if x in self.category.objects.keys():
@@ -35,15 +38,15 @@ class KNet:
 				self.edges[len(self.edges)] = (id_vertex_A,id_vertex_B,operation)
 			else:
 				raise Exception(str(operation)+" is not a valid operation for the corresponding vertices\n")
-			
-	def pathKNet_from_vertices(self):
+
+	def path_knet_from_vertices(self):
 		if not self.category.SIMPLY_TRANSITIVE:
 			raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
 		else:
 			for i in range(len(self.vertices)-1):
 				self.add_edges([(i,i+1,self.category.get_operation(self.vertices[i],self.vertices[i+1])[0])])
 
-	def completeKNet_from_vertices(self):
+	def complete_knet_from_vertices(self):
 		if not self.category.SIMPLY_TRANSITIVE:
 			raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
 		else:
@@ -52,21 +55,7 @@ class KNet:
 					self.add_edges([(i,j,self.category.get_operation(self.vertices[i],self.vertices[j])[0])])
 
 
-	def print_KNet(self):
-		for x in self.edges.keys():
-			self.print_KNet_edge(x)
-
-	def print_KNet_edge(self,x):
-		name_A = self.vertices[self.edges[x][0]]
-		name_B = self.vertices[self.edges[x][1]]
-		name_op = self.edges[x][2]
-		print " "*len(name_A)+name_op+" "*len(name_B)
-		print self.vertices[self.edges[x][0]]+"-"*len(name_op)+">"+self.vertices[self.edges[x][1]]
-		print ""
-
-			
-	def is_valid(self):
-	
+	def is_valid(self):	
 		## Get the adjacency matrix
 		n_obj = len(self.vertices)
 		adj_matrix = np.zeros((n_obj,n_obj))
@@ -97,10 +86,42 @@ class KNet:
 				for idx_2,op_2,v2 in list_prop:
 					if idx_1==idx_2 and not(op_1==op_2):
 						return False
-		
 		return True
-					
+
+
+	################################################
+	## KNet transformational analysis
+
+
+	def apply_knet_morphism(self,monoid_automorphism, nat_trans):
+		if self.category.is_action_automorphism(monoid_automorphism,nat_trans):
+			new_knet = KNet(self.category)
+			new_knet.vertices=self.vertices.copy()
+			new_knet.edges=self.edges.copy()
 			
+			for i in range(len(new_knet.vertices)):
+				new_knet.vertices[i] = nat_trans[new_knet.vertices[i]]
+			for i in range(len(new_knet.edges)):
+				id_vertex_A,id_vertex_B,operation = new_knet.edges[i]
+				new_knet.edges[i] = (id_vertex_A,id_vertex_B,monoid_automorphism[operation])
+				
+			return new_knet
+		else:
+			raise Exception("The given monoid automorphism and/or the natural transformation do not constitute a valid K-Net morphism")
 
 
+	################################################
+	## KNet display
+	
 
+	def print_knet(self):
+		for x in self.edges.keys():
+			self.print_knet_edge(x)
+
+	def print_knet_edge(self,x):
+		name_A = self.vertices[self.edges[x][0]]
+		name_B = self.vertices[self.edges[x][1]]
+		name_op = self.edges[x][2]
+		print " "*len(name_A)+name_op+" "*len(name_B)
+		print self.vertices[self.edges[x][0]]+"-"*len(name_op)+">"+self.vertices[self.edges[x][1]]
+		print ""

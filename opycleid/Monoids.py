@@ -82,11 +82,11 @@ class MonoidAction:
             for x,y in zip(l1,mapping):
                 autom_dict[x]=y
             ## Tests if the given map of generators is indeed an automorphism...
-            if self.check_automorphism(autom_dict):
+            if self.is_automorphism(autom_dict):
                 list_automorphisms.append(autom_dict)
         return list_automorphisms
 
-    def check_automorphism(self,autom_dict,full_map=False):
+    def is_automorphism(self,autom_dict,full_map=False):
         new_liste = self.generators.keys()
         added_liste = self.generators.keys()
         full_mapping = autom_dict.copy()
@@ -114,14 +114,30 @@ class MonoidAction:
                             return (False,None)
             new_liste = added_liste[:]
 
-        is_automorphism =  len(np.unique(full_mapping.values()))==len(self.operations.keys())
-        if not is_automorphism:
+        if not len(np.unique(full_mapping.values()))==len(self.operations.keys()):
             return (False,None)
         else:
             if full_map:
                 return (True,full_mapping)
             else:
                 return (True,None)
+
+    def is_action_automorphism(self,autom_dict,nat_trans):
+		## Build the matrix representation (permutation matrix) corresponding to the natural isomorphism given by nat_trans
+        nat_trans_matrix = np.zeros((len(self.objects),len(self.objects)),dtype=bool)
+        for x in self.objects.keys():
+            nat_trans_matrix[self.objects[nat_trans[x]],self.objects[x]]=True
+        
+		## Check the commutativity of the natural transformation square for all operations of the monoid        
+        for x in self.operations.keys():
+            K = np.dot(nat_trans_matrix,self.operations[x])
+            L = np.dot(self.operations[autom_dict[x]],nat_trans_matrix)
+
+            if not np.array_equal(K,L):
+                return False
+
+        return True
+            
 
 
 	############
