@@ -300,6 +300,43 @@ class PRL_Group(MonoidAction):
                 self.operations["(RL)^"+str(i)] = x
                 self.operations["(RL)^"+str(i)+"R"] = x.dot(R)
 
+
+################################################
+###### HOOK's UTT GROUP FOR TRIADS
+###
+
+class UTT_Group(MonoidAction):
+    def __init__(self):
+        self.objects = {"C":0,"Cs":1,"D":2,"Eb":3,"E":4,"F":5,"Fs":6,"G":7,"Gs":8,"A":9,"Bb":10,"B":11,
+                                        "c":12,"cs":13,"d":14,"eb":15,"e":16,"f":17,"fs":18,"g":19,"gs":20,"a":21,"bb":22,"b":23}
+        self.SIMPLY_TRANSITIVE=False
+
+        T = np.zeros((24,24),dtype=bool)
+        for i in range(12):
+                T[(i+1)%12,i]=True
+                T[i+12,i+12]=True
+
+        I = np.zeros((24,24),dtype=bool)
+        for i in range(12):
+                I[i + 12,i]=True
+                I[i, i+12]=True
+        
+        self.generators = {"T":T,"I":I}
+        self.generate_monoid()
+
+        ## Quick rewriting of the operation names to conform to
+        ## Hook's terminology for UTTs
+        
+        for x in self.operations.keys():
+            op = [0,0,0]
+            for j in x[::-1]:
+                if j=="T":
+                    op[op[2]]=op[op[2]]+1
+                if j=="I":
+                    op[2]=1-op[2]
+            newkey = "<"+str(op[0])+","+str(op[1])+","+("+"*(op[2]==0)+"-"*(op[2]==1))+">"
+            self.operations[newkey] = self.operations.pop(x)
+
 ################################################
 ###### LEFT Z3Q8 GROUP FOR TRIADS
 ###
