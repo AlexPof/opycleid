@@ -336,6 +336,7 @@ class UTT_Group(MonoidAction):
                     op[2]=1-op[2]
             newkey = "<"+str(op[0])+","+str(op[1])+","+("+"*(op[2]==0)+"-"*(op[2]==1))+">"
             self.operations[newkey] = self.operations.pop(x)
+        self.generators = {"<1,0,+>":T,"<0,0,->":I}
 
 ################################################
 ###### LEFT Z3Q8 GROUP FOR TRIADS
