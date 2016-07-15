@@ -2,8 +2,8 @@
 ###### Copyright (c) 2016, Alexandre Popoff 
 ###
 
-from opycleid.Monoids import PRL_Group
-from opycleid.KNetAnalysis import KNet
+from opycleid.monoids import PRL_Group
+from opycleid.knetanalysis import KNet
 
 my_group = PRL_Group()
 
