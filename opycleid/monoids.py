@@ -143,7 +143,7 @@ class MonoidAction:
 	############
 	###### ALGEBRAIC STRUCTURE AND GREEN'S RELATIONS
 
-    def find_leftIdeals(self):
+    def get_leftIdeals(self):
         leftIdeals = []
 
         L_classes = self.get_Lclasses()
@@ -159,6 +159,26 @@ class MonoidAction:
         for m in S:
             for f in self.operations.keys():
                 t = self.mult(f,m)
+                if not t in S:
+                    return False
+        return True
+        
+    def get_rightIdeals(self):
+        rightIdeals = []
+
+        R_classes = self.get_Rclasses()
+        for i in range(len(R_classes)+1):
+            for x in itertools.combinations(R_classes, i):
+                subset = list(itertools.chain.from_iterable(x))
+                if self.is_rightIdeal(subset):
+                    rightIdeals.append(subset)
+
+        return rightIdeals
+		
+    def is_rightIdeal(self,S):
+        for m in S:
+            for f in self.operations.keys():
+                t = self.mult(m,f)
                 if not t in S:
                     return False
         return True
