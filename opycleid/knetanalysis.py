@@ -64,7 +64,9 @@ class KNet:
 		
 		## Get all top elements
 		top_elements = np.where(np.sum(adj_matrix,axis=1)==0)[0]
-		
+		if not len(top_elements):
+                        raise Exception("The given K-Net has no top elements")
+                        
 		## Perform propagation of operations along vertices starting from a top element
 		for top_idx in top_elements:
 			list_prop=[(top_idx,"e",0)]
