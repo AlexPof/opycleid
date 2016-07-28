@@ -35,6 +35,11 @@ class MonoidAction:
 
 	############
 	###### MONOID STRUCTURE
+	
+    def add_objects(self,object_list):
+        N = len(self.objects)
+        for i,x in enumerate(object_list):
+            self.objects[x]=i+N
 
     def add_generator(self,gen_name,gen_matrix):
         self.generators[gen_name] = gen_matrix
