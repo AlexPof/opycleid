@@ -470,7 +470,7 @@ class UPL_Monoid(MonoidAction):
         self.generate_monoid()
 
 ################################################
-###### 	S-MONOID
+###### 	S-MONOID (Relation P_1,0)
 ###
 
 class S_Monoid(MonoidAction):
@@ -499,7 +499,7 @@ class S_Monoid(MonoidAction):
 
 
 ################################################
-###### 	T-MONOID
+###### 	T-MONOID (Relation P_2,0)
 ###
 
 class T_Monoid(MonoidAction):
@@ -539,7 +539,62 @@ class T_Monoid(MonoidAction):
         self.generators = {"T":T}
         self.generate_monoid()
 
+################################################
+###### 	K-MONOID (Relation P_2,1)
+###
 
+class K_Monoid(MonoidAction):
+    def __init__(self):
+        self.objects = {"C":0,"Cs":1,"D":2,"Eb":3,"E":4,"F":5,"Fs":6,"G":7,"Gs":8,"A":9,"Bb":10,"B":11,
+                        "c":12,"cs":13,"d":14,"eb":15,"e":16,"f":17,"fs":18,"g":19,"gs":20,"a":21,"bb":22,"b":23,
+                        "C_aug":24,"F_aug":25,"D_aug":26,"G_aug":27}
+        
+        K = np.zeros((28,28),dtype=bool)
+
+        for i in range(12):
+            K[12+(i+3)%12,i]=True
+            K[i,12+(i+3)%12]=True
+            
+            K[12+(i+11)%12,i]=True
+            K[i,12+(i+11)%12]=True
+
+            K[24+((i+1)%4),i]=True
+            K[i,24+((i+1)%4)]=True
+
+            K[24+((i+2)%4),12+i]=True
+            K[12+i,24+((i+2)%4)]=True
+
+        self.generators = {"K":K}
+        self.generate_monoid()
+
+################################################
+###### 	W-MONOID (Relation P_1,2)
+###
+
+class W_Monoid(MonoidAction):
+    def __init__(self):
+        self.objects = {"C":0,"Cs":1,"D":2,"Eb":3,"E":4,"F":5,"Fs":6,"G":7,"Gs":8,"A":9,"Bb":10,"B":11,
+                        "c":12,"cs":13,"d":14,"eb":15,"e":16,"f":17,"fs":18,"g":19,"gs":20,"a":21,"bb":22,"b":23,
+                        "C_aug":24,"F_aug":25,"D_aug":26,"G_aug":27}
+        
+        W = np.zeros((28,28),dtype=bool)
+
+        for i in range(12):
+            W[12+(i+2)%12,i]=True
+            W[i,12+(i+2)%12]=True
+            
+            W[12+(i+6)%12,i]=True
+            W[i,12+(i+6)%12]=True
+
+            W[24+((i+2)%4),i]=True
+            W[i,24+((i+2)%4)]=True
+
+            W[24+((i+1)%4),12+i]=True
+            W[12+i,24+((i+1)%4)]=True
+
+        self.generators = {"W":W}
+        self.generate_monoid()
+	
 ################################################
 ###### 	ST-MONOID
 ###
