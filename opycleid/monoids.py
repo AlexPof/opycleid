@@ -87,7 +87,7 @@ class MonoidAction:
             for x,y in zip(l1,mapping):
                 autom_dict[x]=y
             ## Tests if the given map of generators is indeed an automorphism...
-            if self.is_automorphism(autom_dict):
+            if self.is_automorphism(autom_dict)[0]:
                 list_automorphisms.append(autom_dict)
         return list_automorphisms
 
