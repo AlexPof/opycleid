@@ -2,7 +2,7 @@
 ###### Copyright (c) 2016, Alexandre Popoff 
 ###
 
-from opycleid.monoids import PRL_Group
+from opycleid.musicmonoids import PRL_Group
 from opycleid.knetanalysis import KNet
 
 my_group = PRL_Group()
