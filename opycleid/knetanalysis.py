@@ -11,119 +11,197 @@ import numpy as np
 ###
 
 class KNet:
-	def __init__(self,category):
-		if not "MonoidAction" in str(category.__class__.__bases__):
-			raise Exception("Not a valid category action\n")
-		else:
-			self.vertices = {}
-			self.edges = {}
-			self.category = category
+    def __init__(self,category):
+        """Initialize a K_Net.
+        Variables
+        ----------
+        - vertices : dictionary, keys are index numbers, values are elements in the K_Net category/monoid
+        - edges : dictionary, keys are index numbers, values are 3-tuples (start,end,op) (see add_edges)
+        - category : an instance of a MonoidAction class
+        """
+        
+        if not "MonoidAction" in str(category.__class__.__bases__):
+            raise Exception("Not a valid category action\n")
+        else:
+            self.vertices = {}
+            self.edges = {}
+            self.category = category
 
-	################################################
-	## KNet construction methods
+    ################################################
+    ## KNet construction methods
 
-	def add_vertices(self,list_vertices):
-		for x in list_vertices:
-			if x in self.category.objects.keys():
-				self.vertices[len(self.vertices)] = x
-			else:
-				raise Exception("Element "+str(x)+" is not in the category action\n")
+    def add_vertices(self,list_vertices):
+        """Add vertices to a K_Net.
+        Checks if:
+            - the provided musical element is in the K_Net category action
 
-	def add_edges(self,list_edges):
-		for id_vertex_A,id_vertex_B,operation in list_edges:
-			if not operation in self.category.operations.keys():
-				raise Exception(str(operation)+" is not a valid operation in the category\n")
-				
-			if operation in self.category.get_operation(self.vertices[id_vertex_A],self.vertices[id_vertex_B]):
-				self.edges[len(self.edges)] = (id_vertex_A,id_vertex_B,operation)
-			else:
-				raise Exception(str(operation)+" is not a valid operation for the corresponding vertices\n")
+        Parameters
+        ----------
+        list_vertices : list of musical element
 
-	def path_knet_from_vertices(self):
-		if not self.category.SIMPLY_TRANSITIVE:
-			raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
-		else:
-			for i in range(len(self.vertices)-1):
-				self.add_edges([(i,i+1,self.category.get_operation(self.vertices[i],self.vertices[i+1])[0])])
+        Returns
+        -------
+        None
+        """
+        for x in list_vertices:
+            if x in self.category.objects.keys():
+                self.vertices[len(self.vertices)] = x
+            else:
+                raise Exception("Element "+str(x)+" is not in the category action\n")
 
-	def complete_knet_from_vertices(self):
-		if not self.category.SIMPLY_TRANSITIVE:
-			raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
-		else:
-			for i in range(len(self.vertices)):
-				for j in range(i+1,len(self.vertices)):
-					self.add_edges([(i,j,self.category.get_operation(self.vertices[i],self.vertices[j])[0])])
+    def add_edges(self,list_edges):
+        """Add labelled edges to a K_Net.
+        Checks if:
+            - There does not already an edge between the indicated vertices
+            - The provided operation exists in the K_Net category
+            - The provided operation is a valid one given the corresponding vertices
+        Parameters
+        ----------
+        list_edges : list of 3-tuples (start,end,op), where
+                - start is the index of the starting vertex
+                - end is the index of the ending vertex
+                - op is an operation in the K_Net category/monoid
+
+        Returns
+        -------
+        None
+        """        
+        for id_vertex_A,id_vertex_B,operation in list_edges:
+            
+            for edge_start,edge_end,edge_op in self.edges.itervalues():
+                if edge_start == id_vertex_A and id_vertex_B == edge_end:
+                    raise Exception("There already exists an edge between vertices "+str(edge_start)+" and "+str(edge_end)+"\n")
+        
+            if not operation in self.category.operations.keys():
+                raise Exception(str(operation)+" is not a valid operation in the category\n")
+                
+            if operation in self.category.get_operation(self.vertices[id_vertex_A],self.vertices[id_vertex_B]):
+                self.edges[len(self.edges)] = (id_vertex_A,id_vertex_B,operation)
+            else:
+                raise Exception(str(operation)+" is not a valid operation for the corresponding vertices\n")
+
+    def path_knet_from_vertices(self):
+        """Creates automatically all edges between successive vertices of the K_Net.
+        Checks if:
+            - the K_Net category/monoid action is simply transitive. Fails otherwise, since the determination of operations is ambiguous
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        if not self.category.SIMPLY_TRANSITIVE:
+            raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
+        else:
+            for i in range(len(self.vertices)-1):
+                self.add_edges([(i,i+1,self.category.get_operation(self.vertices[i],self.vertices[i+1])[0])])
+
+    def complete_knet_from_vertices(self):
+        """Creates automatically all edges between vertex i and all vertices j>i of the K_Net.
+        Checks if:
+            - the K_Net category/monoid action is simply transitive. Fails otherwise, since the determination of operations is ambiguous
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        if not self.category.SIMPLY_TRANSITIVE:
+            raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
+        else:
+            for i in range(len(self.vertices)):
+                for j in range(i+1,len(self.vertices)):
+                    self.add_edges([(i,j,self.category.get_operation(self.vertices[i],self.vertices[j])[0])])
 
 
-	def is_valid(self):	
-		## Get the adjacency matrix
-		n_obj = len(self.vertices)
-		adj_matrix = np.zeros((n_obj,n_obj))
-		for x in self.edges.keys():
-			adj_matrix[self.edges[x][1],self.edges[x][0]] = True
-		
-		## Get all top elements
-		top_elements = np.where(np.sum(adj_matrix,axis=1)==0)[0]
-		if not len(top_elements):
-                        raise Exception("The given K-Net has no top elements")
+    def is_valid(self):    
+        """Checks the consistency of the K_Net.
+        A K_Net is considered as consistent if:
+            - it does not contain cycles
+            - path consistency is respected:
+                given two edges A->B, and B->C, with operations f, and g, respectively,
+                the edge A->C (if it exists) has operation gf.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        ## Get the adjacency matrix
+        n_obj = len(self.vertices)
+        adj_matrix = np.zeros((n_obj,n_obj),dtype=bool)
+        for x in self.edges.keys():
+            adj_matrix[self.edges[x][1],self.edges[x][0]] = True
+ 
+        ## Check for the presence of cycles
+        for i in range(2,n_obj+1):
+            C = np.linalg.matrix_power(adj_matrix,i)
+            if np.sum(C[range(n_obj),range(n_obj)]):
+                return False
                         
-		## Perform propagation of operations along vertices starting from a top element
-		for top_idx in top_elements:
-			list_prop=[(top_idx,"e",0)]
-			flag=1
-			while(flag):
-				flag=0
-				for i,(idx,op,visited) in enumerate(list_prop):
-					if not visited:
-						# Get all the possible edges out of this vertex, and multiply on the left by the category element
-						for edge in self.edges.keys():
-							if self.edges[edge][0]==idx:
-								list_prop.append((self.edges[edge][1],self.category.mult(self.edges[edge][2],op),0))
-								flag=1
-						# We have exhausted all the possible paths out of this vertex, so we mark it as visited 
-						list_prop[i] = (idx,op,1)
-			
-			## Check the validity of the paths: the same vertex should have the same category operation
-			for idx_1,op_1,v1 in list_prop:
-				for idx_2,op_2,v2 in list_prop:
-					if idx_1==idx_2 and not(op_1==op_2):
-						return False
-		return True
+        ## Build the labelled adjacency matrix
+        lbl_adj_matrix = np.zeros((n_obj,n_obj),dtype=object)
+        for x in self.edges.keys():
+            lbl_adj_matrix[self.edges[x][1],self.edges[x][0]] = self.edges[x][2]
+                                              
+            ## Matrix multiplication with values in a monoid
+            for i in range(n_obj):
+                for j in range(n_obj):
+                    l=[]
+                    for k in range(n_obj):
+                        if not (lbl_adj_matrix[i,k] == 0 or lbl_adj_matrix[k,j] == 0):
+                            l.append(self.category.mult(lbl_adj_matrix[i,k],lbl_adj_matrix[k,j]))
+                    if len(l):
+                        if len(l)>1:
+                            return False
+                        if not lbl_adj_matrix[i,j] == 0 and not l[0] == lbl_adj_matrix[i,j]:
+                            return False
+               
+        return True
+                                    
+
+    ################################################
+    ## KNet transformational analysis
 
 
-	################################################
-	## KNet transformational analysis
+    def apply_knet_morphism(self,monoid_automorphism, nat_trans):
+        if self.category.is_action_automorphism(monoid_automorphism,nat_trans):
+            new_knet = KNet(self.category)
+            new_knet.vertices=self.vertices.copy()
+            new_knet.edges=self.edges.copy()
+            
+            for i in range(len(new_knet.vertices)):
+                new_knet.vertices[i] = nat_trans[new_knet.vertices[i]]
+            for i in range(len(new_knet.edges)):
+                id_vertex_A,id_vertex_B,operation = new_knet.edges[i]
+                new_knet.edges[i] = (id_vertex_A,id_vertex_B,monoid_automorphism[operation])
+                
+            return new_knet
+        else:
+            raise Exception("The given monoid automorphism and/or the natural transformation do not constitute a valid K-Net morphism")
 
 
-	def apply_knet_morphism(self,monoid_automorphism, nat_trans):
-		if self.category.is_action_automorphism(monoid_automorphism,nat_trans):
-			new_knet = KNet(self.category)
-			new_knet.vertices=self.vertices.copy()
-			new_knet.edges=self.edges.copy()
-			
-			for i in range(len(new_knet.vertices)):
-				new_knet.vertices[i] = nat_trans[new_knet.vertices[i]]
-			for i in range(len(new_knet.edges)):
-				id_vertex_A,id_vertex_B,operation = new_knet.edges[i]
-				new_knet.edges[i] = (id_vertex_A,id_vertex_B,monoid_automorphism[operation])
-				
-			return new_knet
-		else:
-			raise Exception("The given monoid automorphism and/or the natural transformation do not constitute a valid K-Net morphism")
+    ################################################
+    ## KNet display
+    
 
+    def print_knet(self):
+        for x in self.edges.keys():
+            self.print_knet_edge(x)
 
-	################################################
-	## KNet display
-	
-
-	def print_knet(self):
-		for x in self.edges.keys():
-			self.print_knet_edge(x)
-
-	def print_knet_edge(self,x):
-		name_A = self.vertices[self.edges[x][0]]
-		name_B = self.vertices[self.edges[x][1]]
-		name_op = self.edges[x][2]
-		print " "*len(name_A)+name_op+" "*len(name_B)
-		print self.vertices[self.edges[x][0]]+"-"*len(name_op)+">"+self.vertices[self.edges[x][1]]
-		print ""
+    def print_knet_edge(self,x):
+        name_A = self.vertices[self.edges[x][0]]
+        name_B = self.vertices[self.edges[x][1]]
+        name_op = self.edges[x][2]
+        print " "*len(name_A)+name_op+" "*len(name_B)
+        print self.vertices[self.edges[x][0]]+"-"*len(name_op)+">"+self.vertices[self.edges[x][1]]
+        print ""
