@@ -6,11 +6,11 @@
 
 import numpy as np
 
-################################################
-###### GENERIC CLASS FOR MONOID ACTION
-###
-
 class KNet:
+    """Class definition for a K-Net
+    """
+
+
     def __init__(self,category):
         """Initialize a K_Net.
         Variables
@@ -26,9 +26,7 @@ class KNet:
             self.vertices = {}
             self.edges = {}
             self.category = category
-
-    ################################################
-    ## KNet construction methods
+            
 
     def add_vertices(self,list_vertices):
         """Add vertices to a K_Net.
@@ -169,12 +167,23 @@ class KNet:
         return True
                                     
 
-    ################################################
-    ## KNet transformational analysis
+    def apply_knet_automorphism(self,morphism_dict, nat_trans):
+        """Apply a K-Net morphism to a given K_Net.
+        A K-Net morphism consists in 
+            - a monoid morphism, defining how operations are transformed
+            - a natural transformation, defining how the musical elements are transformed
 
+        Parameters
+        ----------
+        monoid_automorphism : a dictionary defining a monoid morphism. Keys are operations in the K-Net category/monoid action, values are the images of these operations.
+        nat_trans : a dictionary defining a natural transformation. Keys are musical elements in the K-Net category/monoid action, values are the images of these elements.
 
-    def apply_knet_morphism(self,monoid_automorphism, nat_trans):
-        if self.category.is_action_automorphism(monoid_automorphism,nat_trans):
+        Returns
+        -------
+        A new K-Net, whose vertices and edges are the images of the vertices and edges of the initial K-Net by the given K_net morphism
+        """
+
+        if self.category.is_action_automorphism(morphism_dict,nat_trans):
             new_knet = KNet(self.category)
             new_knet.vertices=self.vertices.copy()
             new_knet.edges=self.edges.copy()
@@ -183,11 +192,11 @@ class KNet:
                 new_knet.vertices[i] = nat_trans[new_knet.vertices[i]]
             for i in range(len(new_knet.edges)):
                 id_vertex_A,id_vertex_B,operation = new_knet.edges[i]
-                new_knet.edges[i] = (id_vertex_A,id_vertex_B,monoid_automorphism[operation])
+                new_knet.edges[i] = (id_vertex_A,id_vertex_B,morphism_dict[operation])
                 
             return new_knet
         else:
-            raise Exception("The given monoid automorphism and/or the natural transformation do not constitute a valid K-Net morphism")
+            raise Exception("The given monoid morphism and/or the natural transformation do not constitute a valid K-Net morphism")
 
 
     ################################################
