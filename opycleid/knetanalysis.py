@@ -167,7 +167,7 @@ class KNet:
         return True
                                     
 
-    def apply_knet_automorphism(self,morphism_dict, nat_trans):
+    def apply_knet_morphism(self,monoidactionmorphism):
         """Apply a K-Net morphism to a given K_Net.
         A K-Net morphism consists in 
             - a monoid morphism, defining how operations are transformed
@@ -175,24 +175,23 @@ class KNet:
 
         Parameters
         ----------
-        monoid_automorphism : a dictionary defining a monoid morphism. Keys are operations in the K-Net category/monoid action, values are the images of these operations.
-        nat_trans : a dictionary defining a natural transformation. Keys are musical elements in the K-Net category/monoid action, values are the images of these elements.
+        monoidactionmorphism : a instance of MonoidActionMorphism
 
         Returns
         -------
         A new K-Net, whose vertices and edges are the images of the vertices and edges of the initial K-Net by the given K_net morphism
         """
 
-        if self.category.is_action_automorphism(morphism_dict,nat_trans):
-            new_knet = KNet(self.category)
+        if monoidactionmorphism.is_valid():
+            new_knet = KNet(monoidactionmorphism.monoidaction_dest)
             new_knet.vertices=self.vertices.copy()
             new_knet.edges=self.edges.copy()
             
             for i in range(len(new_knet.vertices)):
-                new_knet.vertices[i] = nat_trans[new_knet.vertices[i]]
+                new_knet.vertices[i] = monoidactionmorphism.nat_trans[new_knet.vertices[i]]
             for i in range(len(new_knet.edges)):
                 id_vertex_A,id_vertex_B,operation = new_knet.edges[i]
-                new_knet.edges[i] = (id_vertex_A,id_vertex_B,morphism_dict[operation])
+                new_knet.edges[i] = (id_vertex_A,id_vertex_B,monoidactionmorphism.monoid_morphism[operation])
                 
             return new_knet
         else:
