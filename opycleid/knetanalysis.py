@@ -5,6 +5,7 @@
 ###
 
 import numpy as np
+from opycleid.monoidaction import MonoidAction
 
 class KNet:
     """Class definition for a K-Net
@@ -20,7 +21,7 @@ class KNet:
         - category : an instance of a MonoidAction class
         """
         
-        if not "MonoidAction" in str(category.__class__):
+        if not isinstance(category,MonoidAction):
             raise Exception("Not a valid category action\n")
         else:
             self.vertices = {}
