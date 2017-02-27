@@ -20,7 +20,7 @@ class KNet:
         - category : an instance of a MonoidAction class
         """
         
-        if not "MonoidAction" in str(category.__class__.__bases__):
+        if not "MonoidAction" in str(category.__class__):
             raise Exception("Not a valid category action\n")
         else:
             self.vertices = {}
