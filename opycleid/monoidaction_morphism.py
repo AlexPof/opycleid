@@ -52,7 +52,7 @@ class MonoidActionMorphism:
         A boolean indicating if this is a valid natural transformation. 
         """
         ## Build the matrix representation (permutation matrix) corresponding to the natural isomorphism given by nat_trans
-        nat_trans_matrix = np.zeros((len(self.monoidaction_source.objects),len(self.monoidaction_dest.objects)),dtype=bool)
+        nat_trans_matrix = np.zeros((len(self.monoidaction_dest.objects),len(self.monoidaction_source.objects)),dtype=bool)
         for x in self.monoidaction_source.objects.keys():
             nat_trans_matrix[self.monoidaction_dest.objects[self.nat_trans[x]],self.monoidaction_source.objects[x]]=True
         
