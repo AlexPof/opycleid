@@ -211,37 +211,6 @@ class MonoidAction:
                 return (True,full_mapping)
             else:
                 return (True,None)
-
-    def is_action_automorphism(self,morphism_dict,nat_trans):
-        """Checks if this is a valid morphism of the monoid action functor.
-        
-        Such a morphism consists in 
-            - a monoid morphism, defining how operations are transformed
-            - a natural transformation, defining how the musical elements are transformed
-
-        Parameters
-        ----------
-        autom_dict : a dictionary defining a monoid morphism. Keys are operations in the monoid, values are the images of these operations.
-        nat_trans : a dictionary defining a natural transformation. Keys are musical elements in the monoid action, values are the images of these elements.
-
-        Returns
-        -------
-        A boolean indicating if this is a valid morphism. 
-        """
-        ## Build the matrix representation (permutation matrix) corresponding to the natural isomorphism given by nat_trans
-        nat_trans_matrix = np.zeros((len(self.objects),len(self.objects)),dtype=bool)
-        for x in self.objects.keys():
-            nat_trans_matrix[self.objects[nat_trans[x]],self.objects[x]]=True
-        
-        ## Check the commutativity of the natural transformation square for all operations of the monoid        
-        for x in self.operations.keys():
-            K = np.dot(nat_trans_matrix,self.operations[x])
-            L = np.dot(self.operations[morphism_dict[x]],nat_trans_matrix)
-
-            if not np.array_equal(K,L):
-                return False
-
-        return True
             
     def element_Rclass(self,op_name):
         """Generates the R class for a given operation x in the monoid, i.e. all elements y of the monoid such that we have xRy for Green's R relation.
