@@ -27,13 +27,29 @@ class MonoidActionMorphism:
         self.nat_trans = nat_trans
         
 
-    def is_valid(self):
-        """Checks if this is a valid morphism of the monoid action functor.
+    def is_monoidmorphism_valid(self):
+        """Checks if the specified monoid morphism is a valid one.
+           We should have f(g2*g1)=f(g2)*f(g1).
+
+        Returns
+        -------
+        A boolean indicating if this is a valid monoid morphism. 
+        """
+        for op1 in self.monoidaction_source.operations.keys():
+            for op2 in self.monoidaction_source.operations.keys():
+                image_op_1 = self.monoid_morphism[self.monoidaction_source.mult(op1,op2)]
+                image_op_2 = self.monoidaction_dest.mult(self.monoid_morphism[op1],self.monoid_morphism[op2])
+                if not image_op_1 == image_op_2:
+                    return False
+        return True
+
+    def is_nattransformation_valid(self):
+        """Checks if the specified natural transformation is a valid one.
            In particular, the commutativity condition of the natural transformation should be respected.
 
         Returns
         -------
-        A boolean indicating if this is a valid morphism. 
+        A boolean indicating if this is a valid natural transformation. 
         """
         ## Build the matrix representation (permutation matrix) corresponding to the natural isomorphism given by nat_trans
         nat_trans_matrix = np.zeros((len(self.monoidaction_source.objects),len(self.monoidaction_dest.objects)),dtype=bool)
@@ -49,3 +65,12 @@ class MonoidActionMorphism:
                 return False
 
         return True
+
+    def is_valid(self):
+        """Checks if this is a valid morphism of the monoid action functor.
+  
+        Returns
+        -------
+        A boolean indicating if this is a valid morphism. 
+        """
+        return self.is_monoidmorphism_valid() and self.is_nattransformation_valid()
