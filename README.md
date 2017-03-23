@@ -1,3 +1,5 @@
+![PyPi](https://badge.fury.io/py/opycleid.svg)
+
 # opycleid
 Opycleid - A Python package for transformational music theory
 
