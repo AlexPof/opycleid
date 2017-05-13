@@ -68,7 +68,7 @@ class MonoidAction:
         idx_element = self.objects[element_name]
         op = self.operations[operation_name]
         list_indices = np.where(op[:,idx_element])[0]
-        return [x for x in self.objects.keys() for y in list_indices if self.objects[x]==y]
+        return [x for x in self.objects for y in list_indices if self.objects[x]==y]
 
     def get_operation(self,elem_1,elem_2):
         """Determines the possible operations relating an element to another.
@@ -123,12 +123,12 @@ class MonoidAction:
 
         while(len(added_liste)>0):
             added_liste = {}
-            for name_x in new_liste.keys():
-                for name_g in self.generators.keys():
+            for name_x in new_liste:
+                for name_g in self.generators:
                     elem_name = name_g+name_x
                     elem_matrix = (self.generators[name_g].dot(new_liste[name_x])>0)
                     c=0
-                    for name_y in self.operations.keys():
+                    for name_y in self.operations:
                         if np.array_equal(self.operations[name_y],elem_matrix):
                             c=1
                     if c==0:
@@ -190,7 +190,7 @@ class MonoidAction:
         while(len(added_liste)>0):
             added_liste = []
             for name_x in new_liste:
-                for name_g in self.generators.keys():
+                for name_g in self.generators:
                     name_product = self.mult(name_g,name_x)
                     name_imageproduct = self.mult(full_mapping[name_g],full_mapping[name_x])
                     if not name_product in full_mapping.keys():
@@ -226,9 +226,9 @@ class MonoidAction:
         A list of operations related to op_name by Green's R relation. 
         """
         list_Req = []
-        I1 = np.unique([self.mult(op_name,x) for x in self.operations.keys()])
+        I1 = np.unique([self.mult(op_name,x) for x in self.operations])
         for op in self.operations.keys():
-            I2 = np.unique([self.mult(op,x) for x in self.operations.keys()])
+            I2 = np.unique([self.mult(op,x) for x in self.operations])
             if sorted(I2) == sorted(I1):
                 list_Req.append(op)
         return list_Req
@@ -247,9 +247,9 @@ class MonoidAction:
         A list of operations related to op_name by Green's L relation. 
         """
         list_Req = []
-        I1 = np.unique([self.mult(x,op_name) for x in self.operations.keys()])
+        I1 = np.unique([self.mult(x,op_name) for x in self.operations])
         for op in self.operations.keys():
-            I2 = np.unique([self.mult(x,op) for x in self.operations.keys()])
+            I2 = np.unique([self.mult(x,op) for x in self.operations])
             if sorted(I2) == sorted(I1):
                 list_Req.append(op)
         return list_Req
@@ -334,7 +334,7 @@ class MonoidAction:
         A boolean indicating if S is a left ideal.
         """
         for m in S:
-            for f in self.operations.keys():
+            for f in self.operations:
                 t = self.mult(f,m)
                 if not t in S:
                     return False
@@ -376,7 +376,7 @@ class MonoidAction:
         A boolean indicating if S is a right ideal.
         """
         for m in S:
-            for f in self.operations.keys():
+            for f in self.operations:
                 t = self.mult(m,f)
                 if not t in S:
                     return False

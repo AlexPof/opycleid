@@ -138,7 +138,7 @@ class KNet:
         ## Get the adjacency matrix
         n_obj = len(self.vertices)
         adj_matrix = np.zeros((n_obj,n_obj),dtype=bool)
-        for x in self.edges.keys():
+        for x in self.edges:
             adj_matrix[self.edges[x][1],self.edges[x][0]] = True
  
         ## Check for the presence of cycles
@@ -149,7 +149,7 @@ class KNet:
                         
         ## Build the labelled adjacency matrix
         lbl_adj_matrix = np.zeros((n_obj,n_obj),dtype=object)
-        for x in self.edges.keys():
+        for x in self.edges:
             lbl_adj_matrix[self.edges[x][1],self.edges[x][0]] = self.edges[x][2]
                                               
             ## Matrix multiplication with values in a monoid
@@ -204,7 +204,7 @@ class KNet:
     
 
     def print_knet(self):
-        for x in self.edges.keys():
+        for x in self.edges:
             self.print_knet_edge(x)
 
     def print_knet_edge(self,x):

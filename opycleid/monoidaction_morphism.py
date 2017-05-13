@@ -35,8 +35,8 @@ class MonoidActionMorphism:
         -------
         A boolean indicating if this is a valid monoid morphism. 
         """
-        for op1 in self.monoidaction_source.operations.keys():
-            for op2 in self.monoidaction_source.operations.keys():
+        for op1 in self.monoidaction_source.operations:
+            for op2 in self.monoidaction_source.operations:
                 image_op_1 = self.monoid_morphism[self.monoidaction_source.mult(op1,op2)]
                 image_op_2 = self.monoidaction_dest.mult(self.monoid_morphism[op1],self.monoid_morphism[op2])
                 if not image_op_1 == image_op_2:
@@ -53,11 +53,11 @@ class MonoidActionMorphism:
         """
         ## Build the matrix representation (permutation matrix) corresponding to the natural isomorphism given by nat_trans
         nat_trans_matrix = np.zeros((len(self.monoidaction_dest.objects),len(self.monoidaction_source.objects)),dtype=bool)
-        for x in self.monoidaction_source.objects.keys():
+        for x in self.monoidaction_source.objects:
             nat_trans_matrix[self.monoidaction_dest.objects[self.nat_trans[x]],self.monoidaction_source.objects[x]]=True
         
         ## Check the commutativity of the natural transformation square for all operations of the monoid        
-        for x in self.monoidaction_source.operations.keys():
+        for x in self.monoidaction_source.operations:
             K = np.dot(nat_trans_matrix,self.monoidaction_source.operations[x])
             L = np.dot(self.monoidaction_dest.operations[self.monoid_morphism[x]],nat_trans_matrix)
 

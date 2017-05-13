@@ -137,7 +137,7 @@ class UTT_Group(MonoidAction):
         ## Quick rewriting of the operation names to conform to
         ## Hook's terminology for UTTs
         
-        for x in self.operations.keys():
+        for x in self.operations:
             op = [0,0,0]
             for j in x[::-1]:
                 if j=="T":
