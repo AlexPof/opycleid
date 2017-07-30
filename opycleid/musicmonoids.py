@@ -137,7 +137,8 @@ class UTT_Group(MonoidAction):
         ## Quick rewriting of the operation names to conform to
         ## Hook's terminology for UTTs
         
-        for x in self.operations:
+        new_operations = {}
+        for x,mat in self.operations.iteritems():
             op = [0,0,0]
             for j in x[::-1]:
                 if j=="T":
@@ -145,7 +146,8 @@ class UTT_Group(MonoidAction):
                 if j=="I":
                     op[2]=1-op[2]
             newkey = "<"+str(op[0])+","+str(op[1])+","+("+"*(op[2]==0)+"-"*(op[2]==1))+">"
-            self.operations[newkey] = self.operations.pop(x)
+            new_operations[newkey] = mat
+        self.operations = new_operations.copy()
         self.generators = {"<1,0,+>":T,"<0,0,->":I}
 
 class Left_Z3Q8_Group(MonoidAction):
