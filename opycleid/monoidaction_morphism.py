@@ -5,7 +5,7 @@
 ###
 
 import numpy as np
-from monoidaction import MonoidAction
+from .monoidaction import MonoidAction
 
 class MonoidActionMorphism:
 

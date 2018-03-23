@@ -5,7 +5,7 @@
 ###
 
 import numpy as np
-from opycleid.monoidaction import MonoidAction
+from .monoidaction import MonoidAction
 
 class KNet:
     """Class definition for a K-Net

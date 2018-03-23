@@ -5,7 +5,7 @@
 ###
 
 import numpy as np
-from monoidaction import MonoidAction
+from .monoidaction import MonoidAction
 
 class Noll_Monoid(MonoidAction):
     """Defines the Noll monoid acting on the set of the twelve pitch classes.
