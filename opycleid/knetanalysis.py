@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 ################################################
-###### Copyright (c) 2016, Alexandre Popoff 
+###### Copyright (c) 2016, Alexandre Popoff
 ###
 
 import numpy as np
-from .monoidaction import MonoidAction
+from .categoryaction import MonoidAction
 
 class KNet:
     """Class definition for a K-Net
@@ -20,30 +20,31 @@ class KNet:
         - edges : dictionary, keys are index numbers, values are 3-tuples (start,end,op) (see add_edges)
         - category : an instance of a MonoidAction class
         """
-        
+
         if not isinstance(category,MonoidAction):
-            raise Exception("Not a valid category action\n")
+            raise Exception("Not a valid monoid action\n")
         else:
             self.vertices = {}
             self.edges = {}
             self.category = category
-            
 
-    def add_vertices(self,list_vertices):
-        """Add vertices to a K_Net.
+
+    def set_vertices(self,list_vertices):
+        """Set vertices for the K_Net.
         Checks if:
             - the provided musical element is in the K_Net category action
 
         Parameters
         ----------
-        list_vertices : list of musical element
+        list_vertices : list of musical elements
 
         Returns
         -------
         None
         """
+        self.edges = {}
         for x in list_vertices:
-            if x in self.category.objects.keys():
+            if self.category.get_object().is_in(x):
                 self.vertices[len(self.vertices)] = x
             else:
                 raise Exception("Element "+str(x)+" is not in the category action\n")
@@ -64,16 +65,16 @@ class KNet:
         Returns
         -------
         None
-        """        
+        """
         for id_vertex_A,id_vertex_B,operation in list_edges:
-            
+
             for edge_start,edge_end,edge_op in self.edges.itervalues():
                 if edge_start == id_vertex_A and id_vertex_B == edge_end:
                     raise Exception("There already exists an edge between vertices "+str(edge_start)+" and "+str(edge_end)+"\n")
-        
+
             if not operation in self.category.operations.keys():
                 raise Exception(str(operation)+" is not a valid operation in the category\n")
-                
+
             if operation in self.category.get_operation(self.vertices[id_vertex_A],self.vertices[id_vertex_B]):
                 self.edges[len(self.edges)] = (id_vertex_A,id_vertex_B,operation)
             else:
@@ -119,7 +120,7 @@ class KNet:
                     self.add_edges([(i,j,self.category.get_operation(self.vertices[i],self.vertices[j])[0])])
 
 
-    def is_valid(self):    
+    def is_valid(self):
         """Checks the consistency of the K_Net.
         A K_Net is considered as consistent if:
             - it does not contain cycles
@@ -140,18 +141,18 @@ class KNet:
         adj_matrix = np.zeros((n_obj,n_obj),dtype=bool)
         for x in self.edges:
             adj_matrix[self.edges[x][1],self.edges[x][0]] = True
- 
+
         ## Check for the presence of cycles
         for i in range(2,n_obj+1):
             C = np.linalg.matrix_power(adj_matrix,i)
             if np.sum(C[range(n_obj),range(n_obj)]):
                 return False
-                        
+
         ## Build the labelled adjacency matrix
         lbl_adj_matrix = np.zeros((n_obj,n_obj),dtype=object)
         for x in self.edges:
             lbl_adj_matrix[self.edges[x][1],self.edges[x][0]] = self.edges[x][2]
-                                              
+
             ## Matrix multiplication with values in a monoid
             for i in range(n_obj):
                 for j in range(n_obj):
@@ -164,13 +165,13 @@ class KNet:
                             return False
                         if not lbl_adj_matrix[i,j] == 0 and not l[0] == lbl_adj_matrix[i,j]:
                             return False
-               
+
         return True
-                                    
+
 
     def apply_knet_morphism(self,monoidactionmorphism):
         """Apply a K-Net morphism to a given K_Net.
-        A K-Net morphism consists in 
+        A K-Net morphism consists in
             - a monoid morphism, defining how operations are transformed
             - a natural transformation, defining how the musical elements are transformed
 
@@ -187,13 +188,13 @@ class KNet:
             new_knet = KNet(monoidactionmorphism.monoidaction_dest)
             new_knet.vertices=self.vertices.copy()
             new_knet.edges=self.edges.copy()
-            
+
             for i in range(len(new_knet.vertices)):
                 new_knet.vertices[i] = monoidactionmorphism.nat_trans[new_knet.vertices[i]]
             for i in range(len(new_knet.edges)):
                 id_vertex_A,id_vertex_B,operation = new_knet.edges[i]
                 new_knet.edges[i] = (id_vertex_A,id_vertex_B,monoidactionmorphism.monoid_morphism[operation])
-                
+
             return new_knet
         else:
             raise Exception("The given monoid morphism and/or the natural transformation do not constitute a valid K-Net morphism")
@@ -201,7 +202,7 @@ class KNet:
 
     ################################################
     ## KNet display
-    
+
 
     def print_knet(self):
         for x in self.edges:

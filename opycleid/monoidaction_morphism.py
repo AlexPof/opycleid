@@ -5,7 +5,7 @@
 ###
 
 import numpy as np
-from .monoidaction import MonoidAction
+from .categoryaction import MonoidAction
 
 class MonoidActionMorphism:
 
@@ -25,9 +25,13 @@ class MonoidActionMorphism:
             - nat_trans:            a natural transformation, defining how
                                     the musical elements are transformed.
                                     This is a dictionary, the keys of which are
-                                    objects in monoidaction_source, the values
-                                    of which are objects in monoidaction_dest
+                                    elements in monoidaction_source, the values
+                                    of which are elements in monoidaction_dest
         """
+        if not isinstance(monoidaction_source,MonoidAction):
+           raise Exception("Source is not a valid monoid action\n")
+        if not isinstance(monoid_action_dest,MonoidAction):
+            raise Exception("Target is not a valid monoid action\n")
         self.monoidaction_source = monoidaction_source
         self.monoidaction_dest = monoid_action_dest
         self.monoid_morphism = monoid_morphism
@@ -59,15 +63,24 @@ class MonoidActionMorphism:
         -------
         A boolean indicating if this is a valid natural transformation.
         """
-        ## Build the matrix representation (permutation matrix) corresponding to the natural isomorphism given by nat_trans
-        nat_trans_matrix = np.zeros((len(self.monoidaction_dest.objects),len(self.monoidaction_source.objects)),dtype=bool)
-        for x in self.monoidaction_source.objects:
-            nat_trans_matrix[self.monoidaction_dest.objects[self.nat_trans[x]],self.monoidaction_source.objects[x]]=True
+
+        ## Get the single object in the source Monoid Action
+        source_object = self.monoidaction_source.get_object()
+        ## Get the single object in the target Monoid Action
+        target_object = self.monoidaction_dest.get_object()
+
+        source_cardinality = source_object.get_cardinality()
+        target_cardinality = target_object.get_cardinality()
+
+        ## Build the matrix representation (permutation matrix) corresponding to the natural transformation given by nat_trans
+        nat_trans_matrix = np.zeros((target_cardinality,source_cardinality),dtype=bool)
+        for elem,image in self.nat_trans.iteritems():
+            nat_trans_matrix[target_object.get_idx_by_name(image),source_object.get_idx_by_name(elem)]=True
 
         ## Check the commutativity of the natural transformation square for all operations of the monoid
-        for x in self.monoidaction_source.operations:
-            K = np.dot(nat_trans_matrix,self.monoidaction_source.operations[x])
-            L = np.dot(self.monoidaction_dest.operations[self.monoid_morphism[x]],nat_trans_matrix)
+        for name_x,x in self.monoidaction_source.operations.iteritems():
+            K = np.dot(nat_trans_matrix,x.get_mapping_matrix())
+            L = np.dot(self.monoidaction_dest.operations[self.monoid_morphism[name_x]].get_mapping_matrix(),nat_trans_matrix)
 
             if not np.array_equal(K,L):
                 return False
