@@ -56,25 +56,60 @@ class CatMorphism:
         self.matrix = matrix
 
     def get_mapping(self):
-        n_x,n_y = self.matrix.shape
-        return [(self.source.get_name_by_idx(i),[self.target.get_name_by_idx(x) \
-                                                 for x in np.where(self.matrix[:,i])[0]]) for i in range(n_x)]
+        dest_cardinality,source_cardinality = self.matrix.shape
+        return dict([(self.source.get_name_by_idx(i),
+                [self.target.get_name_by_idx(x) for x in np.where(self.matrix[:,i])[0]]) \
+                for i in range(source_cardinality)])
 
     def get_mapping_matrix(self):
         return self.matrix
 
-    def get_description(self):
+    def __str__(self):
+        """Returns a verbose description of the morphism
+        Overloads the 'str' operator of Python
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A description of the morphism via its source, target, and mapping.
+        """
         descr = self.name+":"+self.source.name+"->"+self.target.name+"\n\n"
-        for s,t in self.get_mapping():
+        for s,t in self.get_mapping().iteritems():
             descr += " "*(len(self.name)+1)
             descr += s+"->"+(",".join(t))+"\n"
         return descr
 
     def __rshift__(self,elem):
+        """Apply the current morphism to an element of its domain
+        Overloads the '>>' operator of Python
+
+        Parameters
+        ----------
+        elem : string representing an element of self.source
+
+        Returns
+        -------
+        The image of elem by the current morphism
+        """
         idx_elem = self.source.get_idx_by_name(elem)
         return [self.target.get_name_by_idx(x) for x in np.where(self.matrix[:,idx_elem])[0]]
 
     def __mul__(self,morphism):
+        """Compose two morphisms
+        Overloads the '*' operator of Python
+
+        Parameters
+        ----------
+        morphism : an instance of CatMorphism
+
+        Returns
+        -------
+        The product self * morphism. Raises an exception if the two morphisms
+        are not composable
+        """
         if not morphism.target==self.source:
             raise Exception("Morphisms are not composable")
         new_morphism =  CatMorphism(self.name+morphism.name,morphism.source,self.target)
@@ -83,9 +118,38 @@ class CatMorphism:
         return new_morphism
 
     def __eq__(self,morphism):
+        """Checks if the given morphism is equal to 'morphism'
+        Overloads the '=' operator of Python
+
+        Parameters
+        ----------
+        morphism : an instance of CatMorphism
+
+        Returns
+        -------
+        True if 'self' is equal to 'morphism'
+        """
         return (self.source == morphism.source) and \
                (self.target == morphism.target) and \
                (np.array_equal(self.matrix,morphism.matrix))
+
+    def __lt__(self, morphism):
+        """Checks if the given morphism is included in 'morphism', i.e. if there
+        is a 2-morphism in Rel from 'self' to 'morphism'.
+        Overloads the '<' operator of Python
+
+        Parameters
+        ----------
+        morphism : an instance of CatMorphism
+
+        Returns
+        -------
+        True if 'self' is included in 'morphism'
+        """
+
+        if not (self.source == morphism.source) and (self.target == morphism.target):
+            raise Exception("Morphisms should have the same domain and codomain")
+        return np.array_equal(self.matrix,self.matrix & morphism.matrix)
 
 class CategoryAction:
     def __init__(self):
@@ -154,7 +218,7 @@ class CategoryAction:
         return res
 
     def get_description(self,name_f):
-        return self.operations[name_f].get_description()
+        return str(self.operations[name_f])
 
 
 class MonoidAction(CategoryAction):

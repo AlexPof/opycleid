@@ -5,11 +5,11 @@
 ###
 
 import numpy as np
-from .categoryaction import MonoidAction
+from .categoryaction import MonoidAction, CatMorphism
 
 class MonoidActionMorphism:
 
-    def __init__(self,monoidaction_source,monoid_action_dest,monoid_morphism,nat_trans):
+    def __init__(self,monoidaction_source,monoid_action_dest,monoid_morphism,nat_trans_mapping):
         """Initializes a morphism of monoid action class
 
         Variables
@@ -22,11 +22,11 @@ class MonoidActionMorphism:
                                     are operations in monoidaction_source,
                                     the values of which are operations
                                     in monoidaction_dest
-            - nat_trans:            a natural transformation, defining how
+            - nat_trans_mapping:    a natural transformation, defining how
                                     the musical elements are transformed.
                                     This is a dictionary, the keys of which are
                                     elements in monoidaction_source, the values
-                                    of which are elements in monoidaction_dest
+                                    of which are list of elements in monoidaction_dest
         """
         if not isinstance(monoidaction_source,MonoidAction):
            raise Exception("Source is not a valid monoid action\n")
@@ -35,7 +35,13 @@ class MonoidActionMorphism:
         self.monoidaction_source = monoidaction_source
         self.monoidaction_dest = monoid_action_dest
         self.monoid_morphism = monoid_morphism
-        self.nat_trans = nat_trans
+
+        N = CatMorphism("N",
+                        self.monoidaction_source.get_object(),
+                        self.monoidaction_dest.get_object())
+        N.set_mapping(nat_trans_mapping)
+
+        self.nat_trans = N
 
 
     def is_monoidmorphism_valid(self):
@@ -49,40 +55,31 @@ class MonoidActionMorphism:
         for op1 in self.monoidaction_source.operations:
             for op2 in self.monoidaction_source.operations:
                 image_op_1 = self.monoid_morphism[self.monoidaction_source.mult(op1,op2)]
-                image_op_2 = self.monoidaction_dest.mult(self.monoid_morphism[op1],self.monoid_morphism[op2])
+                image_op_2 = self.monoidaction_dest.mult(self.monoid_morphism[op1],
+                                                         self.monoid_morphism[op2])
                 if not image_op_1 == image_op_2:
                     return False
         return True
 
     def is_nattransformation_valid(self):
-        """Checks if the specified natural transformation is a valid one.
+        """Checks if the specified lax natural transformation is a valid one.
            In particular, the commutativity condition
            of the natural transformation should be respected.
+           In the 2-category Rel, given a lax natural transformation N between
+           two functors F and G, this means that there should be a 2-morphism
+           from N_Y*F(f) to G(f)*N_X (i.e. the relation N_Y*F(f) is included in
+           G(f)*N_X) for all morphisms f.
 
         Returns
         -------
-        A boolean indicating if this is a valid natural transformation.
+        A boolean indicating if this is a valid lax natural transformation.
         """
 
-        ## Get the single object in the source Monoid Action
-        source_object = self.monoidaction_source.get_object()
-        ## Get the single object in the target Monoid Action
-        target_object = self.monoidaction_dest.get_object()
-
-        source_cardinality = source_object.get_cardinality()
-        target_cardinality = target_object.get_cardinality()
-
-        ## Build the matrix representation (permutation matrix) corresponding to the natural transformation given by nat_trans
-        nat_trans_matrix = np.zeros((target_cardinality,source_cardinality),dtype=bool)
-        for elem,image in self.nat_trans.iteritems():
-            nat_trans_matrix[target_object.get_idx_by_name(image),source_object.get_idx_by_name(elem)]=True
-
-        ## Check the commutativity of the natural transformation square for all operations of the monoid
+        ## Check the validity of the lax natural transformation square for all operations of the monoid
         for name_x,x in self.monoidaction_source.operations.iteritems():
-            K = np.dot(nat_trans_matrix,x.get_mapping_matrix())
-            L = np.dot(self.monoidaction_dest.operations[self.monoid_morphism[name_x]].get_mapping_matrix(),nat_trans_matrix)
-
-            if not np.array_equal(K,L):
+            K = self.nat_trans * x
+            L = self.monoidaction_dest.operations[self.monoid_morphism[name_x]] * self.nat_trans
+            if not K<L:
                 return False
 
         return True

@@ -190,7 +190,10 @@ class KNet:
             new_knet.edges=self.edges.copy()
 
             for i in range(len(new_knet.vertices)):
-                new_knet.vertices[i] = monoidactionmorphism.nat_trans[new_knet.vertices[i]]
+                vertex_image = monoidactionmorphism.nat_trans>>new_knet.vertices[i]
+                if len(vertex_image)>1:
+                    raise Exception("Rel-based MonoidAction morphisms are not implemented")
+                new_knet.vertices[i] = vertex_image[0]
             for i in range(len(new_knet.edges)):
                 id_vertex_A,id_vertex_B,operation = new_knet.edges[i]
                 new_knet.edges[i] = (id_vertex_A,id_vertex_B,monoidactionmorphism.monoid_morphism[operation])
@@ -204,14 +207,13 @@ class KNet:
     ## KNet display
 
 
-    def print_knet(self):
+    def __str__(self):
+        descr = "K-Net description: \n"
         for x in self.edges:
-            self.print_knet_edge(x)
-
-    def print_knet_edge(self,x):
-        name_A = self.vertices[self.edges[x][0]]
-        name_B = self.vertices[self.edges[x][1]]
-        name_op = self.edges[x][2]
-        print " "*len(name_A)+name_op+" "*len(name_B)
-        print self.vertices[self.edges[x][0]]+"-"*len(name_op)+">"+self.vertices[self.edges[x][1]]
-        print ""
+            name_A = self.vertices[self.edges[x][0]]
+            name_B = self.vertices[self.edges[x][1]]
+            name_op = self.edges[x][2]
+            descr += "    "+" "*len(name_A)+name_op+" "*len(name_B)+"\n"
+            descr += "    "+self.vertices[self.edges[x][0]]
+            descr += "-"*len(name_op)+">"+self.vertices[self.edges[x][1]]+"\n"
+        return descr

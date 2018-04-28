@@ -13,7 +13,7 @@ except ImportError:
     sys.exit(1)
 
 setup(name='opycleid',
-      version='0.1.0',
+      version='0.2.0',
       description='Transformational music analysis in Python',
       author='Alexandre Popoff',
       author_email='al.popoff@free.fr',
