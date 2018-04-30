@@ -21,6 +21,9 @@ class CatObject:
     def get_name_by_idx(self,idx):
         return self.dict_idx2elem.get(idx)
 
+    def get_elements(self):
+        return list(self.dict_elem2idx.keys())
+
     def get_cardinality(self):
         return len(self.dict_idx2elem)
 
@@ -77,7 +80,7 @@ class CatMorphism:
         A description of the morphism via its source, target, and mapping.
         """
         descr = self.name+":"+self.source.name+"->"+self.target.name+"\n\n"
-        for s,t in self.get_mapping().iteritems():
+        for s,t in self.get_mapping().items():
             descr += " "*(len(self.name)+1)
             descr += s+"->"+(",".join(t))+"\n"
         return descr
@@ -209,7 +212,7 @@ class CategoryAction:
 
     def get_operation(self,elem1,elem2):
         res = []
-        for name_f,f in self.operations.iteritems():
+        for name_f,f in self.operations.items():
             try:
                 if elem2 in f>>elem1:
                     res.append(name_f)
