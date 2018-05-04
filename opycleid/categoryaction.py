@@ -273,7 +273,7 @@ class MonoidAction(CategoryAction):
     def get_object(self):
         """XXX should
         """
-        return self.objects.values()[0]
+        return list(self.objects.values())[0]
 
     def get_automorphisms(self):
         """Returns all automorphisms of the monoid as a list of dictionaries.
