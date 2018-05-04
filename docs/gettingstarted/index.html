@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Tutorial - Opycleid</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  <link href="../extra.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Tutorial";
+    var mkdocs_page_input_path = "gettingstarted.md";
+    var mkdocs_page_url = "/gettingstarted/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Opycleid</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Tutorial</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#a-tutorial-on-opycleid">A tutorial on Opycleid</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#using-existing-category-actions">Using existing category actions</a></li>
+        
+            <li><a class="toctree-l3" href="#defining-custom-morphisms-and-category-actions">Defining custom morphisms and category actions</a></li>
+        
+            <li><a class="toctree-l3" href="#defining-monoid-action-morphisms">Defining monoid action morphisms</a></li>
+        
+            <li><a class="toctree-l3" href="#k-net-analysis">K-Net analysis</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Reference Manual</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../categoryaction/">opycleid.categoryaction</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../musicmonoids/">opycleid.musicmonoids</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../monoidactionmorphism/">opycleid.monoidactionmorphism</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../knetanalysis/">opycleid.knetanalysis</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Opycleid</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Tutorial</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="a-tutorial-on-opycleid">A tutorial on Opycleid</h1>
+<p>We give here a quick tutorial on the major features of Opycleid. Please consult the reference manual for a detailed description of the classes and methods.</p>
+<h2 id="using-existing-category-actions">Using existing category actions</h2>
+<p>In simple cases, one would just like to analyze chords, notes, etc. using the groups and monoids commonly used in transformational music theory, such as the transposition/inversion group, also known as the <script type="math/tex"> T\text{/}I </script> group, or the neo-Riemannian <script type="math/tex"> \text{PRL} </script> group.</p>
+<p>Opycleid provides ready-to-use groups and monoids to perform such analysis. Let's take a famous example, first introduced by Richard Cohn (<em>Richard Cohn: Maximally Smooth Cycles, Hexatonic Systems, and the Analysis of Late-Romantic Triadic Progressions, Music Analysis, 15(1), pp. 9-40, (1996).</em>), namely the second movement of Beethoven's Ninth Symphony at bar 143. This is a progression of 19 major and minor triads, starting with C major, A minor, F major, D minor, B flat major, etc.</p>
+<p>We would like to analyze this progression using the <script type="math/tex"> \text{PRL} </script> group. First, we create a new instance of <code>opycleid.musicmonoids.PRL_Group</code>.</p>
+<pre><code class="python">from opycleid.musicmonoids import PRL_Group
+
+my_group = PRL_Group()
+</code></pre>
+
+<p>The class <code>opycleid.musicmonoids.PRL_Group</code> inherits from <code>opycleid.categoryaction.MonoidAction</code>, which itself inherits from <code>opycleid.categoryaction.CategoryAction</code>. This latter class is the basis for all category actions, and provides three methods, <code>mult</code>, <code>apply_operation</code>, and <code>get_operation</code> for respectively composing musical transformations, applying a musical transformation to a musical element, and getting the possible transformations between two musical elements.
+In our case, we would like to determine which operation from the <script type="math/tex"> \text{PRL} </script> group takes C major to A minor, A minor to F major, F major to D minor, and so on. This is achieved in one line in Python by calling the method <code>get_operation</code>.</p>
+<pre><code class="python">print(my_group.get_operation(&quot;C_M&quot;,&quot;A_m&quot;)) ## prints ['R']
+print(my_group.get_operation(&quot;A_m&quot;,&quot;F_M&quot;)) ## prints ['(RL)^11R']
+print(my_group.get_operation(&quot;F_M&quot;,&quot;D_m&quot;)) ## prints ['R']
+print(my_group.get_operation(&quot;D_m&quot;,&quot;Bb_M&quot;)) ## prints ['(RL)^11R']
+</code></pre>
+
+<p>In the current implementation, elements of the <script type="math/tex"> \text{PRL} </script> group are given with the normal form <script type="math/tex"> (RL)^pR^q </script> with <script type="math/tex">p=0\ldots11</script> and <script type="math/tex">q=0,1</script>. The transformation <script type="math/tex">(RL)^{11}R</script> is equal to <script type="math/tex"> L </script>, thus showing that the Beethoven progression is built on a <script type="math/tex"> R-L </script> cycle.</p>
+<p>To compare, we could analyze the same progression using the <script type="math/tex"> T\text{/}I </script> group, which is also implemented in Opycleid.</p>
+<pre><code class="python">from opycleid.musicmonoids import TI_Group_Triads
+
+my_group = TI_Group_Triads()
+
+print(my_group.get_operation(&quot;C_M&quot;,&quot;A_m&quot;)) ## prints ['I^4']
+print(my_group.get_operation(&quot;A_m&quot;,&quot;F_M&quot;)) ## prints ['I^9']
+print(my_group.get_operation(&quot;F_M&quot;,&quot;D_m&quot;)) ## prints ['I^2']
+print(my_group.get_operation(&quot;D_m&quot;,&quot;Bb_M&quot;)) ## prints ['I^7']
+</code></pre>
+
+<p>Coming back to the <script type="math/tex"> \text{PRL} </script> group, we could wonder what would yield the transformation <script type="math/tex"> R </script> applied to the G minor triad. This is achieved by calling the method <code>apply_operation</code>.</p>
+<pre><code class="python">from opycleid.musicmonoids import PRL_Group
+
+my_group = PRL_Group()
+print(my_group.apply_operation(&quot;R&quot;,&quot;G_m&quot;)) ## prints ['Bb_M']
+</code></pre>
+
+<p>Finally, we can multiply operations by calling <code>mult</code>.</p>
+<pre><code class="python">from opycleid.musicmonoids import PRL_Group
+
+my_group = PRL_Group()
+print(my_group.mult(&quot;(RL)^5R&quot;,&quot;(RL)^3&quot;)) ## prints ['(RL)^2R']
+</code></pre>
+
+<h2 id="defining-custom-morphisms-and-category-actions">Defining custom morphisms and category actions</h2>
+<p>If the ready-to-use monoids and groups provided by Opycleid are not enough, it is possible to create one's own category action for specific musical purposes.
+In this section, we will see how to build morphisms and generate a category from them.</p>
+<p>In our example use case, we would like to study major and augmented triads, and transformations between them. Instead of considering all triads in a single set, we are going to consider two distinct sets: one with the 12 major triads, which we denote by <script type="math/tex"> X=\{C_M, C\sharp_M, D_M, E\flat_M, E_M, F_M, F\sharp_M, G_M, G\sharp_M, A_M, B\flat_M, B_M\} </script>, and one with the 4 augmented triads, which we denote by <script type="math/tex"> Y=\{C_{\text{aug}}, F_{\text{aug}}, D_{\text{aug}}, G_{\text{aug}}\} </script>.</p>
+<p>First, we need to define these category objects in Opycleid, by instantiating the class <code>opycleid.categoryaction.CatObject</code></p>
+<pre><code class="python">from opycleid.categoryaction import CatObject
+
+X = CatObject(&quot;X&quot;,[&quot;C_M&quot;,&quot;Cs_M&quot;,&quot;D_M&quot;,&quot;Eb_M&quot;,&quot;E_M&quot;,
+                   &quot;F_M&quot;,&quot;Fs_M&quot;,&quot;G_M&quot;,&quot;Gs_M&quot;,&quot;A_M&quot;,
+                   &quot;Bb_M&quot;,&quot;B_M&quot;])
+Y = CatObject(&quot;Y&quot;,[&quot;C_aug&quot;,&quot;F_aug&quot;,&quot;D_aug&quot;,&quot;G_aug&quot;])
+</code></pre>
+
+<p><strong>Caution: all elements should have distinct names (even across distinct objects). If not, this may lead to random and unexpected behavior.</strong></p>
+<p>Then, we are going to define some morphisms of interest. The first one is simply the transposition operator acting on the set of the 12 major triads, which send <script type="math/tex">C</script> major to <script type="math/tex">C\sharp</script> major, <script type="math/tex">C\sharp</script> major to <script type="math/tex">D</script> major, and so on. In Opycleid, we need to instantiate the class <code>opycleid.categoryaction.CatMorphism</code> and define the action of this morphism on its domain.</p>
+<pre><code class="python">from opycleid.categoryaction import CatMorphism
+
+## We create a category morphism with name &quot;T&quot;, domain X, and codomain X
+T = CatMorphism(&quot;T&quot;,X,X)
+T.set_mapping({&quot;C_M&quot;:[&quot;Cs_M&quot;],&quot;Cs_M&quot;:[&quot;D_M&quot;],&quot;D_M&quot;:[&quot;Eb_M&quot;],&quot;Eb_M&quot;:[&quot;E_M&quot;],
+               &quot;E_M&quot;:[&quot;F_M&quot;],&quot;F_M&quot;:[&quot;Fs_M&quot;],&quot;Fs_M&quot;:[&quot;G_M&quot;],&quot;G_M&quot;:[&quot;Gs_M&quot;],
+               &quot;Gs_M&quot;:[&quot;A_M&quot;],&quot;A_M&quot;:[&quot;Bb_M&quot;],&quot;Bb_M&quot;:[&quot;B_M&quot;],&quot;B_M&quot;:[&quot;C_M&quot;]})
+</code></pre>
+
+<p>Any instance of <code>opycleid.categoryaction.CatMorphism</code> overloads the <code>&gt;&gt;</code> Python operator in order to denote the action of a morphism on an element of its domain.
+For example, if we would like to know what is the image of <script type="math/tex">F</script> major by the morphism <script type="math/tex">T</script>, we would write the following.</p>
+<pre><code class="python">print(T&gt;&gt;&quot;F_M&quot;) ## prints ['Fs_M']
+</code></pre>
+
+<p>Instances of <code>opycleid.categoryaction.CatMorphism</code> can be composed if their domain and codomain are compatible. For example, the composition of <script type="math/tex">T</script> with itself gives, as expected, a transposition operator which moves the root of a major triad by two semitones.</p>
+<pre><code class="python">T_2 = T*T
+print(T_2&gt;&gt;&quot;F_M&quot;) ## prints ['G_M']
+</code></pre>
+
+<p>As we will see later, there is no need to explicitly calculate all possible compositions of morphisms. Instead, <em>generators</em> will be specified in a category, and Opycleid itself will generate the whole category.</p>
+<p>Since we want to study transformations between major triads and augmented triads, we are going to define another morphism with domain <script type="math/tex">X</script> and codomain <script type="math/tex">Y</script>. Observe that, for any major triad, we get an augmented triad if the fifth is raised a semitone higher. This will define our second morphism, and since names can even be unicode strings, we will call it 同.</p>
+<pre><code class="python">## We create a category morphism with name &quot;同&quot;, domain X, and codomain Y
+I = CatMorphism(&quot;同&quot;,X,Y)
+I.set_mapping({&quot;C_M&quot;:[&quot;C_aug&quot;],&quot;Cs_M&quot;:[&quot;F_aug&quot;],&quot;D_M&quot;:[&quot;D_aug&quot;],&quot;Eb_M&quot;:[&quot;G_aug&quot;],
+               &quot;E_M&quot;:[&quot;C_aug&quot;],&quot;F_M&quot;:[&quot;F_aug&quot;],&quot;Fs_M&quot;:[&quot;D_aug&quot;],&quot;G_M&quot;:[&quot;G_aug&quot;],
+               &quot;Gs_M&quot;:[&quot;C_aug&quot;],&quot;A_M&quot;:[&quot;F_aug&quot;],&quot;Bb_M&quot;:[&quot;D_aug&quot;],&quot;B_M&quot;:[&quot;G_aug&quot;]})
+</code></pre>
+
+<p><strong>Caution: all morphisms in a category should have distinct names. If not, this may lead to random and unexpected behavior.</strong></p>
+<p>Conversely, if one lowers any note of an augmented triad by a semitone, one gets a major triad. Since, there are three possible notes, this defines a relation (and not simply a function) from <script type="math/tex">Y</script> to <script type="math/tex">X</script>. We will call this morphism 和.</p>
+<pre><code class="python">## We create a category morphism with name &quot;和&quot;, domain Y, and codomain X
+J = CatMorphism(&quot;和&quot;,Y,X)
+J.set_mapping({&quot;C_aug&quot;:[&quot;C_M&quot;,&quot;E_M&quot;,&quot;Gs_M&quot;],
+               &quot;F_aug&quot;:[&quot;Cs_M&quot;,&quot;F_M&quot;,&quot;A_M&quot;],
+               &quot;D_aug&quot;:[&quot;D_M&quot;,&quot;Fs_M&quot;,&quot;Bb_M&quot;],
+               &quot;G_aug&quot;:[&quot;Eb_M&quot;,&quot;G_M&quot;,&quot;B_M&quot;]})
+</code></pre>
+
+<p>We now create the category generated by the two objects <script type="math/tex">X</script> and <script type="math/tex">Y</script>, and the three morphisms <script type="math/tex">T</script>, 同, and 和. For this, we instantiate <code>opycleid.categoryaction.CategoryAction</code> and specify the objects and the generators.</p>
+<pre><code class="python">from opycleid.categoryaction import CategoryAction
+
+my_category = CategoryAction()
+my_category.set_objects([X,Y])
+my_category.add_generators([T,I,J])
+my_category.generate_category()
+for x in my_category.operations:
+  print(x)
+'''
+This prints the following list:
+T
+同TTT和
+同TT和
+TTTTTTTTT
+T和同TT
+TTTT
+TTTTT
+和同TT
+同T和
+TTTTTTT
+TTT
+TTT和
+同T
+id_X
+和
+和同
+TT和
+id_Y
+T和同
+TTTTTT
+TTTTTTTT
+T和
+同TT
+TTTTTTTTTT
+TTTTTTTTTTT
+同
+TT
+同TTT
+'''  
+</code></pre>
+
+<p><strong>Note:</strong> in the current implementation, Opycleid does not rewrite/simplify the name of the morphisms,
+which are obtained by concatenation of the names of the generators. This is planned for a future release.</p>
+<p>Our category is such that</p>
+<ul>
+<li>There are 16 morphisms from <script type="math/tex">X</script> to <script type="math/tex">X</script>:<ul>
+<li>12 of the form <script type="math/tex">T^p</script> with <script type="math/tex">p=0\ldots11</script> (<script type="math/tex">T^0</script> being <script type="math/tex">\text{id_X}</script>), and</li>
+<li>4 of the form <script type="math/tex">T^p和同</script> with <script type="math/tex">p=0\ldots3</script> (here T和同TT, T和同, 和同TT, and 和同, since <script type="math/tex">T^p和同=和同T^p</script> as can be verified directly in Opycleid).</li>
+</ul>
+</li>
+<li>There are 4 morphisms from <script type="math/tex">Y</script> to <script type="math/tex">Y</script>:<ul>
+<li>of the form <script type="math/tex">同T^p和</script> with <script type="math/tex">p=0\ldots3</script> (<script type="math/tex">同和</script> being equal to <script type="math/tex">\text{id_Y}</script>)</li>
+</ul>
+</li>
+<li>There are 4 morphisms from <script type="math/tex">X</script> to <script type="math/tex">Y</script>:<ul>
+<li>of the form <script type="math/tex">同T^p</script> with <script type="math/tex">p=0\ldots3</script>
+</li>
+</ul>
+</li>
+<li>There are 4 morphisms from <script type="math/tex">Y</script> to <script type="math/tex">X</script>:<ul>
+<li>of the form <script type="math/tex">T^p和</script> with <script type="math/tex">p=0\ldots3</script>
+</li>
+</ul>
+</li>
+</ul>
+<p>Now that our category is generated, we can use it for analyzing transformations between chords.
+For example, we could ask what are the transformations between <script type="math/tex">E</script> major and <script type="math/tex">F</script> major.</p>
+<pre><code class="python">print(my_category.get_operation(&quot;E_M&quot;,&quot;F_M&quot;))
+## Prints ['T和同', 'TTTTTTTTTTT']
+</code></pre>
+
+<p>Indeed we can just transpose <script type="math/tex">E</script> major by a semitone lower, using <script type="math/tex">T^{11}=T^{-1}</script>, or we can transform <script type="math/tex">E</script> major to <script type="math/tex">C</script> augmented by using 同, then to <script type="math/tex">E</script> major by using 和, and finally to <script type="math/tex">F</script> major by using <script type="math/tex">T</script>.</p>
+<h2 id="defining-monoid-action-morphisms">Defining monoid action morphisms</h2>
+<p>In the framework of Opycleid, an instance of <code>opycleid.categoryaction.CategoryAction</code> is a concrete implementation of a faithful functor <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script>,
+where <script type="math/tex"> \mathbf{C} </script> is a small category, and <script type="math/tex"> \mathbf{Rel} </script> is the 2-category of finite sets and relations. Such a functor defines a "context" for the analysis: in the example above, we worked in the set of the major and minor triads, or in the two distinct sets of major triads and augmented triads.</p>
+<p>It is naturally to ask whether an analysis context can be changed. This is the role of <em>category action morphisms</em>. By definition, a morphism between two category actions <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script> and <script type="math/tex"> S' \colon \mathbf{C'} \to \mathbf{Rel} </script> is a pair <script type="math/tex"> (N,\nu) </script> where</p>
+<ul>
+<li>
+<script type="math/tex"> N </script> is a functor from <script type="math/tex"> \mathbf{C} </script> to <script type="math/tex"> \mathbf{C'} </script>, and</li>
+<li>
+<script type="math/tex"> \nu </script> is a lax natural transformation from <script type="math/tex"> S </script> to <script type="math/tex"> S'N </script>.</li>
+</ul>
+<p>When <script type="math/tex"> \mathbf{C} </script> and <script type="math/tex"> \mathbf{C'} </script> are monoids, the natural transformation <script type="math/tex"> \nu </script> is simply a morphism in <script type="math/tex"> \mathbf{Rel} </script> (i.e. a relation)
+between the sets <script type="math/tex"> S(e) </script> and <script type="math/tex"> S'(e') </script> (<script type="math/tex">e</script> and <script type="math/tex">e'</script> being the single objects of <script type="math/tex"> \mathbf{C} </script> and <script type="math/tex"> \mathbf{C'} </script>),
+such that for any morphism <script type="math/tex"> f </script> of <script type="math/tex"> \mathbf{C} </script> the relation <script type="math/tex"> \nu \circ S(f) </script> is included in the relation <script type="math/tex"> S'N(f) \circ \nu </script>.</p>
+<p>Currently, Opycleid only allows the definition of monoid action morphisms.</p>
+<p>To illustrate the notion, consider the <script type="math/tex"> T\text{/}I </script> group introduced previously. This is an extension <script type="math/tex"> 1 \to \mathbb{Z}_{12} \to T\text{/}I \to \mathbb{Z}_{2} \to 1</script>, where the homomorphism <script type="math/tex"> \pi \colon T\text{/}I \to \mathbb{Z}_{2} </script> sends the transposition operations <script type="math/tex">T^p</script> to the identity of <script type="math/tex"> \mathbb{Z}_{2} </script>, whereas the inversion operations <script type="math/tex">I^p</script> are sent to the non-trivial element of <script type="math/tex"> \mathbb{Z}_{2} </script>. The group <script type="math/tex"> \mathbb{Z}_{2} </script> can be made to act on the set of <script type="math/tex">\{major,minor\}</script> of chord types in an obvious manner. We can are then going to build a monoid action morphism between these two monoid actions.</p>
+<p>First, we define the group <script type="math/tex"> \mathbb{Z}_{2} </script> and its action.</p>
+<pre><code class="python">from opycleid.categoryaction import CatObject, CatMorphism, MonoidAction
+
+S = CatObject(&quot;S&quot;,[&quot;major&quot;,&quot;minor&quot;])
+
+Z = CatMorphism(&quot;z&quot;,S,S)
+Z.set_mapping({&quot;major&quot;:[&quot;minor&quot;],&quot;minor&quot;:[&quot;major&quot;]})
+
+Z2_group = MonoidAction()
+Z2_group.set_objects([S])
+Z2_group.add_generators([Z])
+Z2_group.generate_category()
+for x in Z2_group.operations:
+    print(x)
+## This prints 'id_S' and 'z', as expected    
+</code></pre>
+
+<p>We also need to instantiate the <script type="math/tex"> T\text{/}I </script> group</p>
+<pre><code class="python">from opycleid.musicmonoids import TI_Group_Triads
+
+ti_group = TI_Group_Triads()
+</code></pre>
+
+<p>To define the monoid action morphism, we need to define the mapping on operations (which defines the functor <script type="math/tex">N</script>), and the mapping on elements (which defines the natural transformation <script type="math/tex">\nu</script>).</p>
+<pre><code class="python">operation_mapping={&quot;id_.&quot;:&quot;id_S&quot;,&quot;T^1&quot;:&quot;id_S&quot;,&quot;T^2&quot;:&quot;id_S&quot;,&quot;T^3&quot;:&quot;id_S&quot;,
+                   &quot;T^4&quot;:&quot;id_S&quot;,&quot;T^5&quot;:&quot;id_S&quot;,&quot;T^6&quot;:&quot;id_S&quot;,&quot;T^7&quot;:&quot;id_S&quot;,
+                   &quot;T^8&quot;:&quot;id_S&quot;,&quot;T^9&quot;:&quot;id_S&quot;,&quot;T^10&quot;:&quot;id_S&quot;,&quot;T^11&quot;:&quot;id_S&quot;,
+                   &quot;I^0&quot;:&quot;z&quot;,&quot;I^1&quot;:&quot;z&quot;,&quot;I^2&quot;:&quot;z&quot;,&quot;I^3&quot;:&quot;z&quot;,&quot;I^4&quot;:&quot;z&quot;,
+                   &quot;I^5&quot;:&quot;z&quot;,&quot;I^6&quot;:&quot;z&quot;,&quot;I^7&quot;:&quot;z&quot;,&quot;I^8&quot;:&quot;z&quot;,&quot;I^9&quot;:&quot;z&quot;,
+                   &quot;I^10&quot;:&quot;z&quot;,&quot;I^11&quot;:&quot;z&quot;}
+elements = [&quot;C_M&quot;,&quot;Cs_M&quot;,&quot;D_M&quot;,&quot;Eb_M&quot;,&quot;E_M&quot;,&quot;F_M&quot;,
+            &quot;Fs_M&quot;,&quot;G_M&quot;,&quot;Gs_M&quot;,&quot;A_M&quot;,&quot;Bb_M&quot;,&quot;B_M&quot;,
+            &quot;C_m&quot;,&quot;Cs_m&quot;,&quot;D_m&quot;,&quot;Eb_m&quot;,&quot;E_m&quot;,&quot;F_m&quot;,
+            &quot;Fs_m&quot;,&quot;G_m&quot;,&quot;Gs_m&quot;,&quot;A_m&quot;,&quot;Bb_m&quot;,&quot;B_m&quot;]
+element_mapping = {}
+for x in elements:
+  if x[-1]==&quot;M&quot;:
+    element_mapping[x]=[&quot;major&quot;]
+  else:
+    element_mapping[x]=[&quot;minor&quot;]
+</code></pre>
+
+<p>We then instantiate <code>opycleid.monoidactionmorphism.MonoidActionMorphism</code> by specifying the source, target, and the necessary mappings.</p>
+<pre><code class="python">from opycleid.monoidactionmorphism import MonoidActionMorphism
+
+action_morphism = MonoidActionMorphism(ti_group,Z2_group,operation_mapping,element_mapping)
+</code></pre>
+
+<p>Finally we check that our monoid action morphism is a valid one (i.e. both the functor <script type="math/tex">N</script> and the natural transformation <script type="math/tex">\nu</script> are valid).</p>
+<pre><code class="python">print(action_morphism.is_monoidmorphism_valid())
+## True
+print(action_morphism.is_nattransformation_valid())
+## True
+
+## The following is a wrap-up around the successive two methods above
+print(action_morphism.is_valid())
+## True
+</code></pre>
+
+<h2 id="k-net-analysis">K-Net analysis</h2>
+<p>Opycleid provides the means to perform basic Klumpenhouwer network (K-Net) analysis.</p>
+<p>Informally, a K-Net is a directed graph, the vertices of which are labelled with musical objects,
+and the arrows of which are labelled with transformations between them. Arrows are understood to be composable: the label
+of a resulting composite arrow should be equal to the label of the composition of the two original arrows.</p>
+<p>A K-Net allows one to study the interconnections between different musical elements,
+for example in the study of the different intervals in the constitutive elements of chords in post-tonal music.</p>
+<p>Opycleid proposes a simplified version of this approach, by focusing on networks using monoid actions, in which vertices are labelled with singletons.
+To illustrate this, we go back to the Beethoven example above, and create a K-net from the chord progression. We need to instantiate <code>opycleid.knetanalysis.KNet</code> by
+specifying a monoid action, in our case the <script type="math/tex"> T\text{/}I </script> group.</p>
+<pre><code class="python">from opycleid.musicmonoids import TI_Group_Triads
+
+ti_group = TI_Group_Triads()
+
+from opycleid.knetanalysis import KNet
+
+my_knet = KNet(ti_group)
+my_knet.set_vertices([&quot;C_M&quot;,&quot;A_m&quot;,&quot;F_M&quot;,&quot;D_m&quot;,&quot;Bb_M&quot;])
+</code></pre>
+
+<p>Since the <script type="math/tex"> T\text{/}I </script> group is simply transitive, the determination of the musical transformations between the vertices is unambiguous, so we can call <code>path_knet_from_vertices()</code> to automatically determine them. Otherwise, edges have to be manually specified.</p>
+<pre><code class="python">my_knet.path_knet_from_vertices()
+print(str(my_knet))
+'''
+K-Net description:
+       I^4   
+    C_M---&gt;A_m
+       I^9   
+    A_m---&gt;F_M
+       I^2   
+    F_M---&gt;D_m
+       I^7    
+    D_m---&gt;Bb_M
+'''
+</code></pre>
+
+<p>Finally, we can transform a K-net into another by using a monoid action morphism. If we use the monoid action morphism we defined in the previous section, we get the following new K-net.</p>
+<pre><code class="python">new_knet = my_knet.apply_knet_morphism(action_morphism)
+print(str(new_knet))
+'''
+K-Net description:
+         z     
+    major-&gt;minor
+         z     
+    minor-&gt;major
+         z     
+    major-&gt;minor
+         z     
+    minor-&gt;major
+'''
+</code></pre>
+
+<p>As expected, we have transformed our original K-net describing chords and their transformations to a new K-net describing <em>chord types</em> and their transformations.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../categoryaction/" class="btn btn-neutral float-right" title="opycleid.categoryaction">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../categoryaction/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Documentation for Opycleid">
+  
+  <link rel="shortcut icon" href="./img/favicon.ico">
+  <title>Home - Opycleid</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="./css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="./css/highlight.css">
+  <link href="./extra.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Home";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = "/";
+  </script>
+  
+  <script src="./js/jquery-2.1.1.min.js"></script>
+  <script src="./js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="./js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> Opycleid</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href=".">Home</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#opycleid-the-python-library-for-transformational-music-analysis">Opycleid: The Python library for transformational music analysis</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#welcome-to-opycleid">Welcome to Opycleid</a></li>
+        
+            <li><a class="toctree-l3" href="#guiding-principles">Guiding principles</a></li>
+        
+            <li><a class="toctree-l3" href="#support">Support</a></li>
+        
+            <li><a class="toctree-l3" href="#why-this-name-opycleid">Why this name, Opycleid ?</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="gettingstarted/">Tutorial</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Reference Manual</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="categoryaction/">opycleid.categoryaction</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="musicmonoids/">opycleid.musicmonoids</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="monoidactionmorphism/">opycleid.monoidactionmorphism</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="knetanalysis/">opycleid.knetanalysis</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">Opycleid</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="opycleid-the-python-library-for-transformational-music-analysis">Opycleid: The Python library for transformational music analysis</h1>
+<h2 id="welcome-to-opycleid">Welcome to Opycleid</h2>
+<p>Opycleid is a Python library for <em>transformational music analysis (TMT)</em>, a field of musicology
+which studies transformations between musical objects (notes, chords, durations, etc.)
+from a mathematical point of view. This field was initiated by David Lewin in the 1980s, relying mainly
+on mathematical group theory, and later developed and extended using elements of <a href="https://en.wikipedia.org/wiki/Category_theory">category theory</a>.</p>
+<p>The use of this library assumes that one is familiar with the basic notions in transformational music theory.
+Here are a few links for those who would be interested in discovering this subject.</p>
+<ul>
+<li>The <a href="https://en.wikipedia.org/wiki/Transformational_theory">Wikipedia page</a> on the subject.</li>
+<li>A <a href="https://alpof.wordpress.com/category/music/math-music/transformational-theory/">series of blog posts introducing transformational music theory</a>.</li>
+<li>The book of David Lewin, where he first defined its group-theoretical approach of <em>generalized musical intervals</em>: Lewin, D.: Generalized Musical Intervals and Transformations, Yale University Press: New Haven, CT, 1987.</li>
+</ul>
+<hr />
+<h2 id="guiding-principles">Guiding principles</h2>
+<ul>
+<li><strong>User-friendly</strong>: Opycleid provides ready-to-use classes for the common groups and monoids encountered in TMT, such as the <script type="math/tex"> T\text{/}I </script> group or the <script type="math/tex"> \text{PRL} </script> group usually found in neo-Riemannian theory. These classes provides methods for determining, multiplying, and applying musical transformations. For, one can start analyzing chords in just a few lines of Python, as shown below.</li>
+</ul>
+<pre><code class="python">from opycleid.musicmonoids import TI_Group_Triads
+
+my_group = TI_Group_Triads()
+print (my_group.get_operation(&quot;C_M&quot;,&quot;B_m&quot;)) ## ['I^6']
+print (my_group.apply_operation(&quot;I^5&quot;,&quot;E_m&quot;)) ## ['Fs_M']
+</code></pre>
+
+<ul>
+<li>
+<p><strong>Generalizability</strong>: TMT has mainly been applied to the analysis of relations between notes and chords, but it can in fact be applied to any musical object, such as durations, time-spans, rhythms, etc. Opycleid takes a very general approach to TMT by considering <em>category actions</em> in <script type="math/tex"> \mathbf{Rel} </script>, i.e. faithful functors from a small category to the 2-category <script type="math/tex"> \mathbf{Rel} </script> of finite sets and relations between them. The elements of these sets are specified as strings and can represent any musical object.</p>
+</li>
+<li>
+<p><strong>Customizability</strong>: though the usual musical groups and monoids are already implemented in Opycleid, custom monoids can be generated by specifying objects and morphisms. Their definition is made easy by the use of standard Python primitives (dictionaries and lists).</p>
+</li>
+<li>
+<p><strong>What it is not</strong>: to allow the user to define his own category actions, Opycleid implements some routines which can be found in computer algebra systems such as GAP and SageMath. However, Opycleid is focused on musical applications, and is therefore not meant to be as complete as these softwares. In particular, Opycleid does not fully implement category theory (categories, functors, natural transformations, etc.), but focuses on faithful functors to <script type="math/tex"> \mathbf{Rel} </script>, which can be more easily implemented. </p>
+</li>
+</ul>
+<hr />
+<h2 id="support">Support</h2>
+<p><strong>Bug reports and features requests (only)</strong> can be posted in <a href="https://github.com/AlexPof/opycleid/issues">GitHub issues</a>.</p>
+<hr />
+<h2 id="why-this-name-opycleid">Why this name, Opycleid ?</h2>
+<p>The <a href="https://en.wikipedia.org/wiki/Ophicleide">ophicleide</a> is a keyed brass instrument from the 19th century.
+From the greek ophis (ὄφις) "serpent" (hence the perfect name for a Python library) + kleis (κλείς) "keys", it means a serpent with keys, the <a href="https://en.wikipedia.org/wiki/Serpent_(instrument)">serpent</a> being an older instrument it evolved from.</p>
+<p><img alt="Screenshot" src="./img/ophicleid.jpg" /></p>
+<p>The ophicleide was later superseded by the tuba, which was considered more reliable in terms of tone production.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gettingstarted/" class="btn btn-neutral float-right" title="Tutorial">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+        <span style="margin-left: 15px"><a href="gettingstarted/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="./js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="./search/require.js"></script>
+      <script src="./search/search.js"></script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 0.17.3
+Build Date UTC : 2018-05-04 18:45:04
+-->

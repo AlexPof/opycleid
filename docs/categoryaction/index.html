@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>opycleid.categoryaction - Opycleid</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  <link href="../extra.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "opycleid.categoryaction";
+    var mkdocs_page_input_path = "categoryaction.md";
+    var mkdocs_page_url = "/categoryaction/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Opycleid</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../gettingstarted/">Tutorial</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Reference Manual</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">opycleid.categoryaction</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#opycleidcategoryaction">opycleid.categoryaction</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#catobject">CatObject</a></li>
+        
+            <li><a class="toctree-l4" href="#catmorphism">CatMorphism</a></li>
+        
+            <li><a class="toctree-l4" href="#categoryaction">CategoryAction</a></li>
+        
+            <li><a class="toctree-l4" href="#monoidaction">MonoidAction</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../musicmonoids/">opycleid.musicmonoids</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../monoidactionmorphism/">opycleid.monoidactionmorphism</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../knetanalysis/">opycleid.knetanalysis</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Opycleid</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Reference Manual &raquo;</li>
+        
+      
+    
+    <li>opycleid.categoryaction</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="opycleidcategoryaction">opycleid.categoryaction</h1>
+<p>This module defines the basic classes needed for building musical transformations.</p>
+<h2 id="catobject">CatObject</h2>
+<pre><code class="python">opycleid.categoryaction.CatObject(name,elements)
+</code></pre>
+
+<p>Defines a category object, which is simply a named finite set. Elements of the set
+are indexed internally from 0 to len(elements).</p>
+<h3 id="arguments">Arguments</h3>
+<ul>
+<li><strong>name</strong>: a string used to name the set.</li>
+<li><strong>elements</strong>: a list of strings representing the elements of the set.</li>
+</ul>
+<hr />
+<h3 id="methods">Methods</h3>
+<h4 id="get_idx_by_name">get_idx_by_name</h4>
+<pre><code class="python">get_idx_by_name(elem)
+</code></pre>
+
+<p>Returns the integer index associated with the element <code>elem</code>. Raises an exception
+if the element cannot be found.</p>
+<hr />
+<h4 id="get_name_by_idx">get_name_by_idx</h4>
+<pre><code class="python">get_name_by_idx(idx)
+</code></pre>
+
+<p>Returns the element associated with the integer index <code>idx</code>.</p>
+<hr />
+<h4 id="get_elements">get_elements</h4>
+<pre><code class="python">get_elements()
+</code></pre>
+
+<p>Returns the list of elements contained in this set.</p>
+<hr />
+<h4 id="get_cardinality">get_cardinality</h4>
+<pre><code class="python">get_cardinality()
+</code></pre>
+
+<p>Returns the cardinality of the set.</p>
+<hr />
+<h4 id="is_in">is_in</h4>
+<pre><code class="python">is_in(elem)
+</code></pre>
+
+<p>Returns <code>True</code> if the element <code>elem</code> is in the set.</p>
+<hr />
+<h2 id="catmorphism">CatMorphism</h2>
+<pre><code class="python">opycleid.categoryaction.CatMorphism(name,source,target)
+</code></pre>
+
+<p>Defines a category morphism between two category objects. It is defined by its
+source, its target, and a relation between the source sets and the target sets.</p>
+<h3 id="arguments_1">Arguments</h3>
+<ul>
+<li><strong>name</strong>: a string used to name the morphism.</li>
+<li><strong>source</strong>: an instance of <code>opycleid.categoryaction.CatObject</code> representing the source of the morphism.</li>
+<li><strong>target</strong>: an instance of <code>opycleid.categoryaction.CatObject</code> representing the target of the morphism.</li>
+</ul>
+<hr />
+<h3 id="methods_1">Methods</h3>
+<h4 id="set_name">set_name</h4>
+<pre><code class="python">set_name(name)
+</code></pre>
+
+<p>Sets the name of the morphism to <code>name</code>.</p>
+<hr />
+<h4 id="set_to_identity">set_to_identity</h4>
+<pre><code class="python">set_to_identity()
+</code></pre>
+
+<p>If the source and target are identical, sets the morphism to be the identity on this category object,
+i.e. the relation between the corresponding sets is the identity function.</p>
+<hr />
+<h4 id="set_mapping">set_mapping</h4>
+<pre><code class="python">set_mapping(mapping)
+</code></pre>
+
+<p>Defines the relation between the source sets and the target sets. The argument <code>mapping</code> should be a dictionary, whose keys are elements in the source set, and whose values are lists of elements in the target set corresponding to the images of the source elements by the given relation.</p>
+<hr />
+<h4 id="set_mapping_matrix">set_mapping_matrix</h4>
+<pre><code class="python">set_mapping_matrix(matrix)
+</code></pre>
+
+<p>Defines the relation between the source sets and the target sets using a matrix description. The argument <code>mapping</code> should be a NumPy array of type <code>bool</code>. The rows of this matrix corresponds to the elements of the target sets, and the columns corresponds to the elements of the source sets, in both cases indexed as in the corresponding <code>CatObject</code>. Use only if you are sure about the correspondence between elements and element indices.</p>
+<hr />
+<h4 id="get_mapping">get_mapping</h4>
+<pre><code class="python">get_mapping()
+</code></pre>
+
+<p>Returns the relation defined by this morphism as a dictionary, whose keys are elements in the source set, and whose values are lists of elements in the target set corresponding to the images of the source elements.</p>
+<hr />
+<h4 id="get_mapping_matrix">get_mapping_matrix</h4>
+<pre><code class="python">get_mapping_matrix()
+</code></pre>
+
+<p>Returns the relation defined by this morphism as a NumPy array of type <code>bool</code>.</p>
+<hr />
+<h4 id="str"><strong>str</strong></h4>
+<p>Overloads Python <code>str</code> to return a string description of the morphism, including its source, target, and the relation between them.</p>
+<hr />
+<h4 id="rshift"><strong>rshift</strong></h4>
+<p>Overloads the <code>&gt;&gt;</code> operator in order to represent a morphism action.
+A typical use is <code>CatMorphism &gt;&gt; elem</code> where <code>elem</code> is a string representing an element in the source set.
+Returns a list of images in the target set.</p>
+<hr />
+<h4 id="mul"><strong>mul</strong></h4>
+<p>Overloads the <code>*</code> operator in order to represent morphism composition.
+A typical use is <code>CatMorphism_2 * CatMorphism_1</code>.
+If the target of <code>CatMorphism_1</code> is identical to the source of <code>CatMorphism_2</code>, this returns the corresponding composite morphism.
+Otherwise, the two morphisms are not composable and an exception will be raised.</p>
+<hr />
+<h4 id="eq"><strong>eq</strong></h4>
+<p>Overloads the <code>==</code> operator in order to check for morphism equality.
+A typical use is <code>CatMorphism_2 == CatMorphism_1</code>.
+Returns <code>True</code> if the sources, targets, and relations of both morphisms are equal.</p>
+<hr />
+<h4 id="lt"><strong>lt</strong></h4>
+<p>Overloads the <code>&lt;</code> operator in order to check for morphism inclusion.
+A typical use is <code>CatMorphism_2 &lt; CatMorphism_1</code>.
+Returns <code>True</code> if the sources, and targets of both morphisms are equal, and if the relation of <code>CatMorphism_2</code> is included in the relation of <code>CatMorphism_1</code>.</p>
+<hr />
+<h2 id="categoryaction">CategoryAction</h2>
+<pre><code class="python">opycleid.categoryaction.CategoryAction()
+</code></pre>
+
+<p>Defines a category action object, i.e. a faithful functor <script type="math/tex"> F \colon \mathbf{C} \to \mathbf{Rel} </script>,
+where <script type="math/tex"> \mathbf{C} </script> is a small category, and <script type="math/tex"> \mathbf{Rel} </script> is the 2-category of finite sets and relations.
+Instances of this class store internally
+<em> a dictionary of <code>CatObject</code> instances, indexed by their name
+</em> a dictionary of <code>CatMorphism</code> instances, indexed by their name, corresponding to the generators of the category,
+* a dictionary of <code>CatMorphism</code> instances, indexed by their name, corresponding to all the operations of the category.</p>
+<hr />
+<h3 id="methods_2">Methods</h3>
+<h4 id="set_objects">set_objects</h4>
+<pre><code class="python">set_objects(list_objects)
+</code></pre>
+
+<p>The argument <code>list_objects</code> should be a list of <code>CatObject</code> instances. Calling this method stores the <code>CatObject</code> instances
+in the internal dictionary, and resets the generators and operations of the category.</p>
+<hr />
+<h4 id="add_generators">add_generators</h4>
+<pre><code class="python">add_generators(list_morphisms)
+</code></pre>
+
+<p>The argument <code>list_morphisms</code> should be a list of <code>CatMorphism</code> instances. These instances are added to the internal dictionary of generators.</p>
+<hr />
+<h4 id="add_morphisms">add_morphisms</h4>
+<pre><code class="python">add_morphisms(list_morphisms)
+</code></pre>
+
+<p>The argument <code>list_morphisms</code> should be a list of <code>CatMorphism</code> instances. These instances are added to the internal dictionary of operations.</p>
+<hr />
+<h4 id="add_identities">add_identities</h4>
+<pre><code class="python">add_identities()
+</code></pre>
+
+<p>Add identity operations to the internal dictionary of operations corresponding to all objects present in this category.</p>
+<hr />
+<h4 id="generate_category">generate_category</h4>
+<pre><code class="python">generate_category()
+</code></pre>
+
+<p>Generates the category from the internal dictionary of generators. This means that for any operation <script type="math/tex"> f </script> and any generator <script type="math/tex"> g </script> of this category, the composite operation <script type="math/tex"> g \circ f </script> will be added to the internal dictionary of operations, if not already present, until the generation is complete.</p>
+<hr />
+<h4 id="mult">mult</h4>
+<pre><code class="python">mult(operation_2,operation_1)
+</code></pre>
+
+<p>The arguments <code>operation_2</code> and <code>operation_1</code> are the names of category operations.
+Returns the name of the composite operation <script type="math/tex"> \text{operation_2} \circ \text{operation_1} </script> if present.</p>
+<hr />
+<h4 id="apply_operation">apply_operation</h4>
+<pre><code class="python">apply_operation(name,elem)
+</code></pre>
+
+<p>The argument <code>name</code> is the name of a category operation, and the argument <code>elem</code> is an element in its source set.
+Returns the images of <code>elem</code> by the category operation with name <code>name</code>.</p>
+<hr />
+<h4 id="apply_operation_1">apply_operation</h4>
+<pre><code class="python">get_operation(elem_1,elem_2)
+</code></pre>
+
+<p>The arguments <code>elem_1</code> and <code>elem_2</code> are elements in the objects of the category.
+Returns all the operations <script type="math/tex">f</script> in the category such that <code>elem_2</code> is the image of <code>elem_1</code> by <script type="math/tex"> f </script>.</p>
+<hr />
+<h2 id="monoidaction">MonoidAction</h2>
+<pre><code class="python">opycleid.categoryaction.MonoidAction()
+</code></pre>
+
+<p>Defines a monoid action object, i.e. a faithful functor <script type="math/tex"> F \colon \mathbf{C} \to \mathbf{Rel} </script>,
+where <script type="math/tex"> \mathbf{C} </script> is a single-object category, and <script type="math/tex"> \mathbf{Rel} </script> is the 2-category of finite sets and relations.
+This class inherits from <code>opycleid.categoryaction.MonoidAction</code>, and implements methods specific to the case of monoids and groups.</p>
+<hr />
+<h3 id="methods_3">Methods</h3>
+<h4 id="set_objects_1">set_objects</h4>
+<pre><code class="python">set_objects(list_objects)
+</code></pre>
+
+<p>This method is the same as the one in <code>opycleid.categoryaction.CategoryAction</code>, except that only a single instance of <code>opycleid.categoryaction.CatObject</code> is allowed in the list <code>list_objects</code>.</p>
+<hr />
+<h4 id="get_object">get_object</h4>
+<pre><code class="python">get_object()
+</code></pre>
+
+<p>Returns the single object (an instance of <code>opycleid.categoryaction.CatObject</code>) of the monoid action.</p>
+<hr />
+<h4 id="get_automorphisms">get_automorphisms</h4>
+<pre><code class="python">get_automorphisms()
+</code></pre>
+
+<p>Computes all possible automorphisms of the monoid. Returns a list of dictionaries: each dictionary maps the generators (the keys) to their image in the monoid (the values).</p>
+<p>In the current implementation, calling this method enumerates every mapping from the generators to the operations. It is not optimized, and therefore should not be used for large monoids.</p>
+<hr />
+<h4 id="is_automorphism">is_automorphism</h4>
+<pre><code class="python">is_automorphism(autom_dict,full_map=False)
+</code></pre>
+
+<p>Checks if a given mapping is a valid automorphism.</p>
+<ul>
+<li><code>autom_dict</code>:  a dictionary, the keys of which are names of the generators, the values of which are names of operations corresponding to the image of the generators by the proposed automorphism.</li>
+<li><code>full_map</code>: a boolean indicating if the full automorphism mapping should be returned.</li>
+</ul>
+<p>Returns a tuple <code>(valid,fullmap)</code>, where</p>
+<ul>
+<li><code>valid</code> is a boolean indicating if the map defined by <code>autom_dict</code> is a valid automorphism, and</li>
+<li><code>fullmap</code> is <code>None</code> if <code>full_map=False</code>, a dictionary mapping all operations of the monoid (keys) to their image (values) if <code>full_map=True</code>.</li>
+</ul>
+<hr />
+<h4 id="element_rclass">element_Rclass</h4>
+<pre><code class="python">element_Rclass(operation)
+</code></pre>
+
+<p>The argument <code>operation</code> should be the name of an operation in the monoid. Generates the R class for the specified operation.</p>
+<p><strong>Note</strong>: for a given morphism <script type="math/tex"> f </script>, i.e. the R class is the set of all <script type="math/tex"> g </script> such that we have <script type="math/tex"> f \mathcal{R} g </script>  for Green's <script type="math/tex"> \mathcal{R}</script> relation, i.e. <script type="math/tex"> f \mathcal{R} g </script> if <script type="math/tex"> fS = gS </script> where <script type="math/tex">S</script> is the monoid.</p>
+<hr />
+<h4 id="element_lclass">element_Lclass</h4>
+<pre><code class="python">element_Lclass(operation)
+</code></pre>
+
+<p>The argument <code>operation</code> should be the name of an operation in the monoid. Generates the L class for the specified operation.</p>
+<p><strong>Note</strong>: for a given morphism <script type="math/tex"> f </script>, i.e. the L class is the set of all <script type="math/tex"> g </script> such that we have <script type="math/tex"> f \mathcal{L} g </script>  for Green's <script type="math/tex"> \mathcal{L}</script> relation, i.e. <script type="math/tex"> f \mathcal{L} g </script> if <script type="math/tex"> Sf = Sg </script> where <script type="math/tex">S</script> is the monoid.</p>
+<hr />
+<h4 id="get_rclasses">get_Rclasses</h4>
+<pre><code class="python">get_Rclasses()
+</code></pre>
+
+<p>Returns all R classes in this monoid as a list of lists, each list being an R class.</p>
+<hr />
+<h4 id="get_lclasses">get_Lclasses</h4>
+<pre><code class="python">get_Lclasses()
+</code></pre>
+
+<p>Returns all L classes in this monoid as a list of lists, each list being an L class.</p>
+<hr />
+<h4 id="get_leftideals">get_leftIdeals</h4>
+<pre><code class="python">get_leftIdeals()
+</code></pre>
+
+<p>Returns all left ideals in this monoid as a list of lists, each list being a left ideal.
+A left ideal is a subset <script type="math/tex">X</script> of the monoid, such that for any operation <script type="math/tex">m</script> in the monoid, <script type="math/tex">mX</script> is included in <script type="math/tex">X</script>.</p>
+<hr />
+<h4 id="get_rightideals">get_rightIdeals</h4>
+<pre><code class="python">get_rightIdeals()
+</code></pre>
+
+<p>Returns all right ideals in this monoid as a list of lists, each list being a right ideal.
+A right ideal is a subset <script type="math/tex">X</script> of the monoid, such that for any operation <script type="math/tex">m</script> in the monoid, <script type="math/tex">Xm</script> is included in <script type="math/tex">X</script>.</p>
+<hr />
+<h4 id="is_leftideal">is_leftIdeal</h4>
+<pre><code class="python">is_leftIdeal(S)
+</code></pre>
+
+<p>Returns <code>True</code> if the subset <script type="math/tex">S</script> is a left ideal in the monoid.</p>
+<hr />
+<h4 id="is_rightideal">is_rightIdeal</h4>
+<pre><code class="python">is_rightIdeal(S)
+</code></pre>
+
+<p>Returns <code>True</code> if the subset <script type="math/tex">S</script> is a right ideal in the monoid.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../musicmonoids/" class="btn btn-neutral float-right" title="opycleid.musicmonoids">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../gettingstarted/" class="btn btn-neutral" title="Tutorial"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../gettingstarted/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../musicmonoids/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

@@ -68,7 +68,7 @@ class KNet:
         """
         for id_vertex_A,id_vertex_B,operation in list_edges:
 
-            for edge_start,edge_end,edge_op in self.edges.itervalues():
+            for edge_start,edge_end,edge_op in self.edges.values():
                 if edge_start == id_vertex_A and id_vertex_B == edge_end:
                     raise Exception("There already exists an edge between vertices "+str(edge_start)+" and "+str(edge_end)+"\n")
 

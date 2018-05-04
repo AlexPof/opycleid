@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>opycleid.knetanalysis - Opycleid</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  <link href="../extra.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "opycleid.knetanalysis";
+    var mkdocs_page_input_path = "knetanalysis.md";
+    var mkdocs_page_url = "/knetanalysis/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Opycleid</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../gettingstarted/">Tutorial</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Reference Manual</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../categoryaction/">opycleid.categoryaction</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../musicmonoids/">opycleid.musicmonoids</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../monoidactionmorphism/">opycleid.monoidactionmorphism</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">opycleid.knetanalysis</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#opycleidknetanalysis">opycleid.knetanalysis</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#overview">Overview</a></li>
+        
+            <li><a class="toctree-l4" href="#knet">KNet</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Opycleid</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Reference Manual &raquo;</li>
+        
+      
+    
+    <li>opycleid.knetanalysis</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="opycleidknetanalysis">opycleid.knetanalysis</h1>
+<h2 id="overview">Overview</h2>
+<p>This module defines a class for performing basic Klumpenhouwer network (K-Net) analysis.</p>
+<p>Informally, a K-Net is a directed graph, the vertices of which are labelled with musical objects,
+and the arrows of which are labelled with transformations between them. Arrows are understood to be composable: the label
+of a resulting composite arrow should be equal to the label of the composition of the two original arrows.</p>
+<p>A K-Net allows one to study the interconnections between different musical elements, for example in the study of the different intervals in the constitutive elements of chords in post-tonal music.</p>
+<p>Recent research (see below) has proposed new categorical formalizations of the K-Net notion, in which a K-Net can be conceived as the data <script type="math/tex"> (R,S,F,\phi) </script> of</p>
+<ul>
+<li>a lax functor <script type="math/tex"> R \colon \Delta \to \mathbf{Rel} </script>,</li>
+<li>a functor <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script> where <script type="math/tex"> \mathbf{C} </script> is a small category, and</li>
+<li>a category action morphism <script type="math/tex"> (F, \phi) </script> between them, i.e. a functor <script type="math/tex"> F \colon \Delta \to \mathbf{C} </script>, and a lax natural transformation <script type="math/tex"> \phi \colon R \to SF </script> (left-total on all components).</li>
+</ul>
+<p>Category action morphisms <script type="math/tex"> (N, \nu) </script> between functors <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script> and <script type="math/tex"> S' \colon \mathbf{C'} \to \mathbf{Rel} </script> then allows one to define new K-Nets <script type="math/tex"> (R,S',F'=NF,\phi'=\nu \circ \phi) </script>.</p>
+<p>Opycleid proposes a simplified version of this approach, by focusing on networks using monoid actions, in which vertices are labelled with singletons. Instances of <code>opycleid.monoidactionmorphism.MonoidActionMorphism</code> can be used to transform a K-Net into another.
+In addition, Opycleid currently does not allow the underlying graph of the K-Net to have cycles.
+A K-Net is <em>valid</em> if it does not contain any cycle, and if composability of the transformations on the edges is respected.</p>
+<h3 id="references">References</h3>
+<p>Reference literature on Klumpenhouwer networks:</p>
+<ul>
+<li>David Lewin: Klumpenhouwer Networks and Some Isographies That Involve Them, Music Theory Spectrum, Vol. 12, pp. 83–120, (1990).</li>
+<li>David Lewin: A Tutorial on Klumpenhouwer Networks, Using the Chorale in Schoenberg’s Opus 11, No. 2, Journal of Music Theory, Vol. 38, pp. 79–101, (1994).</li>
+<li>Henri Klumpenhouwer: The Inner and Outer Automorphisms of Pitch-Class Inversion and Transposition: Some Implications for Analysis with Klumpenhouwer Networks, Intégral, Vol. 12, pp. 81–93, (1998).</li>
+</ul>
+<p>Categorical approaches to Klumpenhouwer networks:</p>
+<ul>
+<li>Guerino Mazzola, Moreno Andreatta: From a Categorical Point of View: K-Nets as Limit Denotators, Perspectives of New Music, 44(2), pp. 88–113, (2006).</li>
+<li>Alexandre Popoff, Moreno Andreatta, Andrée Ehresmann: A Categorical Generalization of Klumpenhouwer Networks, Proceedings of MCM 2015, Vol. 9110 of Lecture Notes in Computer Science, pp. 303–314, Springer .</li>
+<li>Alexandre Popoff, Carlos Agon, Moreno Andreatta, Andrée Ehresmann: From K-nets to PK-nets: a Categorical Approach, Perspectives of New Music, 54(2), pp. 5–63, (2016).</li>
+</ul>
+<h2 id="knet">KNet</h2>
+<pre><code class="python">opycleid.knetanalysis.KNet(monoidaction)
+</code></pre>
+
+<p>Defines a new K-Net.
+Instances of this class store internally
+<em> an instance of <code>opycleid.categoryaction.MonoidAction</code> defining the monoid action used in the K-Net,
+</em> a dictionary of vertices, the keys of which are integer indices, the values of which are strings representing musical elements in the single object of the monoid action,
+* a dictionary of edges, the keys of which are integer indices, the values of which are triples <code>(id_s,id_t,label)</code> where <code>id_s</code> is the integer index of the starting vertex, <code>id_t</code> is the integer index of the target vertex, and <code>label</code> is the name of an operation in the monoid action.</p>
+<h3 id="arguments">Arguments</h3>
+<ul>
+<li><strong>monoidaction</strong>: an instance of <code>opycleid.categoryaction.MonoidAction</code> defining the monoid action used in the K-Net for labelling vertices and edges.</li>
+</ul>
+<hr />
+<h3 id="methods">Methods</h3>
+<h4 id="set_vertices">set_vertices</h4>
+<pre><code class="python">set_vertices(list_edges)
+</code></pre>
+
+<p>Defines the list of vertices for this K-Net. The argument <code>list_vertices</code> is a list of strings representing musical elements in the single object of the defined monoid action. Calling this method erases previous data on edges.</p>
+<hr />
+<h4 id="add_edges">add_edges</h4>
+<pre><code class="python">add_edges(list_vertices)
+</code></pre>
+
+<p>Adds edges to this K-Net. The argument <code>list_edges</code> is a list of triples <code>(id_s,id_t,label)</code> where <code>id_s</code> is the integer index of the starting vertex, <code>id_t</code> is the integer index of the target vertex, and <code>label</code> is the name of an operation in the monoid action. The method checks if <code>label</code> is a valid transformation between the musical elements at the corresponding vertices, and raises an exception if this is not the case.</p>
+<hr />
+<h4 id="path_knet_from_vertices">path_knet_from_vertices</h4>
+<pre><code class="python">path_knet_from_vertices()
+</code></pre>
+
+<p>Automatically add edges to this K-Net. If <script type="math/tex"> n </script> is the number of vertices in the K-Net, calling this method adds an edge between vertices <script type="math/tex"> i </script> and <script type="math/tex"> i+1 </script> for all <script type="math/tex"> i = 0\ldots(n-1) </script>. The determination of the edge label can only be done if the monoid action is simply transitive.</p>
+<hr />
+<h4 id="complete_knet_from_vertices">complete_knet_from_vertices</h4>
+<pre><code class="python">complete_knet_from_vertices()
+</code></pre>
+
+<p>Automatically add edges to this K-Net. If <script type="math/tex"> n </script> is the number of vertices in the K-Net, calling this method adds an edge between vertices <script type="math/tex"> i </script> and <script type="math/tex"> j </script> for all <script type="math/tex"> i = 0\ldots(n-1), j = 0\ldots(n-1), j>i </script>. The determination of the edge label can only be done if the monoid action is simply transitive.</p>
+<hr />
+<h4 id="is_valid">is_valid</h4>
+<pre><code class="python">is_valid()
+</code></pre>
+
+<p>Checks if the K-Net is a valid one, i.e. it does not contain any cycle, and composability of the transformations on the edges is respected. Returns <code>True</code> if valid.</p>
+<hr />
+<h4 id="apply_knet_morphism">apply_knet_morphism</h4>
+<pre><code class="python">apply_knet_morphism(monoidactionmorphism)
+</code></pre>
+
+<p>Transforms a K-Net by applying a monoid action morphism. The argument <code>monoidactionmorphism</code> should be an instance of <code>opycleid.monoidactionmorphism.MonoidActionMorphism</code>. Calling this method checks if the given monoid action morphism is a valid one, and returns a newly labelled K-Net if this is the case.
+Note that since Opycleid only allows networks in which vertices are labelled with singletons, monoid action morphisms in which musical elements have multiple images are not allowed.</p>
+<hr />
+<h4 id="str"><strong>str</strong></h4>
+<p>Overloads Python <code>str</code> to return a string description of all edges in the K-Net.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../monoidactionmorphism/" class="btn btn-neutral" title="opycleid.monoidactionmorphism"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../monoidactionmorphism/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

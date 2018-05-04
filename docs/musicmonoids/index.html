@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>opycleid.musicmonoids - Opycleid</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  <link href="../extra.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "opycleid.musicmonoids";
+    var mkdocs_page_input_path = "musicmonoids.md";
+    var mkdocs_page_url = "/musicmonoids/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Opycleid</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../gettingstarted/">Tutorial</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Reference Manual</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../categoryaction/">opycleid.categoryaction</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">opycleid.musicmonoids</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#opycleidmusicmonoids">opycleid.musicmonoids</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#noll_monoid">Noll_Monoid</a></li>
+        
+            <li><a class="toctree-l4" href="#ti_group_pc">TI_Group_PC</a></li>
+        
+            <li><a class="toctree-l4" href="#ti_group_triads">TI_Group_Triads</a></li>
+        
+            <li><a class="toctree-l4" href="#prl_group">PRL_Group</a></li>
+        
+            <li><a class="toctree-l4" href="#utt_group">UTT_Group</a></li>
+        
+            <li><a class="toctree-l4" href="#left_z3q8_group">Left_Z3Q8_Group</a></li>
+        
+            <li><a class="toctree-l4" href="#right_z3q8_group">Right_Z3Q8_Group</a></li>
+        
+            <li><a class="toctree-l4" href="#upl_monoid">UPL_Monoid</a></li>
+        
+            <li><a class="toctree-l4" href="#s_monoid">S_Monoid</a></li>
+        
+            <li><a class="toctree-l4" href="#t_monoid">T_Monoid</a></li>
+        
+            <li><a class="toctree-l4" href="#k_monoid">K_Monoid</a></li>
+        
+            <li><a class="toctree-l4" href="#w_monoid">W_Monoid</a></li>
+        
+            <li><a class="toctree-l4" href="#st_monoid">ST_Monoid</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../monoidactionmorphism/">opycleid.monoidactionmorphism</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../knetanalysis/">opycleid.knetanalysis</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Opycleid</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Reference Manual &raquo;</li>
+        
+      
+    
+    <li>opycleid.musicmonoids</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="opycleidmusicmonoids">opycleid.musicmonoids</h1>
+<p>This module includes musical monoids and groups commonly encountered in TMT.</p>
+<h2 id="noll_monoid">Noll_Monoid</h2>
+<pre><code class="python">opycleid.musicmonoids.Noll_Monoid()
+</code></pre>
+
+<p>This monoid of 8 elements acts on the set of the twelve pitch classes <script type="math/tex"> \{C,C\sharp,D,E\flat,E,F,F\sharp,G,G\sharp,A,B\flat,B\} </script> encoded with the usual semi-tone encoding, i.e. the set <script type="math/tex"> \mathbb{Z}_{12} </script> with <script type="math/tex"> C=0, C\sharp=1, \text{etc.} </script>.</p>
+<p>It is defined by Thomas Noll as the monoid generated by the two transformations <script type="math/tex"> f \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> and
+<script type="math/tex"> g \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> such that
+<script type="math/tex; mode=display"> f(x)= 3x+7,</script>
+and
+<script type="math/tex; mode=display"> g(x)= 8x+4.</script>
+</p>
+<h3 id="references">References</h3>
+<p>Thomas Noll: The topos of triads, In: Colloquium on Mathematical Music Theory, Volume 347 of Grazer Math. Ber. Karl-Franzens-Univ. Graz, pp. 103–135, (2005).</p>
+<hr />
+<h2 id="ti_group_pc">TI_Group_PC</h2>
+<pre><code class="python">opycleid.musicmonoids.TI_Group_PC()
+</code></pre>
+
+<p>This group is the commonly named <script type="math/tex"> T\text{/}I </script> group which acts on the set of the twelve pitch classes <script type="math/tex"> \{C,C\sharp,D,E\flat,E,F,F\sharp,G,G\sharp,A,B\flat,B\} </script> encoded with the usual semi-tone encoding.</p>
+<p>It is isomorphic to the dihedral group <script type="math/tex"> D_{24} </script> of order 24, and is generated by the following two transformations.</p>
+<ul>
+<li>The transformation <script type="math/tex"> T_1 \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> is called the <em>transposition operation</em>, and is such that <script type="math/tex; mode=display">T_1(x)=x+1</script>
+</li>
+<li>The transformation <script type="math/tex"> I_0 \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> is called the <em>inversion operation</em>, and is such that <script type="math/tex; mode=display">I_0(x)=-x</script>
+</li>
+</ul>
+<h3 id="example">Example</h3>
+<pre><code class="python">from opycleid.musicmonoids import TI_Group_PC
+
+my_group = TI_Group_PC()
+print(my_group.get_operation(&quot;D&quot;,&quot;A&quot;)) ## ['T^7', 'I^11']
+print(my_group.apply_operation(&quot;I^11&quot;,&quot;B&quot;)) ## ['C']
+print(my_group.mult(&quot;I^11&quot;,&quot;T^3&quot;)) ## &quot;I^8&quot;
+</code></pre>
+
+<h3 id="references_1">References</h3>
+<p>Alissa S. Crans, Thomas M. Fiore &amp; Ramon Satyendra: Musical Actions of Dihedral Groups, The American Mathematical Monthly, 116:6, pp. 479-495, (2018).</p>
+<hr />
+<h2 id="ti_group_triads">TI_Group_Triads</h2>
+<pre><code class="python">opycleid.musicmonoids.TI_Group_Triads()
+</code></pre>
+
+<p>This group is the commonly named <script type="math/tex"> T\text{/}I </script> group which acts simply transitively on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\}</script> of the 24 major and minor triads, where <script type="math/tex">n_M</script> (resp. <script type="math/tex">n_m</script>) represents a major (resp. minor) triad with root <script type="math/tex">n</script> in the usual semi-tone encoding of pitch classes.</p>
+<p>It is isomorphic to the dihedral group <script type="math/tex"> D_{24} </script> of order 24, and is generated by the following two transformations.</p>
+<ul>
+<li>The transformation <script type="math/tex"> T_1 \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> is called the <em>transposition operation</em>, and is such that <script type="math/tex; mode=display"> T_1(n_M)=(n+1)_M, T_1(n_m)=(n+1)_m </script>
+</li>
+<li>The transformation <script type="math/tex"> I_0 \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> is called the <em>inversion operation</em>, and is such that <script type="math/tex; mode=display"> I_0(n_M)=(5-n)_m </script>
+</li>
+</ul>
+<p>In effect, the <script type="math/tex"> T_1</script> and <script type="math/tex"> I_0</script> operations act element-wise on the pitch classes constituting the chords.</p>
+<h3 id="example_1">Example</h3>
+<pre><code class="python">from opycleid.musicmonoids import TI_Group_Triads
+
+my_group = TI_Group_Triads()
+print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['I^7']
+print(my_group.apply_operation(&quot;I^7&quot;,&quot;B_M&quot;)) ## ['Cs_m']
+print(my_group.mult(&quot;I^7&quot;,&quot;T^4&quot;)) ## &quot;I^3&quot;
+</code></pre>
+
+<h3 id="references_2">References</h3>
+<p>Alissa S. Crans, Thomas M. Fiore &amp; Ramon Satyendra: Musical Actions of Dihedral Groups, The American Mathematical Monthly, 116:6, pp. 479-495, (2018).</p>
+<hr />
+<h2 id="prl_group">PRL_Group</h2>
+<pre><code class="python">opycleid.musicmonoids.PRL_Group()
+</code></pre>
+
+<p>This group is the <script type="math/tex"> \text{PRL} </script> group commonly used in neo-Riemannian theory, which acts simply transitively on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\}</script> of the 24 major and minor triads, where <script type="math/tex">n_M</script> (resp. <script type="math/tex">n_m</script>) represents a major (resp. minor) triad with root <script type="math/tex">n</script> in the usual semi-tone encoding of pitch classes.</p>
+<p>It is isomorphic to the dihedral group <script type="math/tex"> D_{24} </script> of order 24, and is generated by the following two transformations.</p>
+<ul>
+<li>The transformation <script type="math/tex"> L \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> is called the <em>leading-tone operation</em>, and is such that <script type="math/tex; mode=display"> L(n_M)=(n+4)_m</script>
+</li>
+<li>The transformation <script type="math/tex"> R \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> is called the <em>relative operation</em>, and is such that <script type="math/tex; mode=display"> R(n_M)=(n+9)_m </script>
+</li>
+</ul>
+<p>Though not a generator, the operation <script type="math/tex"> P = (RL)^3R </script>, called the <em>parallel operation</em>, is often considered, and is such that <script type="math/tex"> P(n_M)=n_m </script>.</p>
+<p>In the current implementation of this group, elements are given with the normal form <script type="math/tex"> (RL)^pR^q </script> with <script type="math/tex">p=0\ldots11</script> and <script type="math/tex">q=0,1</script>.</p>
+<h3 id="example_2">Example</h3>
+<pre><code class="python">from opycleid.musicmonoids import PRL_Group
+
+my_group = PRL_Group()
+print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['(RL)^11R']
+print(my_group.apply_operation(&quot;(RL)^3R&quot;,&quot;B_M&quot;)) ## ['B_m']
+print(my_group.mult(&quot;(RL)^3R&quot;,&quot;(RL)^7&quot;)) ## &quot;(RL)^8R&quot;
+</code></pre>
+
+<h3 id="references_3">References</h3>
+<ul>
+<li>Alissa S. Crans, Thomas M. Fiore &amp; Ramon Satyendra (2018): Musical Actions of Dihedral Groups, The American Mathematical Monthly, 116:6, 479-495.</li>
+<li><a href="https://en.wikipedia.org/wiki/Neo-Riemannian_theory">Neo-Riemannian theory</a>.</li>
+</ul>
+<hr />
+<h2 id="utt_group">UTT_Group</h2>
+<pre><code class="python">opycleid.musicmonoids.UTT_Group()
+</code></pre>
+
+<p>This group is called the group of <em>Uniform Triadic Transformations (UTT)</em> and was introduced by Julian Hook in his Ph.D. dissertation. It acts on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\}</script> of the 24 major and minor triads, where <script type="math/tex">n_M</script> (resp. <script type="math/tex">n_m</script>) represents a major (resp. minor) triad with root <script type="math/tex">n</script> in the usual semi-tone encoding of pitch classes.</p>
+<p>The UTT group is isomorphic to the wreath product <script type="math/tex"> \mathbb{Z}_{12} \wr \mathbb{Z}_2 </script> of order 288 and its elements are usually notated as <script type="math/tex"> (p,q,\sigma) </script>, with <script type="math/tex">p=0\ldots11</script>, <script type="math/tex">q=0\ldots11</script>, and <script type="math/tex"> \sigma \in \{+,-\} </script>. Their action is as follows.</p>
+<ul>
+<li>The UTT <script type="math/tex"> (p,q,+) </script> sends the major triad <script type="math/tex"> n_M </script> to <script type="math/tex"> (n+p)_M </script>, and the minor triad <script type="math/tex"> n_m </script> to <script type="math/tex"> (n+q)_m </script>.</li>
+<li>The UTT <script type="math/tex"> (p,q,-) </script> sends the major triad <script type="math/tex"> n_M </script> to <script type="math/tex"> (n+p)_m </script>, and the minor triad <script type="math/tex"> n_m </script> to <script type="math/tex"> (n+q)_M </script>.</li>
+</ul>
+<h3 id="example_3">Example</h3>
+<pre><code class="python">from opycleid.musicmonoids import UTT_Group
+
+my_group = UTT_Group()
+print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;))
+## Returns
+## ['&lt;4,1,-&gt;', '&lt;4,3,-&gt;', '&lt;4,9,-&gt;', '&lt;4,7,-&gt;', '&lt;4,2,-&gt;',
+##  '&lt;4,11,-&gt;', '&lt;4,6,-&gt;', '&lt;4,10,-&gt;', '&lt;4,4,-&gt;', '&lt;4,0,-&gt;',
+##  '&lt;4,5,-&gt;', '&lt;4,8,-&gt;']
+print(my_group.apply_operation(&quot;&lt;7,6,-&gt;&quot;,&quot;A_M&quot;)) ## ['E_m']
+print(my_group.mult(&quot;&lt;3,5,-&gt;&quot;,&quot;&lt;2,9,-&gt;&quot;)) ## &quot;&lt;7,0,+&gt;&quot;
+</code></pre>
+
+<h3 id="references_4">References</h3>
+<p>Julian Hook: Uniform triadic transformations, Journal of Music Theory, 46(1/2), pp. 57–126, (2002).</p>
+<hr />
+<h2 id="left_z3q8_group">Left_Z3Q8_Group</h2>
+<pre><code class="python">opycleid.musicmonoids.Left_Z3Q8_Group()
+</code></pre>
+
+<p>Like the <script type="math/tex"> T\text{/}I </script> group and the <script type="math/tex"> \text{PRL} </script> group, this group is an extension of <script type="math/tex"> \mathbb{Z}_{12} </script> by <script type="math/tex"> \mathbb{Z}_2 </script> which acts simply transitively on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\}</script> of the 24 major and minor triads as defined above.</p>
+<p>It is generated by the following two transformations.</p>
+<ul>
+<li>The transformation <script type="math/tex"> T_1 \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> such that <script type="math/tex; mode=display"> T_1(n_M)=(n+1)_M, T_1(n_m)=(n+1)_m.</script>
+</li>
+<li>The transformation <script type="math/tex"> J_0 \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> such that <script type="math/tex; mode=display"> J_0(n_M)=(-n)_m, J_0(n_m)=(-n+6)_M.</script>
+</li>
+</ul>
+<h3 id="example_4">Example</h3>
+<pre><code class="python">from opycleid.musicmonoids import Left_Z3Q8_Group
+
+my_group = Left_Z3Q8_Group()
+print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['J^0']
+print(my_group.apply_operation(&quot;J^0&quot;,&quot;Gs_m&quot;)) ## ['Bb_M']
+print(my_group.mult(&quot;J^3&quot;,&quot;T^2&quot;)) ## &quot;J^1&quot;
+</code></pre>
+
+<h3 id="references_5">References</h3>
+<p>Alexandre Popoff: Building Generalized Neo-Riemannian Groups of Musical Transformations as Extensions, Journal of Mathematics and Music, 7(1), pp. 55–72, (2013).</p>
+<hr />
+<h2 id="right_z3q8_group">Right_Z3Q8_Group</h2>
+<pre><code class="python">opycleid.musicmonoids.Right_Z3Q8_Group()
+</code></pre>
+
+<p>This group is the right version of the 'Left_Z3Q8_Group' above. It also acts simply transitively on the set of major and minor triads, and is generated by the following two transformations.</p>
+<ul>
+<li>The transformation <script type="math/tex"> T_1 \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> such that <script type="math/tex; mode=display"> T_1(n_M)=(n+1)_M, T_1(n_m)=(n-1)_m.</script>
+</li>
+<li>The transformation <script type="math/tex"> J_0 \colon \mathbb{Z}_{12} \to \mathbb{Z}_{12} </script> such that <script type="math/tex; mode=display"> J_0(n_M)=n_m, J_0(n_m)=(n+6)_M.</script>
+</li>
+</ul>
+<h3 id="example_5">Example</h3>
+<pre><code class="python">from opycleid.musicmonoids import Right_Z3Q8_Group
+
+my_group = Right_Z3Q8_Group()
+print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['J^8']
+print(my_group.apply_operation(&quot;J^0&quot;,&quot;Gs_m&quot;)) ## ['D_M']
+print(my_group.mult(&quot;J^3&quot;,&quot;T^2&quot;)) ## &quot;J^1&quot;
+</code></pre>
+
+<h3 id="references_6">References</h3>
+<p>Alexandre Popoff: Building Generalized Neo-Riemannian Groups of Musical Transformations as Extensions, Journal of Mathematics and Music, 7(1), pp. 55–72, (2013).</p>
+<hr />
+<h2 id="upl_monoid">UPL_Monoid</h2>
+<pre><code class="python">opycleid.musicmonoids.UPL_Monoid()
+</code></pre>
+
+<p>A monoid which acts on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\} \cup \{n_{\text{aug}}, n=0\ldots3\}</script> of the 28 major, minor, and augmented triads, where <script type="math/tex">n_M</script> (resp. <script type="math/tex">n_m</script>, <script type="math/tex">n_{\text{aug}}</script>) represents a major (resp. minor, augmented) triad with root <script type="math/tex">n</script> in the usual semi-tone encoding of pitch classes.</p>
+<p>It is generated by the following three relations.</p>
+<ul>
+<li>
+<p>The relation <script type="math/tex"> \mathcal{P} </script> is the symmetric relation such that we have <script type="math/tex"> n_M \mathcal{P} n_m</script> for <script type="math/tex"> 0 \leq n \leq 11</script>, and <script type="math/tex">n_\text{aug} \mathcal{P} n_\text{aug}</script> for <script type="math/tex">0 \leq n \leq 3</script>. This is the relational analogue of the neo-Riemannian <script type="math/tex">P</script> operation.</p>
+</li>
+<li>
+<p>The relation <script type="math/tex">\mathcal{L}</script> is the symmetric relation such that we have <script type="math/tex">n_M \mathcal{L} (n+4)_m</script> for <script type="math/tex">0 \leq n \leq 11</script>, and <script type="math/tex">n_\text{aug} \mathcal{L} n_\text{aug}</script> for <script type="math/tex">0 \leq n \leq 3</script>. This is the relational analogue of the neo-Riemannian <script type="math/tex">L</script> operation.</p>
+</li>
+<li>
+<p>The relation <script type="math/tex">\mathcal{U}</script> is the symmetric relation such that we have <script type="math/tex">n_M \mathcal{U} (n \pmod 4)_\text{aug}</script> for <script type="math/tex">0 \leq n \leq 11</script>, and <script type="math/tex">n_m \mathcal{U} ((n+3) \pmod 4)_\text{aug}</script> for <script type="math/tex">0 \leq n \leq 11</script>. It relates major and minor triads to augmented triads.</p>
+</li>
+</ul>
+<p>Note that for any of these generators, two triads are related if they differ by a single semi-tone move.</p>
+<h3 id="example_6">Example</h3>
+<pre><code class="python">from opycleid.musicmonoids import UPL_Monoid
+
+my_group = UPL_Monoid()
+print(my_group.get_operation(&quot;E_M&quot;,&quot;F_aug&quot;))
+## Returns ['ULUU', 'LULULU', 'LULUU', 'ULULU']
+print(my_group.apply_operation(&quot;U&quot;,&quot;F_aug&quot;))
+## Returns ['Cs_M', 'F_M', 'A_M', 'D_m', 'Fs_m', 'Bb_m']
+print(my_group.mult(&quot;U&quot;,&quot;UULUU&quot;)) ## &quot;ULUU&quot;
+</code></pre>
+
+<h3 id="references_7">References</h3>
+<p>Alexandre Popoff, Moreno Andreatta, Andrée Ehresmann: Relational PK-Nets for Transformational Music Analysis, <a href="https://arxiv.org/abs/1611.02249">arXiv:1611.02249</a>.</p>
+<hr />
+<h2 id="s_monoid">S_Monoid</h2>
+<pre><code class="python">opycleid.musicmonoids.S_Monoid()
+</code></pre>
+
+<p>A monoid which acts on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\} \cup \{n_{\text{aug}}, n=0\ldots3\}</script> of the 28 major, minor, and augmented triads, where <script type="math/tex">n_M</script> (resp. <script type="math/tex">n_m</script>, <script type="math/tex">n_{\text{aug}}</script>) represents a major (resp. minor, augmented) triad with root <script type="math/tex">n</script> in the usual semi-tone encoding of pitch classes.</p>
+<p>It is generated by the <script type="math/tex">\mathcal{S}</script> relation defined as the symmetric relation such that we have <script type="math/tex"> n_M \mathcal{S} n_m </script>, <script type="math/tex"> n_M \mathcal{S} (n+4)_m</script>, <script type="math/tex">n_M \mathcal{S} (n \pmod{4})_\text{aug}</script>, and <script type="math/tex">n_m \mathcal{S} ((n+3) \pmod{4})_\text{aug}</script> for <script type="math/tex">0 \leq n \leq 11</script>. This relations is the same as the <script type="math/tex">\mathcal{P}_{1,0}</script> relation introduced by Douthett in his work on parsimonious graphs. Two triads are related by <script type="math/tex">\mathcal{S}</script> if they differ by a single semi-tone move.</p>
+<h3 id="example_7">Example</h3>
+<pre><code class="python">from opycleid.musicmonoids import S_Monoid
+
+my_group = S_Monoid()
+print(my_group.get_operation(&quot;E_M&quot;,&quot;F_aug&quot;))
+## Returns ['SSSS', 'SSSSSS']
+print(my_group.apply_operation(&quot;S&quot;,&quot;E_M&quot;))
+## Returns ['E_m', 'Gs_m', 'C_aug']
+</code></pre>
+
+<h3 id="references_8">References</h3>
+<p>Douthett, J., Steinbach, P.: Parsimonious Graphs: A Study in Parsimony, Contextual Transformations, and Modes of Limited Transposition, Journal of Music Theory, 42(2), pp. 241-263, (1998).</p>
+<hr />
+<h2 id="t_monoid">T_Monoid</h2>
+<pre><code class="python">opycleid.musicmonoids.T_Monoid()
+</code></pre>
+
+<p>A monoid which acts on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\} \cup \{n_{\text{aug}}, n=0\ldots3\}</script> of the 28 major, minor, and augmented triads, where <script type="math/tex">n_M</script> (resp. <script type="math/tex">n_m</script>, <script type="math/tex">n_{\text{aug}}</script>) represents a major (resp. minor, augmented) triad with root <script type="math/tex">n</script> in the usual semi-tone encoding of pitch classes.</p>
+<p>It is generated by the <script type="math/tex">\mathcal{T}</script> relation defined as the symmetric relation such that we have, for <script type="math/tex">0 \leq n \leq 11 </script>,</p>
+<ul>
+<li>
+<script type="math/tex">n_M \mathcal{T} (n+4)_M,</script>
+</li>
+<li>
+<script type="math/tex">n_M \mathcal{T} (n+8)_M,</script>
+</li>
+<li>
+<script type="math/tex">n_m \mathcal{T} (n+4)_m,</script>
+</li>
+<li>
+<script type="math/tex">n_m \mathcal{T} (n+8)_m,</script>
+</li>
+<li>
+<script type="math/tex">n_M \mathcal{T} (n+1)_m,</script>
+</li>
+<li>
+<script type="math/tex">n_M \mathcal{T} (n+5)_m,</script>
+</li>
+<li>
+<script type="math/tex">n_M \mathcal{T} ((n+3) \pmod{4})_\text{aug},</script> and</li>
+<li>
+<script type="math/tex">n_m \mathcal{T} (n \pmod{4})_\text{aug}.</script>
+</li>
+</ul>
+<p>This relation is the same as the <script type="math/tex">\mathcal{P}_{2,0}</script> relation introduced by Douthett in his work on parsimonious graphs. Two triads are related by <script type="math/tex">\mathcal{T}</script> if they differ by two semi-tone moves.</p>
+<h3 id="example_8">Example</h3>
+<pre><code class="python">from opycleid.musicmonoids import T_Monoid
+
+my_group = T_Monoid()
+print(my_group.get_operation(&quot;E_M&quot;,&quot;F_aug&quot;))
+## Returns ['TT', 'TTT']
+print(my_group.apply_operation(&quot;T&quot;,&quot;E_M&quot;))
+## Returns ['C_M', 'Gs_M', 'F_m', 'A_m', 'G_aug']
+</code></pre>
+
+<h3 id="references_9">References</h3>
+<p>Douthett, J., Steinbach, P.: Parsimonious Graphs: A Study in Parsimony, Contextual Transformations, and Modes of Limited Transposition, Journal of Music Theory, 42(2), pp. 241-263, (1998).</p>
+<hr />
+<h2 id="k_monoid">K_Monoid</h2>
+<pre><code class="python">opycleid.musicmonoids.K_Monoid()
+</code></pre>
+
+<p>A monoid which acts on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\} \cup \{n_{\text{aug}}, n=0\ldots3\}</script> of the 28 major, minor, and augmented triads, where <script type="math/tex">n_M</script> (resp. <script type="math/tex">n_m</script>, <script type="math/tex">n_{\text{aug}}</script>) represents a major (resp. minor, augmented) triad with root <script type="math/tex">n</script> in the usual semi-tone encoding of pitch classes.</p>
+<p>It is generated by the <script type="math/tex">\mathcal{K}</script> relation. This is the same as the <script type="math/tex">\mathcal{P}_{2,1}</script> relation introduced by Douthett in his work on parsimonious graphs. Two triads are related by <script type="math/tex">\mathcal{K}</script> if they differ by the movement of two notes by a semitone each, and the remaining note by a tone.</p>
+<h3 id="references_10">References</h3>
+<p>Douthett, J., Steinbach, P.: Parsimonious Graphs: A Study in Parsimony, Contextual Transformations, and Modes of Limited Transposition, Journal of Music Theory, 42(2), pp. 241-263, (1998).</p>
+<hr />
+<h2 id="w_monoid">W_Monoid</h2>
+<pre><code class="python">opycleid.musicmonoids.W_Monoid()
+</code></pre>
+
+<p>A monoid which acts on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\} \cup \{n_{\text{aug}}, n=0\ldots3\}</script> of the 28 major, minor, and augmented triads, where <script type="math/tex">n_M</script> (resp. <script type="math/tex">n_m</script>, <script type="math/tex">n_{\text{aug}}</script>) represents a major (resp. minor, augmented) triad with root <script type="math/tex">n</script> in the usual semi-tone encoding of pitch classes.</p>
+<p>It is generated by the <script type="math/tex">\mathcal{K}</script> relation. This is the same as the <script type="math/tex">\mathcal{P}_{1,2}</script> relation introduced by Douthett in his work on parsimonious graphs. Two triads are related by <script type="math/tex">\mathcal{K}</script> if they differ by the movement of a single note by a semitone, and the remaining notes by a tone each.</p>
+<h3 id="references_11">References</h3>
+<p>Douthett, J., Steinbach, P.: Parsimonious Graphs: A Study in Parsimony, Contextual Transformations, and Modes of Limited Transposition, Journal of Music Theory, 42(2), pp. 241-263, (1998).</p>
+<hr />
+<h2 id="st_monoid">ST_Monoid</h2>
+<pre><code class="python">opycleid.musicmonoids.ST_Monoid()
+</code></pre>
+
+<p>A monoid which acts on the set <script type="math/tex"> \{n_M, n=0\ldots11\} \cup \{n_m, n=0\ldots11\} \cup \{n_{\text{aug}}, n=0\ldots3\}</script> of the 28 major, minor, and augmented triads, where <script type="math/tex">n_M</script> (resp. <script type="math/tex">n_m</script>, <script type="math/tex">n_{\text{aug}}</script>) represents a major (resp. minor, augmented) triad with root <script type="math/tex">n</script> in the usual semi-tone encoding of pitch classes.</p>
+<p>It is generated by the two relations <script type="math/tex">\mathcal{S}</script> and <script type="math/tex">\mathcal{T}</script> described above.</p>
+<hr />
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../monoidactionmorphism/" class="btn btn-neutral float-right" title="opycleid.monoidactionmorphism">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../categoryaction/" class="btn btn-neutral" title="opycleid.categoryaction"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../categoryaction/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../monoidactionmorphism/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>
