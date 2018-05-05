@@ -37,6 +37,8 @@ class CatMorphism:
         self.target = target
 
     def set_name(self,name):
+        if not len(name):
+            raise Exception("The specified morphism name is empty")
         self.name = name
 
     def set_to_identity(self):
@@ -66,6 +68,12 @@ class CatMorphism:
 
     def get_mapping_matrix(self):
         return self.matrix
+
+    def copy(self):
+        U = CatMorphism(self.name,self.source,self.target)
+        U.set_mapping_matrix(self.get_mapping_matrix())
+
+        return U
 
     def __str__(self):
         """Returns a verbose description of the morphism
@@ -99,6 +107,28 @@ class CatMorphism:
         """
         idx_elem = self.source.get_idx_by_name(elem)
         return [self.target.get_name_by_idx(x) for x in np.where(self.matrix[:,idx_elem])[0]]
+
+    def __pow__(self,int_power):
+        """Raise the morphism to the power int_power
+        Overloads the '**' operator of Python
+
+        Parameters
+        ----------
+        int_power : an integer
+
+        Returns
+        -------
+        The power self^int_power. Raises an exception if the morphism is not an endomorphism
+        """
+        if not self.target==self.source:
+            raise Exception("Morphism should be an endomorphism")
+        U = self.copy()
+        U.set_to_identity()
+        for i in range(int_power):
+            U = self*U
+        U.set_name(self.name+"^"+str(int_power))
+
+        return U
 
     def __mul__(self,morphism):
         """Compose two morphisms
@@ -159,16 +189,20 @@ class CategoryAction:
         self.objects={}
         self.generators={}
         self.operations={}
+        self.equivalences=[]
 
     def set_objects(self,list_objects):
         self.objects={}
         self.generators={}
         self.operations={}
+        self.equivalences=[]
         for catobject in list_objects:
             self.objects[catobject.name] = catobject
 
     def add_generators(self,list_morphisms):
         for catmorphism in list_morphisms:
+            if len(catmorphism.name)>1:
+                raise Exception("Generators should have a name of length 1")
             self.generators[catmorphism.name] = catmorphism
 
     def add_morphisms(self,list_morphisms):
@@ -196,6 +230,7 @@ class CategoryAction:
                         for name_y,morphism_y in self.operations.items():
                             if new_morphism==morphism_y:
                                 c=1
+                                self.equivalences.append([new_morphism.name,morphism_y.name])
                         if c==0:
                             added_liste[new_morphism.name] = new_morphism
                             self.operations[new_morphism.name] = new_morphism
@@ -219,6 +254,48 @@ class CategoryAction:
             except:
                 pass
         return res
+
+    def rename_operation(self,name_f,new_name):
+        if not name_f in self.operations:
+            raise Exception("The specified operation cannot be found")
+        new_op = self.operations[name_f].copy()
+        new_op.set_name(new_name)
+        del self.operations[name_f]
+        self.operations[new_name] = new_op
+
+    def rewrite_operations(self):
+        operation_names = list(self.operations.keys())
+        for op_name in operation_names:
+            self.rename_operation(op_name,self.rewrite(op_name))
+
+        equivalences_new=[]
+        for x,y in self.equivalences:
+            equivalences_new.append([self.rewrite(x),self.rewrite(y)])
+        self.equivalences = equivalences_new
+
+    def get_repeated_sequences(self,the_string):
+        c=the_string[0]
+        seq=""
+        res=[]
+        for d in the_string[1:]:
+            if d==c:
+                if len(seq):
+                    seq+=d
+                else:
+                    seq+=c+d
+            else:
+                if len(seq):
+                    res.append(seq)
+                seq=""
+            c=d
+        if len(seq):
+            res.append(seq)
+        return sorted(res,key=lambda x: -len(x))
+
+    def rewrite(self,the_string):
+        for p in self.get_repeated_sequences(the_string):
+            the_string = the_string.replace(p,p[0]+"^"+str(len(p)))
+        return the_string
 
     def get_description(self,name_f):
         return str(self.operations[name_f])
