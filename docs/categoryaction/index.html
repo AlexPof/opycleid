@@ -246,6 +246,11 @@ A typical use is <code>CatMorphism_2 * CatMorphism_1</code>.
 If the target of <code>CatMorphism_1</code> is identical to the source of <code>CatMorphism_2</code>, this returns the corresponding composite morphism.
 Otherwise, the two morphisms are not composable and an exception will be raised.</p>
 <hr />
+<h4 id="pow"><strong>pow</strong></h4>
+<p>Overloads the <code>**</code> operator in order to represent morphism iterated multiplication.
+A typical use is <code>CatMorphism ** int</code>.
+If <code>CatMorphism</code> is an endomorphism, i.e. its target is the same object as its source, this returns the corresponding iterated morphism. Otherwise, an exception will be raised.</p>
+<hr />
 <h4 id="eq"><strong>eq</strong></h4>
 <p>Overloads the <code>==</code> operator in order to check for morphism equality.
 A typical use is <code>CatMorphism_2 == CatMorphism_1</code>.
@@ -279,7 +284,8 @@ in the internal dictionary, and resets the generators and operations of the cate
 <pre><code class="python">add_generators(list_morphisms)
 </code></pre>
 
-<p>The argument <code>list_morphisms</code> should be a list of <code>CatMorphism</code> instances. These instances are added to the internal dictionary of generators.</p>
+<p>The argument <code>list_morphisms</code> should be a list of <code>CatMorphism</code> instances. These instances are added to the internal dictionary of generators.
+The names of the generators should be strings of length 1 (i.e. single characters).</p>
 <hr />
 <h4 id="add_morphisms">add_morphisms</h4>
 <pre><code class="python">add_morphisms(list_morphisms)
@@ -299,6 +305,19 @@ in the internal dictionary, and resets the generators and operations of the cate
 
 <p>Generates the category from the internal dictionary of generators. This means that for any operation <script type="math/tex"> f </script> and any generator <script type="math/tex"> g </script> of this category, the composite operation <script type="math/tex"> g \circ f </script> will be added to the internal dictionary of operations, if not already present, until the generation is complete.</p>
 <hr />
+<h4 id="rename_operation">rename_operation</h4>
+<pre><code class="python">rename_operation(name,new_name)
+</code></pre>
+
+<p>The arguments <code>name</code> and <code>new_name</code> are the name of a category operation, and the specified new name respectively.
+Renames an operation in the category.</p>
+<hr />
+<h4 id="rewrite_operations">rewrite_operations</h4>
+<pre><code class="python">rewrite_operations()
+</code></pre>
+
+<p>Rewrite/simplify operation names in the category. Calling this method will examine all operation names, trying to identify repeated single characters "aaa...", and simplifying them to "a^p" where p is the corresponding power. Repeated sequences of more than one character are ignored.</p>
+<hr />
 <h4 id="mult">mult</h4>
 <pre><code class="python">mult(operation_2,operation_1)
 </code></pre>
@@ -313,7 +332,7 @@ Returns the name of the composite operation <script type="math/tex"> \text{opera
 <p>The argument <code>name</code> is the name of a category operation, and the argument <code>elem</code> is an element in its source set.
 Returns the images of <code>elem</code> by the category operation with name <code>name</code>.</p>
 <hr />
-<h4 id="apply_operation_1">apply_operation</h4>
+<h4 id="get_operation">get_operation</h4>
 <pre><code class="python">get_operation(elem_1,elem_2)
 </code></pre>
 
