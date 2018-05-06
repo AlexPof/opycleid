@@ -43,13 +43,13 @@ class TI_Group_PC(MonoidAction):
         X = CatObject(".",["C","Cs","D","Eb","E","F","Fs","G","Gs","A","Bb","B"])
         self.set_objects([X])
 
-        T = CatMorphism("T^1",X,X)
+        T = CatMorphism("T",X,X)
         M_T = np.zeros((12,12),dtype=bool)
         for i in range(12):
             M_T[(i+1)%12,i]=True
         T.set_mapping_matrix(M_T)
 
-        I = CatMorphism("I^0",X,X)
+        I = CatMorphism("I",X,X)
         M_I = np.zeros((12,12),dtype=bool)
         for i in range(12):
             M_I[(-i)%12,i]=True
@@ -78,14 +78,14 @@ class TI_Group_Triads(MonoidAction):
 
         self.SIMPLY_TRANSITIVE=True
 
-        T = CatMorphism("T^1",X,X)
+        T = CatMorphism("T",X,X)
         M_T = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_T[(i+1)%12,i]=True
             M_T[12+(i+1)%12,i+12]=True
         T.set_mapping_matrix(M_T)
 
-        I = CatMorphism("I^0",X,X)
+        I = CatMorphism("I",X,X)
         M_I = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_I[(5-i)%12 + 12,i]=True
@@ -207,14 +207,14 @@ class Left_Z3Q8_Group(MonoidAction):
 
         self.SIMPLY_TRANSITIVE=True
 
-        T = CatMorphism("T^1",X,X)
+        T = CatMorphism("T",X,X)
         M_T = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_T[(i+1)%12,i]=True
             M_T[12+(i+1)%12,i+12]=True
         T.set_mapping_matrix(M_T)
 
-        J = CatMorphism("J^0",X,X)
+        J = CatMorphism("J",X,X)
         M_J = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_J[(-i)%12 + 12,i]=True
@@ -245,14 +245,14 @@ class Right_Z3Q8_Group(MonoidAction):
 
         self.SIMPLY_TRANSITIVE=True
 
-        T = CatMorphism("T^1",X,X)
+        T = CatMorphism("T",X,X)
         M_T = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_T[(i+1)%12,i]=True
             M_T[12+(i-1)%12,i+12]=True
         T.set_mapping_matrix(M_T)
 
-        J = CatMorphism("J^0",X,X)
+        J = CatMorphism("J",X,X)
         M_J = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_J[i + 12,i]=True

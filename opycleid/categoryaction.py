@@ -435,6 +435,13 @@ class MonoidAction(CategoryAction):
             else:
                 return (True,None)
 
+    def is_simplytransitive(self):
+        N = self.get_object().get_cardinality()
+        M = np.zeros((N,N))
+        for x in self.operations:
+            M += (self.operations[x].get_mapping_matrix()).astype(int)
+        return np.array_equal(M,np.ones((N,N)))
+
     def element_Rclass(self,op_name):
         """Generates the R class for a given operation x in the monoid,
         i.e. all elements y of the monoid such that
