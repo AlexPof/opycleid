@@ -7,7 +7,7 @@
 import numpy as np
 import itertools
 
-class CatObject:
+class CatObject(object):
     def __init__(self,name,elements):
         self.name = name
         self.dict_elem2idx = dict([(x,i) for i,x in enumerate(elements)])
@@ -30,7 +30,7 @@ class CatObject:
     def is_in(self,elem):
         return elem in self.dict_elem2idx
 
-class CatMorphism:
+class CatMorphism(object):
     def __init__(self,name,source,target):
         self.name = name
         self.source = source
@@ -184,7 +184,7 @@ class CatMorphism:
             raise Exception("Morphisms should have the same domain and codomain")
         return np.array_equal(self.matrix,self.matrix & morphism.matrix)
 
-class CategoryAction:
+class CategoryAction(object):
     def __init__(self):
         self.objects={}
         self.generators={}
@@ -201,8 +201,6 @@ class CategoryAction:
 
     def add_generators(self,list_morphisms):
         for catmorphism in list_morphisms:
-            if len(catmorphism.name)>1:
-                raise Exception("Generators should have a name of length 1")
             self.generators[catmorphism.name] = catmorphism
 
     def add_morphisms(self,list_morphisms):
@@ -273,29 +271,33 @@ class CategoryAction:
             equivalences_new.append([self.rewrite(x),self.rewrite(y)])
         self.equivalences = equivalences_new
 
-    def get_repeated_sequences(self,the_string):
-        c=the_string[0]
-        seq=""
-        res=[]
-        for d in the_string[1:]:
-            if d==c:
-                if len(seq):
-                    seq+=d
-                else:
-                    seq+=c+d
-            else:
-                if len(seq):
-                    res.append(seq)
-                seq=""
-            c=d
-        if len(seq):
-            res.append(seq)
-        return sorted(res,key=lambda x: -len(x))
-
     def rewrite(self,the_string):
-        for p in self.get_repeated_sequences(the_string):
-            the_string = the_string.replace(p,p[0]+"^"+str(len(p)))
-        return the_string
+        if "id" in the_string:
+            return the_string
+
+        generator_names = list(self.generators.keys())
+
+        count_list=[["",0]]
+        while(len(the_string)):
+            flag=0
+            for name_g in generator_names:
+                if the_string[:len(name_g)]==name_g:
+                    flag=1
+                    if count_list[-1][0]==name_g:
+                        count_list[-1][1]+=1
+                    else:
+                        count_list.append([name_g,1])
+                    the_string=the_string[len(name_g):]
+            if not flag:
+                raise Exception("Operation name cannot be rewritten")
+        new_string=""
+        for name,count in count_list:
+            if count>1:
+                new_string+="("+name+"^"+str(count)+")"
+            else:
+                new_string+=name
+        return new_string
+
 
     def get_description(self,name_f):
         return str(self.operations[name_f])
@@ -323,10 +325,7 @@ class MonoidAction(CategoryAction):
                         simply transitive or not.
     """
     def __init__(self):
-        self.objects = {}
-        self.generators = {}
-        self.operations = {}
-        self.SIMPLY_TRANSITIVE=False
+        super(MonoidAction,self).__init__()
 
     def set_objects(self,list_objects):
         """Add musical objects to the monoid action.
@@ -399,10 +398,12 @@ class MonoidAction(CategoryAction):
                operations of the monoid (keys) to their image (values)
                if full_map=True.
         """
-        new_liste = self.generators
-        added_liste = self.generators
+
+
+        new_liste = self.generators.copy()
+        added_liste = self.generators.copy()
         full_mapping = autom_dict.copy()
-        full_mapping["id_."]="id_."
+        full_mapping["id_"+self.get_object().name] = "id_"+self.get_object().name
 
 
         ## This is a variant of the monoid generation method.
@@ -427,7 +428,7 @@ class MonoidAction(CategoryAction):
                             return (False,None)
             new_liste = added_liste[:]
 
-        if not len(np.unique(full_mapping.values()))==len(self.operations):
+        if not len(set(full_mapping.values()))==len(self.operations):
             return (False,None)
         else:
             if full_map:
@@ -499,7 +500,7 @@ class MonoidAction(CategoryAction):
         -------
         A list of lists, each list being an R class.
         """
-        list_op = zip(self.operations.keys(),[0]*len(self.operations.keys()))
+        list_op = list(zip(self.operations.keys(),[0]*len(self.operations.keys())))
         R_classes = []
         for x,visited in list_op:
             if not visited:
@@ -521,7 +522,7 @@ class MonoidAction(CategoryAction):
         -------
         A list of lists, each list being an L class.
         """
-        list_op = zip(self.operations.keys(),[0]*len(self.operations.keys()))
+        list_op = list(zip(self.operations.keys(),[0]*len(self.operations.keys())))
         L_classes = []
         for x,visited in list_op:
             if not visited:

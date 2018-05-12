@@ -15,6 +15,7 @@ class Noll_Monoid(MonoidAction):
 
     """
     def __init__(self):
+        super(Noll_Monoid,self).__init__()
         X = CatObject(".",["C","Cs","D","Eb","E","F","Fs","G","Gs","A","Bb","B"])
         self.set_objects([X])
 
@@ -38,18 +39,18 @@ class TI_Group_PC(MonoidAction):
     """Defines the TI group acting on the set of the twelve pitch classes.
     """
     def __init__(self):
-        self.SIMPLY_TRANSITIVE=False
+        super(TI_Group_PC,self).__init__()
 
         X = CatObject(".",["C","Cs","D","Eb","E","F","Fs","G","Gs","A","Bb","B"])
         self.set_objects([X])
 
-        T = CatMorphism("T",X,X)
+        T = CatMorphism("T1",X,X)
         M_T = np.zeros((12,12),dtype=bool)
         for i in range(12):
             M_T[(i+1)%12,i]=True
         T.set_mapping_matrix(M_T)
 
-        I = CatMorphism("I",X,X)
+        I = CatMorphism("I0",X,X)
         M_I = np.zeros((12,12),dtype=bool)
         for i in range(12):
             M_I[(-i)%12,i]=True
@@ -57,35 +58,40 @@ class TI_Group_PC(MonoidAction):
 
         self.add_generators([T,I])
         self.add_identities()
-        self.add_morphisms([I])
+        self.add_morphisms([T,I])
+        for i in range(2,12):
+            x = self.operations['id_.']
+            for j in range(i):
+                x = T*x
+            x.set_name("T"+str(i))
+            self.add_morphisms([x])
         for i in range(1,12):
             x = self.operations['id_.']
             for j in range(i):
                 x = T*x
-            x.set_name("T^"+str(i))
             y = x*I
-            y.set_name("I^"+str(i))
-            self.add_morphisms([x,y])
+            y.set_name("I"+str(i))
+            self.add_morphisms([y])
 
 
 class TI_Group_Triads(MonoidAction):
     """Defines the TI group acting on the set of the 24 major and minor triads.
     """
     def __init__(self):
+        super(TI_Group_Triads,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
         self.set_objects([X])
 
-        self.SIMPLY_TRANSITIVE=True
-
-        T = CatMorphism("T",X,X)
+        T = CatMorphism("T1",X,X)
         M_T = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_T[(i+1)%12,i]=True
             M_T[12+(i+1)%12,i+12]=True
         T.set_mapping_matrix(M_T)
 
-        I = CatMorphism("I",X,X)
+        I = CatMorphism("I0",X,X)
         M_I = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_I[(5-i)%12 + 12,i]=True
@@ -94,26 +100,31 @@ class TI_Group_Triads(MonoidAction):
 
         self.add_generators([T,I])
         self.add_identities()
-        self.add_morphisms([I])
+        self.add_morphisms([T,I])
+        for i in range(2,12):
+            x = self.operations['id_.']
+            for j in range(i):
+                x = T*x
+            x.set_name("T"+str(i))
+            self.add_morphisms([x])
         for i in range(1,12):
             x = self.operations['id_.']
             for j in range(i):
                 x = T*x
-            x.set_name("T^"+str(i))
             y = x*I
-            y.set_name("I^"+str(i))
-            self.add_morphisms([x,y])
+            y.set_name("I"+str(i))
+            self.add_morphisms([y])
 
 class PRL_Group(MonoidAction):
     """Defines the neo-Riemannian PRL group acting on the set
     of the 24 major and minor triads.
     """
     def __init__(self):
+        super(PRL_Group,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
         self.set_objects([X])
-
-        self.SIMPLY_TRANSITIVE=True
 
         L = CatMorphism("L",X,X)
         M_L = np.zeros((24,24),dtype=bool)
@@ -129,18 +140,16 @@ class PRL_Group(MonoidAction):
             M_R[(i+3)%12,12+i]=True
         R.set_mapping_matrix(M_R)
 
-        self.add_generators([L,R])
+        P = CatMorphism("P",X,X)
+        M_P = np.zeros((24,24),dtype=bool)
+        for i in range(12):
+            M_P[i%12 + 12,i]=True
+            M_P[i%12,12+i]=True
+        P.set_mapping_matrix(M_P)
+
+        self.add_generators([P,R,L])
         self.add_identities()
-        self.add_morphisms([R])
-        z = R*L
-        for i in range(1,12):
-            x = self.operations['id_.']
-            for j in range(i):
-                x = x*z
-            x.set_name("(RL)^"+str(i))
-            y = x*R
-            y.set_name("(RL)^"+str(i)+"R")
-            self.add_morphisms([x,y])
+        self.generate_category()
 
 class UTT_Group(MonoidAction):
     """Defines Hook's UTT group acting on the set of the 24 major and minor triads.
@@ -152,11 +161,11 @@ class UTT_Group(MonoidAction):
                     and a minor triad of root n to n+p
     """
     def __init__(self):
+        super(UTT_Group,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
         self.set_objects([X])
-
-        self.SIMPLY_TRANSITIVE=False
 
         T = CatMorphism("T",X,X)
         M_T = np.zeros((24,24),dtype=bool)
@@ -201,20 +210,20 @@ class Left_Z3Q8_Group(MonoidAction):
         The group is an extension of Z_12 by Z_2 with a non-trivial cocycle.
     """
     def __init__(self):
+        super(Left_Z3Q8_Group,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
         self.set_objects([X])
 
-        self.SIMPLY_TRANSITIVE=True
-
-        T = CatMorphism("T",X,X)
+        T = CatMorphism("T1",X,X)
         M_T = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_T[(i+1)%12,i]=True
             M_T[12+(i+1)%12,i+12]=True
         T.set_mapping_matrix(M_T)
 
-        J = CatMorphism("J",X,X)
+        J = CatMorphism("J0",X,X)
         M_J = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_J[(-i)%12 + 12,i]=True
@@ -223,15 +232,20 @@ class Left_Z3Q8_Group(MonoidAction):
 
         self.add_generators([T,J])
         self.add_identities()
-        self.add_morphisms([J])
+        self.add_morphisms([T,J])
+        for i in range(2,12):
+            x = self.operations['id_.']
+            for j in range(i):
+                x = x*T
+            x.set_name("T"+str(i))
+            self.add_morphisms([x])
         for i in range(1,12):
             x = self.operations['id_.']
             for j in range(i):
                 x = x*T
             y=x*J
-            x.set_name("T^"+str(i))
-            y.set_name("J^"+str(i))
-            self.add_morphisms([x,y])
+            y.set_name("J"+str(i))
+            self.add_morphisms([y])
 
 class Right_Z3Q8_Group(MonoidAction):
     """Defines a simply transitive generalized neo-Riemannian group acting
@@ -239,20 +253,20 @@ class Right_Z3Q8_Group(MonoidAction):
         The group is an extension of Z_12 by Z_2 with a non-trivial cocycle.
     """
     def __init__(self):
+        super(Right_Z3Q8_Group,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
         self.set_objects([X])
 
-        self.SIMPLY_TRANSITIVE=True
-
-        T = CatMorphism("T",X,X)
+        T = CatMorphism("T1",X,X)
         M_T = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_T[(i+1)%12,i]=True
             M_T[12+(i-1)%12,i+12]=True
         T.set_mapping_matrix(M_T)
 
-        J = CatMorphism("J",X,X)
+        J = CatMorphism("J0",X,X)
         M_J = np.zeros((24,24),dtype=bool)
         for i in range(12):
             M_J[i + 12,i]=True
@@ -261,15 +275,20 @@ class Right_Z3Q8_Group(MonoidAction):
 
         self.add_generators([T,J])
         self.add_identities()
-        self.add_morphisms([J])
+        self.add_morphisms([T,J])
+        for i in range(2,12):
+            x = self.operations['id_.']
+            for j in range(i):
+                x = x*T
+            x.set_name("T"+str(i))
+            self.add_morphisms([x])
         for i in range(1,12):
             x = self.operations['id_.']
             for j in range(i):
                 x = x*T
             y=x*J
-            x.set_name("T^"+str(i))
-            y.set_name("J^"+str(i))
-            self.add_morphisms([x,y])
+            y.set_name("J"+str(i))
+            self.add_morphisms([y])
 
 
 class UPL_Monoid(MonoidAction):
@@ -283,6 +302,8 @@ class UPL_Monoid(MonoidAction):
             two tones in common with x (or y)
     """
     def __init__(self):
+        super(UPL_Monoid,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
                            "C_aug","F_aug","D_aug","G_aug"])
@@ -328,6 +349,8 @@ class S_Monoid(MonoidAction):
         of a single note by a semitone.
     """
     def __init__(self):
+        super(S_Monoid,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
                            "C_aug","F_aug","D_aug","G_aug"])
@@ -362,6 +385,8 @@ class T_Monoid(MonoidAction):
         of two notes by a semitone each.
     """
     def __init__(self):
+        super(T_Monoid,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
                            "C_aug","F_aug","D_aug","G_aug"])
@@ -408,6 +433,8 @@ class K_Monoid(MonoidAction):
         by a semitone each, and the remaining note by a tone.
     """
     def __init__(self):
+        super(K_Monoid,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
                            "C_aug","F_aug","D_aug","G_aug"])
@@ -441,6 +468,8 @@ class W_Monoid(MonoidAction):
         by a semitone, and the remaining notes by a tone each.
     """
     def __init__(self):
+        super(W_Monoid,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
                            "C_aug","F_aug","D_aug","G_aug"])
@@ -473,11 +502,12 @@ class ST_Monoid(MonoidAction):
         It is generated by the S and T operations presented above.
     """
     def __init__(self):
+        super(ST_Monoid,self).__init__()
+
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
                            "C_aug","F_aug","D_aug","G_aug"])
         self.set_objects([X])
-
 
         S = CatMorphism("S",X,X)
         M_S = np.zeros((28,28),dtype=bool)
