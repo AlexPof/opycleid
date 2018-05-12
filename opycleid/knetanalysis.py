@@ -93,7 +93,7 @@ class KNet:
         -------
         None
         """
-        if not self.category.SIMPLY_TRANSITIVE:
+        if not self.category.is_simplytransitive():
             raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
         else:
             for i in range(len(self.vertices)-1):

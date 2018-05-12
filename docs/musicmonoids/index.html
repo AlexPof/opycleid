@@ -185,9 +185,9 @@ and
 <pre><code class="python">from opycleid.musicmonoids import TI_Group_PC
 
 my_group = TI_Group_PC()
-print(my_group.get_operation(&quot;D&quot;,&quot;A&quot;)) ## ['T^7', 'I^11']
-print(my_group.apply_operation(&quot;I^11&quot;,&quot;B&quot;)) ## ['C']
-print(my_group.mult(&quot;I^11&quot;,&quot;T^3&quot;)) ## &quot;I^8&quot;
+print(my_group.get_operation(&quot;D&quot;,&quot;A&quot;)) ## ['T7', 'I11']
+print(my_group.apply_operation(&quot;I11&quot;,&quot;B&quot;)) ## ['C']
+print(my_group.mult(&quot;I11&quot;,&quot;T3&quot;)) ## &quot;I8&quot;
 </code></pre>
 
 <h3 id="references_1">References</h3>
@@ -210,9 +210,9 @@ print(my_group.mult(&quot;I^11&quot;,&quot;T^3&quot;)) ## &quot;I^8&quot;
 <pre><code class="python">from opycleid.musicmonoids import TI_Group_Triads
 
 my_group = TI_Group_Triads()
-print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['I^7']
-print(my_group.apply_operation(&quot;I^7&quot;,&quot;B_M&quot;)) ## ['Cs_m']
-print(my_group.mult(&quot;I^7&quot;,&quot;T^4&quot;)) ## &quot;I^3&quot;
+print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['I7']
+print(my_group.apply_operation(&quot;I7&quot;,&quot;B_M&quot;)) ## ['Cs_m']
+print(my_group.mult(&quot;I7&quot;,&quot;T4&quot;)) ## &quot;I3&quot;
 </code></pre>
 
 <h3 id="references_2">References</h3>
@@ -231,14 +231,13 @@ print(my_group.mult(&quot;I^7&quot;,&quot;T^4&quot;)) ## &quot;I^3&quot;
 </li>
 </ul>
 <p>Though not a generator, the operation <script type="math/tex"> P = (RL)^3R </script>, called the <em>parallel operation</em>, is often considered, and is such that <script type="math/tex"> P(n_M)=n_m </script>.</p>
-<p>In the current implementation of this group, elements are given with the normal form <script type="math/tex"> (RL)^pR^q </script> with <script type="math/tex">p=0\ldots11</script> and <script type="math/tex">q=0,1</script>.</p>
 <h3 id="example_2">Example</h3>
 <pre><code class="python">from opycleid.musicmonoids import PRL_Group
 
 my_group = PRL_Group()
-print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['(RL)^11R']
-print(my_group.apply_operation(&quot;(RL)^3R&quot;,&quot;B_M&quot;)) ## ['B_m']
-print(my_group.mult(&quot;(RL)^3R&quot;,&quot;(RL)^7&quot;)) ## &quot;(RL)^8R&quot;
+print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['L']
+print(my_group.apply_operation(&quot;LPR&quot;,&quot;B_M&quot;)) ## ['C_m']
+print(my_group.mult(&quot;R&quot;,&quot;LPR&quot;)) ## &quot;PL&quot;
 </code></pre>
 
 <h3 id="references_3">References</h3>
@@ -289,9 +288,9 @@ print(my_group.mult(&quot;&lt;3,5,-&gt;&quot;,&quot;&lt;2,9,-&gt;&quot;)) ## &qu
 <pre><code class="python">from opycleid.musicmonoids import Left_Z3Q8_Group
 
 my_group = Left_Z3Q8_Group()
-print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['J^0']
-print(my_group.apply_operation(&quot;J^0&quot;,&quot;Gs_m&quot;)) ## ['Bb_M']
-print(my_group.mult(&quot;J^3&quot;,&quot;T^2&quot;)) ## &quot;J^1&quot;
+print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['J0']
+print(my_group.apply_operation(&quot;J0&quot;,&quot;Gs_m&quot;)) ## ['Bb_M']
+print(my_group.mult(&quot;J3&quot;,&quot;T2&quot;)) ## &quot;J1&quot;
 </code></pre>
 
 <h3 id="references_5">References</h3>
@@ -312,9 +311,9 @@ print(my_group.mult(&quot;J^3&quot;,&quot;T^2&quot;)) ## &quot;J^1&quot;
 <pre><code class="python">from opycleid.musicmonoids import Right_Z3Q8_Group
 
 my_group = Right_Z3Q8_Group()
-print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['J^8']
-print(my_group.apply_operation(&quot;J^0&quot;,&quot;Gs_m&quot;)) ## ['D_M']
-print(my_group.mult(&quot;J^3&quot;,&quot;T^2&quot;)) ## &quot;J^1&quot;
+print(my_group.get_operation(&quot;E_M&quot;,&quot;Gs_m&quot;)) ## ['J8']
+print(my_group.apply_operation(&quot;J0&quot;,&quot;Gs_m&quot;)) ## ['D_M']
+print(my_group.mult(&quot;J3&quot;,&quot;T2&quot;)) ## &quot;J1&quot;
 </code></pre>
 
 <h3 id="references_6">References</h3>
@@ -343,10 +342,10 @@ print(my_group.mult(&quot;J^3&quot;,&quot;T^2&quot;)) ## &quot;J^1&quot;
 
 my_group = UPL_Monoid()
 print(my_group.get_operation(&quot;E_M&quot;,&quot;F_aug&quot;))
-## Returns ['ULUU', 'LULULU', 'LULUU', 'ULULU']
+## Returns ['PUPUU', 'UPUU', 'UPUPU', 'PUPUPU']
 print(my_group.apply_operation(&quot;U&quot;,&quot;F_aug&quot;))
 ## Returns ['Cs_M', 'F_M', 'A_M', 'D_m', 'Fs_m', 'Bb_m']
-print(my_group.mult(&quot;U&quot;,&quot;UULUU&quot;)) ## &quot;ULUU&quot;
+print(my_group.mult(&quot;U&quot;,&quot;UUPUU&quot;)) ## &quot;UPUU&quot;
 </code></pre>
 
 <h3 id="references_7">References</h3>

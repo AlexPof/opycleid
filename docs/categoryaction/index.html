@@ -284,8 +284,7 @@ in the internal dictionary, and resets the generators and operations of the cate
 <pre><code class="python">add_generators(list_morphisms)
 </code></pre>
 
-<p>The argument <code>list_morphisms</code> should be a list of <code>CatMorphism</code> instances. These instances are added to the internal dictionary of generators.
-The names of the generators should be strings of length 1 (i.e. single characters).</p>
+<p>The argument <code>list_morphisms</code> should be a list of <code>CatMorphism</code> instances. These instances are added to the internal dictionary of generators.</p>
 <hr />
 <h4 id="add_morphisms">add_morphisms</h4>
 <pre><code class="python">add_morphisms(list_morphisms)
@@ -316,7 +315,7 @@ Renames an operation in the category.</p>
 <pre><code class="python">rewrite_operations()
 </code></pre>
 
-<p>Rewrite/simplify operation names in the category. Calling this method will examine all operation names, trying to identify repeated single characters "aaa...", and simplifying them to "a^p" where p is the corresponding power. Repeated sequences of more than one character are ignored.</p>
+<p>Rewrite/simplify operation names in the category. Calling this method will examine all operation names, trying to identify repeated instances of the names of the generators, and simplifying them to "([name]^p)" where p is the corresponding power.</p>
 <hr />
 <h4 id="mult">mult</h4>
 <pre><code class="python">mult(operation_2,operation_1)
@@ -376,10 +375,10 @@ This class inherits from <code>opycleid.categoryaction.MonoidAction</code>, and 
 <li><code>autom_dict</code>:  a dictionary, the keys of which are names of the generators, the values of which are names of operations corresponding to the image of the generators by the proposed automorphism.</li>
 <li><code>full_map</code>: a boolean indicating if the full automorphism mapping should be returned.</li>
 </ul>
-<p>Returns a tuple <code>(valid,fullmap)</code>, where</p>
+<p>Returns a tuple <code>(valid,fullmapping)</code>, where</p>
 <ul>
 <li><code>valid</code> is a boolean indicating if the map defined by <code>autom_dict</code> is a valid automorphism, and</li>
-<li><code>fullmap</code> is <code>None</code> if <code>full_map=False</code>, a dictionary mapping all operations of the monoid (keys) to their image (values) if <code>full_map=True</code>.</li>
+<li><code>fullmapping</code> is <code>None</code> if <code>full_map=False</code>, a dictionary mapping all operations of the monoid (keys) to their image (values) if <code>full_map=True</code>.</li>
 </ul>
 <hr />
 <h4 id="is_simplytransitive">is_simplytransitive</h4>
