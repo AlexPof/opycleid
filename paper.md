@@ -8,9 +8,11 @@ tags:
 authors:
   - name: Alexandre Popoff
     orcid: 0000-0002-3767-0361
-    affiliation: None
+    affiliation: 1
 affiliations:
-date: XX September 2018
+  - name: N/A
+    index: 1
+date: 16 September 2018
 bibliography: paper.bib
 ---
 
