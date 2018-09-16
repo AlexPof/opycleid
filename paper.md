@@ -36,7 +36,7 @@ operations).
 
 
 ``Opycleid`` is a Python package for transformational music theory, allowing the
-definition and application of musical transformations in broadest way possible.
+definition and application of musical transformations in the broadest way possible.
 The API for ``Opycleid`` was designed in order to take a very general approach
 to TMT by considering category actions in $\mathbb{Rel}$, i.e. faithful functors
 from a small category to the 2-category $\mathbb{Rel}$ of finite sets and
