@@ -33,18 +33,18 @@ music [@Lehman:2018]. The algebraic and combinatorial nature of musical
 transformation make them prone to easy computer implementations. However,
 general frameworks for creating and applying musical transformations
 (for example using category theory) are scarce if not non-existent, and are
-instead focused on specific and restrained areas for example, neo-Riemannian
+instead focused on specific and restrained areas (for example, neo-Riemannian
 operations).
 
 
 ``Opycleid`` is a Python package for transformational music theory, allowing the
 definition and application of musical transformations in the broadest way possible.
 The API for ``Opycleid`` was designed in order to take a very general approach
-to TMT by considering category actions in $\mathbb{Rel}$, i.e. faithful functors
-from a small category to the 2-category $\mathbb{Rel}$ of finite sets and
+to TMT by considering category actions in **Rel**, i.e. faithful functors
+from a small category to the 2-category **Rel** of finite sets and
 relations between them. At the same time, ``Opycleid`` provides ready-to-use
 classes for the common groups and monoids encountered in TMT
-(such as the T/I group or the PRL group usually found in neo-Riemannian theory),
+(such as the *T/I* group or the *PRL* group usually found in neo-Riemannian theory),
 allowing the analysis of chords with just a few Python lines of code.
 
 
