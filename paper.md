@@ -34,6 +34,7 @@ general frameworks for creating and applying musical transformations
 instead focused on specific and restrained areas for example, neo-Riemannian
 operations).
 
+# Statement of need
 
 ``Opycleid`` is a Python package for transformational music theory, allowing the
 definition and application of musical transformations in the broadest way possible.
@@ -44,7 +45,6 @@ relations between them. At the same time, ``Opycleid`` provides ready-to-use
 classes for the common groups and monoids encountered in TMT
 (such as the T/I group or the PRL group usually found in neo-Riemannian theory),
 allowing the analysis of chords with just a few Python lines of code.
-
 
 ``Opycleid`` was designed to be used by both researchers and by students in
 music theory (see for example
