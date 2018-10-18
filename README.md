@@ -20,7 +20,8 @@ Opycleid requires:
 
 ### User installation
 
-The easiest way to install opycleid is using ``pip`` ::
+The easiest way to install opycleid is using ``pip``:
+
     >>> pip install opycleid
 
 ## Development
@@ -34,7 +35,7 @@ on this page.
 
 ### Source code
 
-You can check the latest sources with the command::
+You can check the latest sources with the command:
 
     >>> git clone https://github.com/AlexPof/opycleid.git
 
