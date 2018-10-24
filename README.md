@@ -22,7 +22,7 @@ Opycleid requires:
 
 The easiest way to install opycleid is using ``pip``:
 
-    >>> pip install opycleid
+    $ pip install opycleid
 
 ## Development
 
