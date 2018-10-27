@@ -10,7 +10,7 @@ authors:
     orcid: 0000-0002-3767-0361
     affiliation: 1
 affiliations:
-  - name: N/A
+  - name: Independent Researcher
     index: 1
 date: 16 September 2018
 bibliography: paper.bib
