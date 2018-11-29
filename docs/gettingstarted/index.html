@@ -173,7 +173,7 @@ print(my_group.apply_operation(&quot;R&quot;,&quot;G_m&quot;)) ## prints ['Bb_M'
 <pre><code class="python">from opycleid.musicmonoids import PRL_Group
 
 my_group = PRL_Group()
-print(my_group.mult(&quot;LPR&quot;,&quot;L&quot;)) ## prints ['RP']
+print(my_group.mult(&quot;RPL&quot;,&quot;R&quot;)) ## prints ['LP']
 </code></pre>
 
 <p><strong>note: depending on your configuration, the names of the operations in the monoid might be different, although they represent the same transformation.</strong></p>
@@ -241,34 +241,34 @@ for x in my_category.operations:
   print(x)
 '''
 This prints the following list:
-同TTT和
-同TT
-同TTT
-TTTTTTTTTT
-和同
-TTT和
-TTT和同
-TTTTTT
-同TT和
-TTTTTTT
-TT
 TTT
-T
-id_Y
+TTTTTT
 同
-TT和同
-同T
-T和
-TTTT
-TT和
+TTT和
+同TT
 同T和
 TTTTTTTTT
-TTTTTTTTTTT
-T和同
+TTTT
+和同T
 id_X
-TTTTT
-TTTTTTTT
+和同TTT
+和同TT
+TTTTTTT
 和
+TTTTTTTTTT
+同TTT和
+TTTTT
+同T
+T
+TTTTTTTTTTT
+TTTTTTTT
+id_Y
+TT
+同TT和
+同TTT
+T和
+TT和
+和同
 '''  
 </code></pre>
 
@@ -278,34 +278,34 @@ for x in my_category.operations:
   print(x)
 '''
 This prints the following list:
-和同
-(T^2)和
-同(T^2)
-(T^11)
-同(T^3)和
-(T^2)和同
-T和
 (T^9)
-同T和
-同(T^3)
-(T^3)
-(T^2)
 同
-(T^7)
-T
-T和同
-(T^3)和
-id_X
-同T
 (T^6)
-(T^5)
-同(T^2)和
-(T^3)和同
-(T^4)
-id_Y
-(T^10)
+(T^3)
 (T^8)
+同(T^3)和
+(T^3)和
+(T^10)
+同T和
+(T^4)
+和同T
+(T^2)和
+(T^7)
+id_X
+(T^11)
+(T^5)
 和
+(T^2)
+同T
+T
+id_Y
+同(T^2)和
+T和
+同(T^2)
+和同(T^3)
+同(T^3)
+和同
+和同(T^2)
 '''
 </code></pre>
 
@@ -315,7 +315,7 @@ id_Y
 <ul>
 <li>There are 16 morphisms from <script type="math/tex">X</script> to <script type="math/tex">X</script>:<ul>
 <li>12 of the form <script type="math/tex">T^p</script> with <script type="math/tex">p=0\ldots11</script> (<script type="math/tex">T^0</script> being <script type="math/tex">\text{id_X}</script>), and</li>
-<li>4 of the form <script type="math/tex">T^p和同</script> with <script type="math/tex">p=0\ldots3</script> (here T和同TT, T和同, 和同TT, and 和同, since <script type="math/tex">T^p和同=和同T^p</script> as can be verified directly in Opycleid).</li>
+<li>4 of the form <script type="math/tex">T^p和同</script> with <script type="math/tex">p=0\ldots3</script> (here 和同(T^3), 和同(T^2), 和同T, and 和同, since <script type="math/tex">T^p和同=和同T^p</script> as can be verified directly in Opycleid).</li>
 </ul>
 </li>
 <li>There are 4 morphisms from <script type="math/tex">Y</script> to <script type="math/tex">Y</script>:<ul>
@@ -336,7 +336,7 @@ id_Y
 <p>Now that our category is generated, we can use it for analyzing transformations between chords.
 For example, we could ask what are the transformations between <script type="math/tex">E</script> major and <script type="math/tex">A</script> major.</p>
 <pre><code class="python">print(my_category.get_operation(&quot;E_M&quot;,&quot;A_M&quot;))
-## Prints ['T和同', 'T^5']
+## Prints ['(T^5)', '和同T']
 </code></pre>
 
 <p>Indeed we can just transpose <script type="math/tex">E</script> major by five semitone higher, using <script type="math/tex">T^{5}</script>, or we can transform <script type="math/tex">E</script> major to <script type="math/tex">C</script> augmented using 同, then to <script type="math/tex">G\sharp</script> major by using 和, and finally to <script type="math/tex">A</script> major by using <script type="math/tex">T</script>.</p>
@@ -369,7 +369,7 @@ Z2_group.add_generators([Z])
 Z2_group.generate_category()
 for x in Z2_group.operations:
     print(x)
-## This prints 'id_S' and 'z', as expected    
+## This prints 'z', id_S' as expected    
 </code></pre>
 
 <p>We also need to instantiate the <script type="math/tex"> T\text{/}I </script> group</p>
