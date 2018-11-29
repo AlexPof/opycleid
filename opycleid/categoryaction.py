@@ -51,7 +51,7 @@ class CatMorphism(object):
         card_source = self.source.get_cardinality()
         card_target = self.target.get_cardinality()
         self.matrix = np.zeros((card_target,card_source),dtype=bool)
-        for elem,images in mapping.items():
+        for elem,images in sorted(mapping.items()):
             id_elem = self.source.get_idx_by_name(elem)
             for image in images:
                 id_image = self.target.get_idx_by_name(image)
@@ -88,7 +88,7 @@ class CatMorphism(object):
         A description of the morphism via its source, target, and mapping.
         """
         descr = self.name+":"+self.source.name+"->"+self.target.name+"\n\n"
-        for s,t in self.get_mapping().items():
+        for s,t in sorted(self.get_mapping().items()):
             descr += " "*(len(self.name)+1)
             descr += s+"->"+(",".join(t))+"\n"
         return descr
@@ -208,7 +208,7 @@ class CategoryAction(object):
             self.operations[catmorphism.name] = catmorphism
 
     def add_identities(self):
-        for name,catobject in self.objects.items():
+        for name,catobject in sorted(self.objects.items()):
             identity_morphism = CatMorphism("id_"+name,catobject,catobject)
             identity_morphism.set_to_identity()
             self.add_morphisms([identity_morphism])
@@ -220,12 +220,12 @@ class CategoryAction(object):
         added_liste = self.generators.copy()
         while(len(added_liste)>0):
             added_liste = {}
-            for name_x,morphism_x in new_liste.items():
-                for name_g,morphism_g in self.generators.items():
+            for name_x,morphism_x in sorted(new_liste.items()):
+                for name_g,morphism_g in sorted(self.generators.items()):
                     try:
                         c=0
                         new_morphism = morphism_g*morphism_x
-                        for name_y,morphism_y in self.operations.items():
+                        for name_y,morphism_y in sorted(self.operations.items()):
                             if new_morphism==morphism_y:
                                 c=1
                                 self.equivalences.append([new_morphism.name,morphism_y.name])
@@ -245,7 +245,7 @@ class CategoryAction(object):
 
     def get_operation(self,elem1,elem2):
         res = []
-        for name_f,f in self.operations.items():
+        for name_f,f in sorted(self.operations.items()):
             try:
                 if elem2 in f>>elem1:
                     res.append(name_f)
@@ -347,7 +347,15 @@ class MonoidAction(CategoryAction):
             self.objects[catobject.name] = catobject
 
     def get_object(self):
-        """XXX should
+        """Returns the unique object of the monoid.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        The unique object of the monoid.
         """
         return list(self.objects.values())[0]
 
@@ -437,6 +445,17 @@ class MonoidAction(CategoryAction):
                 return (True,None)
 
     def is_simplytransitive(self):
+        """Checks if the monoid action is simply transitive.
+
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        Returns True if the monoid action is simply transitive.
+        """
         N = self.get_object().get_cardinality()
         M = np.zeros((N,N))
         for x in self.operations:
