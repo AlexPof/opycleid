@@ -188,7 +188,7 @@ class UTT_Group(MonoidAction):
         ## Hook's terminology for UTTs
 
         new_operations = []
-        for name_f,f in self.operations.items():
+        for name_f,f in sorted(self.operations.items()):
             op = [0,0,0]
             for j in name_f[::-1]:
                 if j=="T":

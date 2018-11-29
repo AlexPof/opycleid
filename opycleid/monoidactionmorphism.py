@@ -76,7 +76,7 @@ class MonoidActionMorphism:
         """
 
         ## Check the validity of the lax natural transformation square for all operations of the monoid
-        for name_x,x in self.monoidaction_source.operations.items():
+        for name_x,x in sorted(self.monoidaction_source.operations.items()):
             K = self.nat_trans * x
             L = self.monoidaction_dest.operations[self.monoid_morphism[name_x]] * self.nat_trans
             if not K<L:
