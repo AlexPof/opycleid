@@ -237,75 +237,75 @@ my_category = CategoryAction()
 my_category.set_objects([X,Y])
 my_category.add_generators([T,I,J])
 my_category.generate_category()
-for x in my_category.operations:
-  print(x)
+for name_f,f in my_category.get_morphisms():
+  print(name_f)
 '''
 This prints the following list:
-TTT
-TTTTTT
-同
-TTT和
-同TT
-同T和
-TTTTTTTTT
-TTTT
-和同T
-id_X
-和同TTT
-和同TT
-TTTTTTT
-和
-TTTTTTTTTT
-同TTT和
-TTTTT
-同T
 T
-TTTTTTTTTTT
-TTTTTTTT
-id_Y
 TT
-同TT和
-同TTT
-T和
+TTT
+TTTT
+TTTTT
+TTTTTT
+TTTTTTT
+TTTTTTTT
+TTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTTT
+TTT和
 TT和
+T和
+id_X
+id_Y
+同
+同T
+同TT
+同TTT
+同TTT和
+同TT和
+同T和
+和
 和同
+和同T
+和同TT
+和同TTT
 '''  
 </code></pre>
 
 <p>During the generation process, the names are obtained by concatenation. We can ask Opycleid to rewrite these operations.</p>
 <pre><code class="python">my_category.rewrite_operations()
-for x in my_category.operations:
-  print(x)
+for name_f,f in my_category.get_morphisms():
+  print(name_f)
 '''
 This prints the following list:
-(T^9)
-同
-(T^6)
-(T^3)
-(T^8)
-同(T^3)和
-(T^3)和
 (T^10)
-同T和
-(T^4)
-和同T
-(T^2)和
-(T^7)
-id_X
 (T^11)
-(T^5)
-和
 (T^2)
-同T
+(T^2)和
+(T^3)
+(T^3)和
+(T^4)
+(T^5)
+(T^6)
+(T^7)
+(T^8)
+(T^9)
 T
-id_Y
-同(T^2)和
 T和
+id_X
+id_Y
+同
 同(T^2)
-和同(T^3)
+同(T^2)和
 同(T^3)
+同(T^3)和
+同T
+同T和
+和
 和同
 和同(T^2)
+和同(T^3)
+和同T
 '''
 </code></pre>
 
