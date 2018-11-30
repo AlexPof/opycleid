@@ -268,29 +268,29 @@ Returns <code>True</code> if the sources, and targets of both morphisms are equa
 <p>Defines a category action object, i.e. a faithful functor <script type="math/tex"> F \colon \mathbf{C} \to \mathbf{Rel} </script>,
 where <script type="math/tex"> \mathbf{C} </script> is a small category, and <script type="math/tex"> \mathbf{Rel} </script> is the 2-category of finite sets and relations.
 Instances of this class store internally
-<em> a dictionary of <code>CatObject</code> instances, indexed by their name
-</em> a dictionary of <code>CatMorphism</code> instances, indexed by their name, corresponding to the generators of the category,
-* a dictionary of <code>CatMorphism</code> instances, indexed by their name, corresponding to all the operations of the category.</p>
+<em> a dictionary of <code>opycleid.categoryaction.CatObject</code> instances, indexed by their name
+</em> a dictionary of <code>opycleid.categoryaction.CatMorphism</code> instances, indexed by their name, corresponding to the generators of the category,
+* a dictionary of <code>opycleid.categoryaction.CatMorphism</code> instances, indexed by their name, corresponding to all the operations of the category.</p>
 <hr />
 <h3 id="methods_2">Methods</h3>
 <h4 id="set_objects">set_objects</h4>
 <pre><code class="python">set_objects(list_objects)
 </code></pre>
 
-<p>The argument <code>list_objects</code> should be a list of <code>CatObject</code> instances. Calling this method stores the <code>CatObject</code> instances
+<p>The argument <code>list_objects</code> should be a list of <code>opycleid.categoryaction.CatObject</code> instances. Calling this method stores the <code>CatObject</code> instances
 in the internal dictionary, and resets the generators and operations of the category.</p>
 <hr />
 <h4 id="add_generators">add_generators</h4>
 <pre><code class="python">add_generators(list_morphisms)
 </code></pre>
 
-<p>The argument <code>list_morphisms</code> should be a list of <code>CatMorphism</code> instances. These instances are added to the internal dictionary of generators.</p>
+<p>The argument <code>list_morphisms</code> should be a list of <code>opycleid.categoryaction.CatMorphism</code> instances. These instances are added to the internal dictionary of generators.</p>
 <hr />
 <h4 id="add_morphisms">add_morphisms</h4>
 <pre><code class="python">add_morphisms(list_morphisms)
 </code></pre>
 
-<p>The argument <code>list_morphisms</code> should be a list of <code>CatMorphism</code> instances. These instances are added to the internal dictionary of operations.</p>
+<p>The argument <code>list_morphisms</code> should be a list of <code>opycleid.categoryaction.CatMorphism</code> instances. These instances are added to the internal dictionary of operations.</p>
 <hr />
 <h4 id="add_identities">add_identities</h4>
 <pre><code class="python">add_identities()
@@ -303,6 +303,24 @@ in the internal dictionary, and resets the generators and operations of the cate
 </code></pre>
 
 <p>Generates the category from the internal dictionary of generators. This means that for any operation <script type="math/tex"> f </script> and any generator <script type="math/tex"> g </script> of this category, the composite operation <script type="math/tex"> g \circ f </script> will be added to the internal dictionary of operations, if not already present, until the generation is complete.</p>
+<hr />
+<h4 id="get_objects">get_objects()</h4>
+<pre><code class="python">get_objects()
+</code></pre>
+
+<p>Returns the objects in this category, as a list of tuples <code>(String,CatObject)</code>, where the <code>CatObject</code> instance is an object of the category, and <code>String</code> corresponds to its name.</p>
+<hr />
+<h4 id="get_generators">get_generators()</h4>
+<pre><code class="python">get_generators()
+</code></pre>
+
+<p>Returns the objects in this category, as a list of tuples <code>(String,CatMorphism)</code>, where the <code>CatMorphism</code> instance is a generator morphism of the category, and <code>String</code> corresponds to its name.</p>
+<hr />
+<h4 id="get_morphisms">get_morphisms()</h4>
+<pre><code class="python">get_morphisms()
+</code></pre>
+
+<p>Returns the objects in this category, as a list of tuples <code>(String,CatMorphism)</code>, where the <code>CatMorphism</code> instance is a morphism of the category, and <code>String</code> corresponds to its name.</p>
 <hr />
 <h4 id="rename_operation">rename_operation</h4>
 <pre><code class="python">rename_operation(name,new_name)
@@ -357,7 +375,7 @@ This class inherits from <code>opycleid.categoryaction.MonoidAction</code>, and 
 <pre><code class="python">get_object()
 </code></pre>
 
-<p>Returns the single object (an instance of <code>opycleid.categoryaction.CatObject</code>) of the monoid action.</p>
+<p>Returns the single object of the monoid action as a tuple <code>(String,CatObject)</code>, where the <code>CatObject</code> instance is the single object of the monoid, and <code>String</code> corresponds to its name. This is equivalent to <code>get_objects()[0]</code>.</p>
 <hr />
 <h4 id="get_automorphisms">get_automorphisms</h4>
 <pre><code class="python">get_automorphisms()

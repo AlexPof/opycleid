@@ -44,7 +44,7 @@ class KNet:
         """
         self.edges = {}
         for x in list_vertices:
-            if self.category.get_object().is_in(x):
+            if self.category.get_object()[1].is_in(x):
                 self.vertices[len(self.vertices)] = x
             else:
                 raise Exception("Element "+str(x)+" is not in the category action\n")

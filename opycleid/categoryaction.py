@@ -199,6 +199,15 @@ class CategoryAction(object):
         for catobject in list_objects:
             self.objects[catobject.name] = catobject
 
+    def get_objects(self):
+        return list(sorted(self.objects.items()))
+
+    def get_morphisms(self):
+        return list(sorted(self.operations.items()))
+
+    def get_generators(self):
+        return list(sorted(self.generators.items()))
+
     def add_generators(self,list_morphisms):
         for catmorphism in list_morphisms:
             self.generators[catmorphism.name] = catmorphism
@@ -221,11 +230,11 @@ class CategoryAction(object):
         while(len(added_liste)>0):
             added_liste = {}
             for name_x,morphism_x in sorted(new_liste.items()):
-                for name_g,morphism_g in sorted(self.generators.items()):
+                for name_g,morphism_g in self.get_generators():
                     try:
                         c=0
                         new_morphism = morphism_g*morphism_x
-                        for name_y,morphism_y in sorted(self.operations.items()):
+                        for name_y,morphism_y in self.get_morphisms():
                             if new_morphism==morphism_y:
                                 c=1
                                 self.equivalences.append([new_morphism.name,morphism_y.name])
@@ -245,7 +254,7 @@ class CategoryAction(object):
 
     def get_operation(self,elem1,elem2):
         res = []
-        for name_f,f in sorted(self.operations.items()):
+        for name_f,f in self.get_morphisms():
             try:
                 if elem2 in f>>elem1:
                     res.append(name_f)
@@ -357,7 +366,7 @@ class MonoidAction(CategoryAction):
         -------
         The unique object of the monoid.
         """
-        return list(self.objects.values())[0]
+        return self.get_objects()[0]
 
     def get_automorphisms(self):
         """Returns all automorphisms of the monoid as a list of dictionaries.
@@ -411,7 +420,7 @@ class MonoidAction(CategoryAction):
         new_liste = self.generators.copy()
         added_liste = self.generators.copy()
         full_mapping = autom_dict.copy()
-        full_mapping["id_"+self.get_object().name] = "id_"+self.get_object().name
+        full_mapping["id_"+self.get_object()[0]] = "id_"+self.get_object()[0]
 
 
         ## This is a variant of the monoid generation method.
@@ -456,7 +465,7 @@ class MonoidAction(CategoryAction):
         -------
         Returns True if the monoid action is simply transitive.
         """
-        N = self.get_object().get_cardinality()
+        N = self.get_object()[1].get_cardinality()
         M = np.zeros((N,N))
         for x in self.operations:
             M += (self.operations[x].get_mapping_matrix()).astype(int)

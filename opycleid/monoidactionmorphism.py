@@ -37,8 +37,8 @@ class MonoidActionMorphism:
         self.monoid_morphism = monoid_morphism
 
         N = CatMorphism("N",
-                        self.monoidaction_source.get_object(),
-                        self.monoidaction_dest.get_object())
+                        self.monoidaction_source.get_object()[1],
+                        self.monoidaction_dest.get_object()[1])
         N.set_mapping(nat_trans_mapping)
 
         self.nat_trans = N
