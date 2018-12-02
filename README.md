@@ -20,9 +20,13 @@ Opycleid requires:
 
 ### User installation
 
-The easiest way to install opycleid is using ``pip``:
+The easiest way to install Opycleid is using ``pip``:
 
     $ pip install opycleid
+
+Opycleid can also be installed directly from source:
+
+    $ python setup.py install    
 
 ## Development
 
