@@ -514,7 +514,7 @@ class MonoidAction(CategoryAction):
         for name_g,g in self.get_morphisms():
             I2 = np.unique([self.mult(name_x,name_g) for name_x,x in self.get_morphisms()])
             if sorted(I2) == sorted(I1):
-                list_Req.append(op)
+                list_Req.append(name_g)
         return list_Req
 
     def get_Rclasses(self):
