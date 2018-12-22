@@ -431,7 +431,7 @@ class MonoidAction(CategoryAction):
         while(len(added_liste)>0):
             added_liste = []
             for name_x in new_liste:
-                for name_g, in self.get_generators():
+                for name_g,g in self.get_generators():
                     name_product = self.mult(name_g,name_x)
                     name_imageproduct = self.mult(full_mapping[name_g],full_mapping[name_x])
                     if not name_product in full_mapping:
