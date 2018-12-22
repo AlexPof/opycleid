@@ -1,4 +1,5 @@
 ![PyPi](https://badge.fury.io/py/opycleid.svg)
+[![DOI](http://joss.theoj.org/papers/10.21105/joss.00981/status.svg)](https://doi.org/10.21105/joss.00981)
 
 
 # opycleid

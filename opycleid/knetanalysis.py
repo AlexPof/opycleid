@@ -72,7 +72,7 @@ class KNet:
                 if edge_start == id_vertex_A and id_vertex_B == edge_end:
                     raise Exception("There already exists an edge between vertices "+str(edge_start)+" and "+str(edge_end)+"\n")
 
-            if not operation in self.category.operations.keys():
+            if not operation in self.category.morphisms.keys():
                 raise Exception(str(operation)+" is not a valid operation in the category\n")
 
             if operation in self.category.get_operation(self.vertices[id_vertex_A],self.vertices[id_vertex_B]):

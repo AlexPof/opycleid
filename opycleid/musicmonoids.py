@@ -60,13 +60,13 @@ class TI_Group_PC(MonoidAction):
         self.add_identities()
         self.add_morphisms([T,I])
         for i in range(2,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = T*x
             x.set_name("T"+str(i))
             self.add_morphisms([x])
         for i in range(1,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = T*x
             y = x*I
@@ -102,13 +102,13 @@ class TI_Group_Triads(MonoidAction):
         self.add_identities()
         self.add_morphisms([T,I])
         for i in range(2,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = T*x
             x.set_name("T"+str(i))
             self.add_morphisms([x])
         for i in range(1,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = T*x
             y = x*I
@@ -202,7 +202,7 @@ class UTT_Group(MonoidAction):
 
         self.set_objects([X]) ## This erases previous morphisms
         self.add_morphisms(new_operations)
-        self.generators = {"<1,0,+>":self.operations["<1,0,+>"],"<0,0,->":self.operations["<0,0,->"]}
+        self.generators = {"<1,0,+>":self.morphisms["<1,0,+>"],"<0,0,->":self.morphisms["<0,0,->"]}
 
 class Left_Z3Q8_Group(MonoidAction):
     """Defines a simply transitive generalized neo-Riemannian group acting
@@ -234,13 +234,13 @@ class Left_Z3Q8_Group(MonoidAction):
         self.add_identities()
         self.add_morphisms([T,J])
         for i in range(2,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = x*T
             x.set_name("T"+str(i))
             self.add_morphisms([x])
         for i in range(1,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = x*T
             y=x*J
@@ -277,13 +277,13 @@ class Right_Z3Q8_Group(MonoidAction):
         self.add_identities()
         self.add_morphisms([T,J])
         for i in range(2,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = x*T
             x.set_name("T"+str(i))
             self.add_morphisms([x])
         for i in range(1,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = x*T
             y=x*J

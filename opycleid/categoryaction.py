@@ -188,13 +188,13 @@ class CategoryAction(object):
     def __init__(self):
         self.objects={}
         self.generators={}
-        self.operations={}
+        self.morphisms={}
         self.equivalences=[]
 
     def set_objects(self,list_objects):
         self.objects={}
         self.generators={}
-        self.operations={}
+        self.morphisms={}
         self.equivalences=[]
         for catobject in list_objects:
             self.objects[catobject.name] = catobject
@@ -203,7 +203,7 @@ class CategoryAction(object):
         return list(sorted(self.objects.items()))
 
     def get_morphisms(self):
-        return list(sorted(self.operations.items()))
+        return list(sorted(self.morphisms.items()))
 
     def get_generators(self):
         return list(sorted(self.generators.items()))
@@ -214,7 +214,7 @@ class CategoryAction(object):
 
     def add_morphisms(self,list_morphisms):
         for catmorphism in list_morphisms:
-            self.operations[catmorphism.name] = catmorphism
+            self.morphisms[catmorphism.name] = catmorphism
 
     def add_identities(self):
         for name,catobject in sorted(self.objects.items()):
@@ -223,7 +223,7 @@ class CategoryAction(object):
             self.add_morphisms([identity_morphism])
 
     def generate_category(self):
-        self.operations = self.generators.copy()
+        self.morphisms = self.generators.copy()
         self.add_identities()
         new_liste = self.generators.copy()
         added_liste = self.generators.copy()
@@ -240,17 +240,17 @@ class CategoryAction(object):
                                 self.equivalences.append([new_morphism.name,morphism_y.name])
                         if c==0:
                             added_liste[new_morphism.name] = new_morphism
-                            self.operations[new_morphism.name] = new_morphism
+                            self.morphisms[new_morphism.name] = new_morphism
                     except:
                         pass
             new_liste = added_liste
 
     def mult(self,name_g,name_f):
-        new_morphism = self.operations[name_g]*self.operations[name_f]
-        return [x for x in self.operations if self.operations[x]==new_morphism][0]
+        new_morphism = self.morphisms[name_g]*self.morphisms[name_f]
+        return [name_x for name_x,x in self.get_morphisms() if x==new_morphism][0]
 
     def apply_operation(self,name_f,elem):
-        return self.operations[name_f]>>elem
+        return self.morphisms[name_f]>>elem
 
     def get_operation(self,elem1,elem2):
         res = []
@@ -263,15 +263,15 @@ class CategoryAction(object):
         return res
 
     def rename_operation(self,name_f,new_name):
-        if not name_f in self.operations:
+        if not name_f in self.morphisms:
             raise Exception("The specified operation cannot be found")
-        new_op = self.operations[name_f].copy()
+        new_op = self.morphisms[name_f].copy()
         new_op.set_name(new_name)
-        del self.operations[name_f]
-        self.operations[new_name] = new_op
+        del self.morphisms[name_f]
+        self.morphisms[new_name] = new_op
 
     def rewrite_operations(self):
-        operation_names = list(self.operations.keys())
+        operation_names = sorted(list(self.morphisms.keys()))
         for op_name in operation_names:
             self.rename_operation(op_name,self.rewrite(op_name))
 
@@ -309,7 +309,7 @@ class CategoryAction(object):
 
 
     def get_description(self,name_f):
-        return str(self.operations[name_f])
+        return str(self.morphisms[name_f])
 
 
 class MonoidAction(CategoryAction):
@@ -349,7 +349,7 @@ class MonoidAction(CategoryAction):
         """
         self.objects={}
         self.generators={}
-        self.operations={}
+        self.morphisms={}
         if len(list_objects)>1:
             raise Exception("A monoid must have a single object")
         for catobject in list_objects:
@@ -381,7 +381,7 @@ class MonoidAction(CategoryAction):
         to their image in the monoid (the values)
         """
         l1 = self.generators.keys()
-        l2 = self.operations.keys()
+        l2 = self.morphisms.keys()
         list_automorphisms = []
 
         ## Get all maps from the generator set to itself
@@ -431,7 +431,7 @@ class MonoidAction(CategoryAction):
         while(len(added_liste)>0):
             added_liste = []
             for name_x in new_liste:
-                for name_g in self.generators:
+                for name_g, in self.get_generators():
                     name_product = self.mult(name_g,name_x)
                     name_imageproduct = self.mult(full_mapping[name_g],full_mapping[name_x])
                     if not name_product in full_mapping:
@@ -445,7 +445,7 @@ class MonoidAction(CategoryAction):
                             return (False,None)
             new_liste = added_liste[:]
 
-        if not len(set(full_mapping.values()))==len(self.operations):
+        if not len(set(full_mapping.values()))==len(self.morphisms):
             return (False,None)
         else:
             if full_map:
@@ -467,8 +467,8 @@ class MonoidAction(CategoryAction):
         """
         N = self.get_object()[1].get_cardinality()
         M = np.zeros((N,N))
-        for x in self.operations:
-            M += (self.operations[x].get_mapping_matrix()).astype(int)
+        for name_f,f in self.get_morphisms():
+            M += (f.get_mapping_matrix()).astype(int)
         return np.array_equal(M,np.ones((N,N)))
 
     def element_Rclass(self,op_name):
@@ -487,11 +487,11 @@ class MonoidAction(CategoryAction):
         A list of operations related to op_name by Green's R relation.
         """
         list_Req = []
-        I1 = np.unique([self.mult(op_name,x) for x in self.operations])
-        for op in self.operations:
-            I2 = np.unique([self.mult(op,x) for x in self.operations])
+        I1 = np.unique([self.mult(op_name,name_x) for name_x,x in self.get_morphisms()])
+        for name_g,g in self.get_morphisms():
+            I2 = np.unique([self.mult(name_g,name_x) for name_x,x in self.get_morphisms()])
             if sorted(I2) == sorted(I1):
-                list_Req.append(op)
+                list_Req.append(name_g)
         return list_Req
 
     def element_Lclass(self,op_name):
@@ -510,9 +510,9 @@ class MonoidAction(CategoryAction):
         A list of operations related to op_name by Green's L relation.
         """
         list_Req = []
-        I1 = np.unique([self.mult(x,op_name) for x in self.operations])
-        for op in self.operations:
-            I2 = np.unique([self.mult(x,op) for x in self.operations])
+        I1 = np.unique([self.mult(name_x,op_name) for name_x,x in self.get_morphisms()])
+        for name_g,g in self.get_morphisms():
+            I2 = np.unique([self.mult(name_x,name_g) for name_x,x in self.get_morphisms()])
             if sorted(I2) == sorted(I1):
                 list_Req.append(op)
         return list_Req
@@ -528,7 +528,7 @@ class MonoidAction(CategoryAction):
         -------
         A list of lists, each list being an R class.
         """
-        list_op = list(zip(self.operations.keys(),[0]*len(self.operations.keys())))
+        list_op = list(zip(self.morphisms.keys(),[0]*len(self.morphisms.keys())))
         R_classes = []
         for x,visited in list_op:
             if not visited:
@@ -550,7 +550,7 @@ class MonoidAction(CategoryAction):
         -------
         A list of lists, each list being an L class.
         """
-        list_op = list(zip(self.operations.keys(),[0]*len(self.operations.keys())))
+        list_op = list(zip(self.morphisms.keys(),[0]*len(self.morphisms.keys())))
         L_classes = []
         for x,visited in list_op:
             if not visited:
@@ -599,8 +599,8 @@ class MonoidAction(CategoryAction):
         A boolean indicating if S is a left ideal.
         """
         for m in S:
-            for f in self.operations:
-                t = self.mult(f,m)
+            for name_f,f in self.get_morphisms():
+                t = self.mult(name_f,m)
                 if not t in S:
                     return False
         return True
@@ -643,8 +643,8 @@ class MonoidAction(CategoryAction):
         A boolean indicating if S is a right ideal.
         """
         for m in S:
-            for f in self.operations:
-                t = self.mult(m,f)
+            for name_f,f in self.get_morphisms():
+                t = self.mult(m,name_f)
                 if not t in S:
                     return False
         return True
