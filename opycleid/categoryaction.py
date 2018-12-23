@@ -22,7 +22,7 @@ class CatObject(object):
         return self.dict_idx2elem.get(idx)
 
     def get_elements(self):
-        return list(self.dict_elem2idx.keys())
+        return sorted(self.dict_elem2idx.keys())
 
     def get_cardinality(self):
         return len(self.dict_idx2elem)
@@ -166,10 +166,10 @@ class CatMorphism(object):
                (self.target == morphism.target) and \
                (np.array_equal(self.matrix,morphism.matrix))
 
-    def __lt__(self, morphism):
+    def __le__(self, morphism):
         """Checks if the given morphism is included in 'morphism', i.e. if there
         is a 2-morphism in Rel from 'self' to 'morphism'.
-        Overloads the '<' operator of Python
+        Overloads the '<=' operator of Python
 
         Parameters
         ----------
@@ -183,6 +183,23 @@ class CatMorphism(object):
         if not (self.source == morphism.source) and (self.target == morphism.target):
             raise Exception("Morphisms should have the same domain and codomain")
         return np.array_equal(self.matrix,self.matrix & morphism.matrix)
+
+    def __lt__(self, morphism):
+        """Checks if the given morphism is strictly included in 'morphism', i.e. if there
+        is a non-identity 2-morphism in Rel from 'self' to 'morphism'.
+        Overloads the '<' operator of Python
+
+        Parameters
+        ----------
+        morphism : an instance of CatMorphism
+
+        Returns
+        -------
+        True if 'self' is included in 'morphism'
+        """
+
+        return (self<=morphism) and (not self==morphism)
+
 
 class CategoryAction(object):
     def __init__(self):
@@ -271,7 +288,7 @@ class CategoryAction(object):
         self.morphisms[new_name] = new_op
 
     def rewrite_operations(self):
-        operation_names = sorted(list(self.morphisms.keys()))
+        operation_names = sorted(self.morphisms.keys())
         for op_name in operation_names:
             self.rename_operation(op_name,self.rewrite(op_name))
 
@@ -284,7 +301,7 @@ class CategoryAction(object):
         if "id" in the_string:
             return the_string
 
-        generator_names = list(self.generators.keys())
+        generator_names = sorted(self.generators.keys())
 
         count_list=[["",0]]
         while(len(the_string)):
@@ -380,8 +397,8 @@ class MonoidAction(CategoryAction):
         A list of dictionaries. Each dictionary maps the generators (the keys)
         to their image in the monoid (the values)
         """
-        l1 = self.generators.keys()
-        l2 = self.morphisms.keys()
+        l1 = sorted(self.generators.keys())
+        l2 = sorted(self.morphisms.keys())
         list_automorphisms = []
 
         ## Get all maps from the generator set to itself
@@ -528,7 +545,8 @@ class MonoidAction(CategoryAction):
         -------
         A list of lists, each list being an R class.
         """
-        list_op = list(zip(self.morphisms.keys(),[0]*len(self.morphisms.keys())))
+        list_op = list(zip(sorted(self.morphisms.keys()),
+                           [0]*len(self.morphisms.keys())))
         R_classes = []
         for x,visited in list_op:
             if not visited:
@@ -550,7 +568,8 @@ class MonoidAction(CategoryAction):
         -------
         A list of lists, each list being an L class.
         """
-        list_op = list(zip(self.morphisms.keys(),[0]*len(self.morphisms.keys())))
+        list_op = list(zip(sorted(self.morphisms.keys()),
+                           [0]*len(self.morphisms.keys())))
         L_classes = []
         for x,visited in list_op:
             if not visited:
