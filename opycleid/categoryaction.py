@@ -328,6 +328,65 @@ class CategoryAction(object):
     def get_description(self,name_f):
         return str(self.morphisms[name_f])
 
+    def is_automorphism(self,autom_dict,full_map=False):
+        """Checks if a given map of operations is an automorphism.
+
+        Parameters
+        ----------
+        autom_dict : dictionary, whose keys are generators of the category,
+                    and values are the image of the generators in the category
+                    by the map. The dictionary should also contain the mapping
+                    of the identity morphisms for each object on identity
+                    morphisms, as a way to encode the bijective mapping of
+                    objects.
+
+        full_map :  if True, returns the full mapping of all the operations in
+                    the monoid as a dictionary.
+
+        Returns
+        -------
+        A tuple (valid,fullmap) where:
+            - valid is a boolean indicating if the map defined by autom_dict
+               is an automorphism
+            - fullmap is None if full_map=False, a dictionary mapping all
+               operations of the monoid (keys) to their image (values)
+               if full_map=True.
+        """
+
+
+        new_liste = self.generators.copy()
+        added_liste = self.generators.copy()
+        full_mapping = autom_dict.copy()
+
+        ## This is a variant of the monoid generation method.
+        ## It generates the monoid and their images by the map of generators.
+        ## If it does not give a multi-valued function, and if it generates the same number of elements
+        ## then it is a bijection, hence a valid automorphism
+
+        while(len(added_liste)>0):
+            added_liste = []
+            for name_x in new_liste:
+                for name_g,g in self.get_generators():
+                    name_product = self.mult(name_g,name_x)
+                    name_imageproduct = self.mult(full_mapping[name_g],full_mapping[name_x])
+                    if not name_product in full_mapping:
+                        added_liste.append(name_product)
+                        full_mapping[name_product] = name_imageproduct
+                    else:
+                        ## If the generated element already exists, we check that its existing image corresponds
+                        ## to the image which has just been calculated
+                        if not full_mapping[name_product] == name_imageproduct:
+                            ## We have a multi-valued function so the algorithm stops there
+                            return (False,None)
+            new_liste = added_liste[:]
+
+        if not len(set(full_mapping.values()))==len(self.morphisms):
+            return (False,None)
+        else:
+            if full_map:
+                return (True,full_mapping)
+            else:
+                return (True,None)
 
 class MonoidAction(CategoryAction):
     """Defines a monoid action,
@@ -404,71 +463,13 @@ class MonoidAction(CategoryAction):
         ## Get all maps from the generator set to itself
         for mapping in itertools.permutations(l2,len(l1)):
             ## Builds a dictionary representing the map...
-            autom_dict={}
-            for x,y in zip(l1,mapping):
-                autom_dict[x]=y
+            autom_dict=dict(zip(l1,mapping))
+            monoid_object_name = self.get_object()[0]
+            autom_dict["id_"+monoid_object_name] = "id_"+monoid_object_name
             ## Tests if the given map of generators is indeed an automorphism...
             if self.is_automorphism(autom_dict)[0]:
                 list_automorphisms.append(autom_dict)
         return list_automorphisms
-
-    def is_automorphism(self,autom_dict,full_map=False):
-        """Checks if a given map of operations is an automorphism.
-
-        Parameters
-        ----------
-        autom_dict : dictionary, whose keys are generators of the monoid,
-                    and values are the image of the generators in the monoid
-                    by the map.
-        full_map :  if True, returns the full mapping of all the operations in
-                    the monoid as a dictionary.
-
-        Returns
-        -------
-        A tuple (valid,fullmap) where:
-            - valid is a boolean indicating if the map defined by autom_dict
-               is an automorphism
-            - fullmap is None if full_map=False, a dictionary mapping all
-               operations of the monoid (keys) to their image (values)
-               if full_map=True.
-        """
-
-
-        new_liste = self.generators.copy()
-        added_liste = self.generators.copy()
-        full_mapping = autom_dict.copy()
-        full_mapping["id_"+self.get_object()[0]] = "id_"+self.get_object()[0]
-
-
-        ## This is a variant of the monoid generation method.
-        ## It generates the monoid and their images by the map of generators.
-        ## If it does not give a multi-valued function, and if it generates the same number of elements
-        ## then it is a bijection, hence a valid automorphism
-
-        while(len(added_liste)>0):
-            added_liste = []
-            for name_x in new_liste:
-                for name_g,g in self.get_generators():
-                    name_product = self.mult(name_g,name_x)
-                    name_imageproduct = self.mult(full_mapping[name_g],full_mapping[name_x])
-                    if not name_product in full_mapping:
-                        added_liste.append(name_product)
-                        full_mapping[name_product] = name_imageproduct
-                    else:
-                        ## If the generated element already exists, we check that its existing image corresponds
-                        ## to the image which has just been calculated
-                        if not full_mapping[name_product] == name_imageproduct:
-                            ## We have a multi-valued function so the algorithm stops there
-                            return (False,None)
-            new_liste = added_liste[:]
-
-        if not len(set(full_mapping.values()))==len(self.morphisms):
-            return (False,None)
-        else:
-            if full_map:
-                return (True,full_mapping)
-            else:
-                return (True,None)
 
     def is_simplytransitive(self):
         """Checks if the monoid action is simply transitive.
