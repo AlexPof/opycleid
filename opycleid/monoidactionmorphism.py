@@ -5,7 +5,96 @@
 ###
 
 import numpy as np
-from .categoryaction import MonoidAction, CatMorphism
+from .categoryaction import CategoryAction, MonoidAction, CatMorphism
+
+class CategoryMorphism(object):
+    def __init__(self,cat_action_1,cat_action_2,object_mapping,morphism_mapping):
+        if not isinstance(cat_action_1,CategoryAction):
+           raise Exception("Source is not a valid CategoryAction class\n")
+        if not isinstance(cat_action_2,CategoryAction):
+            raise Exception("Target is not a valid CategoryAction class\n")
+        self.cat_action_1 = cat_action_1
+        self.cat_action_2 = cat_action_2
+        self.object_mapping = object_mapping
+        self.morphism_mapping = morphism_mapping
+
+    def get_image_object(self,object_name):
+        return self.object_mapping[object_name]
+
+    def get_image_morphism(self,morphism_name):
+        return self.morphism_mapping[morphism_name]
+
+    def is_valid(self):
+
+        ## We first need that the source and targets of each morphisms
+        ## are correctly mapped, i.e. to check that for f:X->Y in the source
+        ## category, the image N(f) is a morphism from N(X) to N(Y)
+
+        for name_f,f in self.cat_action_1.get_morphisms():
+            source_name = f.source.name
+            target_name = f.target.name
+
+            image_name_f = self.get_image_morphism(name_f)
+
+            source_image_name = self.cat_action_2.morphisms[image_name_f].source.name
+            target_image_name = self.cat_action_2.morphisms[image_name_f].target.name
+            if not ((self.get_image_object(source_name)==source_image_name) and \
+                    (self.get_image_object(target_name)==target_image_name)):
+                return False
+
+        ## Then we need to check if N is an actual functor, i.e. for all
+        ## f:X->Y and g:Y->Z in the source category, we have N(gf)=N(g)N(f)
+
+        for name_f,f in self.cat_action_1.get_morphisms():
+            for name_g,g in self.cat_action_1.get_morphisms():
+                try:
+                    prod = self.cat_action_1.mult(name_g,name_f)
+                except:
+                    ## g and f are not composable, so no need to check any
+                    ## further
+                    continue
+
+                image_name_f = self.get_image_morphism(name_f)
+                image_name_g = self.get_image_morphism(name_g)
+                try:
+                    image_prod = self.cat_action_2.mult(image_name_g,image_name_f)
+                except:
+                    ## N(g) and N(f) are not composable, so this is not a functor
+                    return False
+                ## Finally we check if we indeed have N(gf)=N(g)N(f)
+                if not self.get_image_morphism(prod)==image_prod:
+                    return False
+        return True
+
+class CategoryActionMorphism(object):
+    def __init__(self,cat_action_1,cat_action_2,category_morphism,nat_transform):
+        ## Nat transform is a dictionary of CatMorphism, with keys the object
+        ## names of cat_action_1
+
+        if not isinstance(cat_action_1,CategoryAction):
+           raise Exception("Source is not a valid CategoryAction class\n")
+        if not isinstance(cat_action_2,CategoryAction):
+            raise Exception("Target is not a valid CategoryAction class\n")
+        if not isinstance(category_morphism,CategoryMorphism):
+            raise Exception("The category morphism is not a valid CategoryMorphism class\n")
+        self.cat_action_1 = cat_action_1
+        self.cat_action_2 = cat_action_2
+        self.category_morphism = category_morphism
+        self.nat_transform = nat_transform
+
+    def is_valid(self):
+        ## see def of Rel_PKNets
+        ## names of cat_action_1
+        for name_f,f in self.cat_action_1.get_morphisms():
+            source_name = f.source.name
+            target_name = f.target.name
+            nat_transform_source = self.nat_transform[source_name]
+            nat_transform_target = self.nat_transform[target_name]
+            image_name_f = self.category_morphism.get_image_morphism(name_f)
+            image_morphism = self.cat_action_2.morphisms[image_name_f]
+            if not (nat_transform_target*f)<=(image_morphism*nat_transform_source):
+                return False
+        return True
 
 class MonoidActionMorphism:
 

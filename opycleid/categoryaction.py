@@ -328,6 +328,31 @@ class CategoryAction(object):
     def get_description(self,name_f):
         return str(self.morphisms[name_f])
 
+    def get_automorphisms(self):
+        """Returns all automorphisms of the monoid as a list of dictionaries.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A list of dictionaries. Each dictionary maps the generators (the keys)
+        to their image in the monoid (the values)
+        """
+        l1 = sorted(self.generators.keys())
+        l2 = sorted(self.morphisms.keys())
+        list_automorphisms = []
+
+        ## Get all maps from the generator set to itself
+        for mapping in itertools.permutations(l2,len(l1)):
+            ## Builds a dictionary representing the map...
+            autom_dict=dict(zip(l1,mapping))
+            ## Tests if the given map of generators is indeed an automorphism...
+            if self.is_automorphism(autom_dict)[0]:
+                list_automorphisms.append(autom_dict)
+        return list_automorphisms
+
     def is_automorphism(self,autom_dict,full_map=False):
         """Checks if a given map of operations is an automorphism.
 
@@ -353,10 +378,34 @@ class CategoryAction(object):
                if full_map=True.
         """
 
+        ## First we need to check if the mapping defines a valid bijection
+        ## between objects
+
+        num_objects = len(self.get_objects())
+
+        object_mapping=[]
+        object_mapping_rev=[]
+        for f,image_f in autom_dict.items():
+            s1 = self.morphisms[f].source.name
+            s2 = self.morphisms[image_f].source.name
+            t1 = self.morphisms[f].target.name
+            t2 = self.morphisms[image_f].target.name
+            object_mapping.append((s1,s2))
+            object_mapping.append((t1,t2))
+            object_mapping_rev.append((s2,s1))
+            object_mapping_rev.append((t2,t1))
+        object_mapping = set(object_mapping)
+        object_mapping_rev = set(object_mapping_rev)
+        if (not len(object_mapping)==num_objects) or \
+           (not len(object_mapping_rev)==num_objects):
+           return (False,None)
+        full_mapping = autom_dict.copy()
+        for obj,image_obj in object_mapping:
+            full_mapping["id_"+obj] = "id_"+image_obj
 
         new_liste = self.generators.copy()
         added_liste = self.generators.copy()
-        full_mapping = autom_dict.copy()
+
 
         ## This is a variant of the monoid generation method.
         ## It generates the monoid and their images by the map of generators.
@@ -367,17 +416,20 @@ class CategoryAction(object):
             added_liste = []
             for name_x in new_liste:
                 for name_g,g in self.get_generators():
-                    name_product = self.mult(name_g,name_x)
-                    name_imageproduct = self.mult(full_mapping[name_g],full_mapping[name_x])
-                    if not name_product in full_mapping:
-                        added_liste.append(name_product)
-                        full_mapping[name_product] = name_imageproduct
-                    else:
-                        ## If the generated element already exists, we check that its existing image corresponds
-                        ## to the image which has just been calculated
-                        if not full_mapping[name_product] == name_imageproduct:
-                            ## We have a multi-valued function so the algorithm stops there
-                            return (False,None)
+                    try:
+                        name_product = self.mult(name_g,name_x)
+                        name_imageproduct = self.mult(full_mapping[name_g],full_mapping[name_x])
+                        if not name_product in full_mapping:
+                            added_liste.append(name_product)
+                            full_mapping[name_product] = name_imageproduct
+                        else:
+                            ## If the generated element already exists, we check that its existing image corresponds
+                            ## to the image which has just been calculated
+                            if not full_mapping[name_product] == name_imageproduct:
+                                ## We have a multi-valued function so the algorithm stops there
+                                return (False,None)
+                    except:
+                        pass
             new_liste = added_liste[:]
 
         if not len(set(full_mapping.values()))==len(self.morphisms):
@@ -443,33 +495,6 @@ class MonoidAction(CategoryAction):
         The unique object of the monoid.
         """
         return self.get_objects()[0]
-
-    def get_automorphisms(self):
-        """Returns all automorphisms of the monoid as a list of dictionaries.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        A list of dictionaries. Each dictionary maps the generators (the keys)
-        to their image in the monoid (the values)
-        """
-        l1 = sorted(self.generators.keys())
-        l2 = sorted(self.morphisms.keys())
-        list_automorphisms = []
-
-        ## Get all maps from the generator set to itself
-        for mapping in itertools.permutations(l2,len(l1)):
-            ## Builds a dictionary representing the map...
-            autom_dict=dict(zip(l1,mapping))
-            monoid_object_name = self.get_object()[0]
-            autom_dict["id_"+monoid_object_name] = "id_"+monoid_object_name
-            ## Tests if the given map of generators is indeed an automorphism...
-            if self.is_automorphism(autom_dict)[0]:
-                list_automorphisms.append(autom_dict)
-        return list_automorphisms
 
     def is_simplytransitive(self):
         """Checks if the monoid action is simply transitive.
