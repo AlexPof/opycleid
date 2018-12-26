@@ -976,7 +976,7 @@ class CategoryFunctor(object):
         self.generators_mapping = None
 
 
-    def set_fullmapping(object_mapping,morphism_mapping):
+    def set_fullmapping(self,object_mapping,morphism_mapping):
         """Sets the mapping of morphisms and objects between the domain and
         codomain category actions. The method checks if the given mappings are
         valid and returns the corresponding True/False values.
@@ -1106,6 +1106,19 @@ class CategoryFunctor(object):
         """
         return self.morphisms_mapping[morphism_name]
 
+    def get_morphism_mapping(self):
+        """Gets the mapping of a morphisms by the category functor.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A dictionary representing the mapping of the morphisms.
+        """
+        return self.morphisms_mapping
+
     def is_valid(self):
         """Checks if the specified functor is a valid one.
 
@@ -1189,8 +1202,35 @@ class CategoryFunctor(object):
 
         return True
 
+    def __mul__(self,cat_functor):
+        """Compose two category functors
+        Overloads the '*' operator of Python
+
+        Parameters
+        ----------
+        cat_functor : an instance of CategoryFunctor
+
+        Returns
+        -------
+        The product self * cat_functor. Raises an exception if the two morphisms
+        are not composable
+        """
+        if not cat_functor.cat_action_2==self.cat_action_1:
+            raise Exception("Functors are not composable")
+
+
+        new_cat_functor =  CategoryFunctor(cat_functor.cat_action_1,
+                                           self.cat_action_2)
+        gen_mapping = {}
+        for name_g,g in cat_functor.cat_action_1.get_generators():
+            image_name_g = cat_functor.morphisms_mapping[name_g]
+            gen_mapping[name_g] = self.morphisms_mapping[image_name_g]
+        new_cat_functor.set_from_generator_mapping(gen_mapping)
+
+        return new_cat_functor
+
 class CategoryActionFunctor(object):
-    def __init__(self,cat_action_1,cat_action_2,category_morphism,nat_transform):
+    def __init__(self,cat_action_1,cat_action_2,category_functor,nat_transform):
         """Instantiates a CategoryActionFunctor class, i.e. a functor from one
         category action S:C->Rel to another S':C'->Rel. This corresponds to the
         data of a functor N: C->C' along with a natural transformation
@@ -1201,7 +1241,7 @@ class CategoryActionFunctor(object):
         cat_action_1, cat_action_2: instances of CategoryAction, the domain
         and codomain of the category action functor.
 
-        category_morphism: an instance of CategoryFunctor, the functor N:C->C'.
+        category_functor: an instance of CategoryFunctor, the functor N:C->C'.
 
         nat_transform: a dictionary representing the natural transformation
                        eta:S->S'N, where:
@@ -1221,11 +1261,11 @@ class CategoryActionFunctor(object):
            raise Exception("Source is not a valid CategoryAction class\n")
         if not isinstance(cat_action_2,CategoryAction):
             raise Exception("Target is not a valid CategoryAction class\n")
-        if not isinstance(category_morphism,CategoryFunctor):
+        if not isinstance(category_functor,CategoryFunctor):
             raise Exception("The category morphism is not a valid CategoryFunctor class\n")
         self.cat_action_1 = cat_action_1
         self.cat_action_2 = cat_action_2
-        self.category_morphism = category_morphism
+        self.category_functor = category_functor
         self.nat_transform = nat_transform
 
     def is_valid(self):
@@ -1236,7 +1276,7 @@ class CategoryActionFunctor(object):
            two functors F and G, this means that there should be a 2-morphism
            from N_Y*F(f) to G(f)*N_X (i.e. the relation N_Y*F(f) is included in
            G(f)*N_X) for all morphisms f.
-           
+
         Parameters
         ----------
         None
@@ -1245,7 +1285,7 @@ class CategoryActionFunctor(object):
         -------
         True if the given category action functor is valid, False otherwise
         """
-        if not self.category_morphism.is_valid():
+        if not self.category_functor.is_valid():
             return False
 
         ## see def of Rel_PKNets
@@ -1255,8 +1295,38 @@ class CategoryActionFunctor(object):
             target_name = f.target.name
             nat_transform_source = self.nat_transform[source_name]
             nat_transform_target = self.nat_transform[target_name]
-            image_name_f = self.category_morphism.get_image_morphism(name_f)
+            image_name_f = self.category_functor.get_image_morphism(name_f)
             image_morphism = self.cat_action_2.morphisms[image_name_f]
             if not (nat_transform_target*f)<=(image_morphism*nat_transform_source):
                 return False
         return True
+
+    def __mul__(self,cat_action_functor):
+        """Compose two category action functors
+        Overloads the '*' operator of Python
+
+        Parameters
+        ----------
+        cat_action_functor : an instance of CategoryActionFunctor
+
+        Returns
+        -------
+        The product self * cat_action_functor. Raises an exception if the two morphisms
+        are not composable
+        """
+        if not cat_action_functor.cat_action_2==self.cat_action_1:
+            raise Exception("Category Action Functors are not composable")
+
+        new_cat_functor = self.category_functor*cat_action_functor.category_functor
+
+        new_nat_transform = {}
+        for obj,component in cat_action_functor.nat_transform.items():
+            image_obj = component.target.name
+            new_nat_transform[obj] = self.nat_transform[image_obj]*component
+
+        new_cat_action_functor =  CategoryActionFunctor(cat_action_functor.cat_action_1,
+                                                        self.cat_action_2,
+                                                        new_cat_functor,
+                                                        new_nat_transform)
+
+        return new_cat_action_functor
