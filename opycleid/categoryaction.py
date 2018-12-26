@@ -6,6 +6,7 @@
 
 import numpy as np
 import itertools
+import time
 
 class CatObject(object):
     def __init__(self,name,elements):
@@ -346,99 +347,15 @@ class CategoryAction(object):
 
         ## Get all maps from the generator set to itself
         for mapping in itertools.permutations(l2,len(l1)):
-            ## Builds a dictionary representing the map...
-            autom_dict=dict(zip(l1,mapping))
-            ## Tests if the given map of generators is indeed an automorphism...
-            if self.is_automorphism(autom_dict)[0]:
-                list_automorphisms.append(autom_dict)
+            ## Builds a dictionary representing the generator mapping
+            gen_mapping=dict(zip(l1,mapping))
+
+            N = CategoryFunctor(self,self)
+            if N.set_from_generator_mapping(gen_mapping):
+                ## Tests if the given map of generators is indeed an automorphism...
+                if N.is_automorphism():
+                    list_automorphisms.append(N)
         return list_automorphisms
-
-    def is_automorphism(self,autom_dict,full_map=False):
-        """Checks if a given map of operations is an automorphism.
-
-        Parameters
-        ----------
-        autom_dict : dictionary, whose keys are generators of the category,
-                    and values are the image of the generators in the category
-                    by the map. The dictionary should also contain the mapping
-                    of the identity morphisms for each object on identity
-                    morphisms, as a way to encode the bijective mapping of
-                    objects.
-
-        full_map :  if True, returns the full mapping of all the operations in
-                    the monoid as a dictionary.
-
-        Returns
-        -------
-        A tuple (valid,fullmap) where:
-            - valid is a boolean indicating if the map defined by autom_dict
-               is an automorphism
-            - fullmap is None if full_map=False, a dictionary mapping all
-               operations of the monoid (keys) to their image (values)
-               if full_map=True.
-        """
-
-        ## First we need to check if the mapping defines a valid bijection
-        ## between objects
-
-        num_objects = len(self.get_objects())
-
-        object_mapping=[]
-        object_mapping_rev=[]
-        for f,image_f in autom_dict.items():
-            s1 = self.morphisms[f].source.name
-            s2 = self.morphisms[image_f].source.name
-            t1 = self.morphisms[f].target.name
-            t2 = self.morphisms[image_f].target.name
-            object_mapping.append((s1,s2))
-            object_mapping.append((t1,t2))
-            object_mapping_rev.append((s2,s1))
-            object_mapping_rev.append((t2,t1))
-        object_mapping = set(object_mapping)
-        object_mapping_rev = set(object_mapping_rev)
-        if (not len(object_mapping)==num_objects) or \
-           (not len(object_mapping_rev)==num_objects):
-           return (False,None)
-        full_mapping = autom_dict.copy()
-        for obj,image_obj in object_mapping:
-            full_mapping["id_"+obj] = "id_"+image_obj
-
-        new_liste = self.generators.copy()
-        added_liste = self.generators.copy()
-
-
-        ## This is a variant of the monoid generation method.
-        ## It generates the monoid and their images by the map of generators.
-        ## If it does not give a multi-valued function, and if it generates the same number of elements
-        ## then it is a bijection, hence a valid automorphism
-
-        while(len(added_liste)>0):
-            added_liste = []
-            for name_x in new_liste:
-                for name_g,g in self.get_generators():
-                    try:
-                        name_product = self.mult(name_g,name_x)
-                        name_imageproduct = self.mult(full_mapping[name_g],full_mapping[name_x])
-                        if not name_product in full_mapping:
-                            added_liste.append(name_product)
-                            full_mapping[name_product] = name_imageproduct
-                        else:
-                            ## If the generated element already exists, we check that its existing image corresponds
-                            ## to the image which has just been calculated
-                            if not full_mapping[name_product] == name_imageproduct:
-                                ## We have a multi-valued function so the algorithm stops there
-                                return (False,None)
-                    except:
-                        pass
-            new_liste = added_liste[:]
-
-        if not len(set(full_mapping.values()))==len(self.morphisms):
-            return (False,None)
-        else:
-            if full_map:
-                return (True,full_mapping)
-            else:
-                return (True,None)
 
 class MonoidAction(CategoryAction):
     """Defines a monoid action,
@@ -692,4 +609,186 @@ class MonoidAction(CategoryAction):
                 t = self.mult(m,name_f)
                 if not t in S:
                     return False
+        return True
+
+
+class CategoryFunctor(object):
+    def __init__(self,cat_action_1,cat_action_2):
+        if not isinstance(cat_action_1,CategoryAction):
+           raise Exception("Source is not a valid CategoryAction class\n")
+        if not isinstance(cat_action_2,CategoryAction):
+            raise Exception("Target is not a valid CategoryAction class\n")
+        self.cat_action_1 = cat_action_1
+        self.cat_action_2 = cat_action_2
+        self.object_mapping = None
+        self.morphisms_mapping = None
+        self.generators_mapping = None
+
+
+    def set_fullmapping(object_mapping,morphism_mapping):
+        self.object_mapping = object_mapping
+        self.morphisms_mapping = morphism_mapping
+        self.generators_mapping = {}
+        for name_f,f in self.cat_action_1.get_generators():
+            self.generators_mapping[name_f] = morphism_mapping[name_f]
+        return self.is_valid()
+
+    def set_from_generator_mapping(self,gen_mapping):
+
+        if not gen_mapping.keys()==self.cat_action_1.generators.keys():
+            return False
+
+        ## First we need to check if the mapping defines a valid mapping
+        ## between objects
+        num_objects = len(self.cat_action_1.get_objects())
+
+        object_mapping=[]
+        for f,image_f in gen_mapping.items():
+            s1 = self.cat_action_1.morphisms[f].source.name
+            s2 = self.cat_action_2.morphisms[image_f].source.name
+            t1 = self.cat_action_1.morphisms[f].target.name
+            t2 = self.cat_action_2.morphisms[image_f].target.name
+            object_mapping.append((s1,s2))
+            object_mapping.append((t1,t2))
+        object_mapping = set(object_mapping)
+        if not len(object_mapping)==num_objects:
+            return False
+
+        full_mapping = gen_mapping.copy()
+        for obj,image_obj in object_mapping:
+            full_mapping["id_"+obj] = "id_"+image_obj
+
+        new_liste = self.cat_action_1.generators.copy()
+        added_liste = self.cat_action_1.generators.copy()
+
+        ## This is a variant of the category action generation method.
+        ## It generates the category and their images by the map of generators.
+        ## If it does not give a multi-valued function, we get the corresponding
+        ## functor.
+
+        while(len(added_liste)>0):
+            added_liste = []
+            for name_x in new_liste:
+                for name_g,g in self.cat_action_1.get_generators():
+                    try:
+                        name_product = self.cat_action_1.mult(name_g,name_x)
+                        name_imageproduct = self.cat_action_2.mult(full_mapping[name_g],full_mapping[name_x])
+                        if not name_product in full_mapping:
+                            added_liste.append(name_product)
+                            full_mapping[name_product] = name_imageproduct
+                        else:
+                            ## If the generated element already exists, we check that its existing image corresponds
+                            ## to the image which has just been calculated
+                            if not full_mapping[name_product] == name_imageproduct:
+                                ## We have a multi-valued function so the algorithm stops there
+                                return False
+                    except:
+                        pass
+            new_liste = added_liste[:]
+
+        self.generators_mapping = gen_mapping.copy()
+        self.object_mapping = dict(object_mapping)
+        self.morphisms_mapping = full_mapping.copy()
+
+        ## By construction, this is functorial, so there is no need to check
+        ## with the is_valid() method
+        return True
+
+    def get_image_object(self,object_name):
+        return self.object_mapping[object_name]
+
+    def get_image_morphism(self,morphism_name):
+        return self.morphisms_mapping[morphism_name]
+
+    def is_valid(self):
+        ## We first need that the source and targets of each morphisms
+        ## are correctly mapped, i.e. to check that for f:X->Y in the source
+        ## category, the image N(f) is a morphism from N(X) to N(Y)
+
+        for name_f,f in self.cat_action_1.get_morphisms():
+            source_name = f.source.name
+            target_name = f.target.name
+
+            image_name_f = self.get_image_morphism(name_f)
+
+            source_image_name = self.cat_action_2.morphisms[image_name_f].source.name
+            target_image_name = self.cat_action_2.morphisms[image_name_f].target.name
+            if not ((self.get_image_object(source_name)==source_image_name) and \
+                    (self.get_image_object(target_name)==target_image_name)):
+                return False
+
+        ## Then we need to check if N is an actual functor, i.e. for all
+        ## f:X->Y and g:Y->Z in the source category, we have N(gf)=N(g)N(f)
+
+        for name_f,f in self.cat_action_1.get_morphisms():
+            for name_g,g in self.cat_action_1.get_morphisms():
+                try:
+                    prod = self.cat_action_1.mult(name_g,name_f)
+                except:
+                    ## g and f are not composable, so no need to check any
+                    ## further
+                    continue
+
+                image_name_f = self.get_image_morphism(name_f)
+                image_name_g = self.get_image_morphism(name_g)
+                try:
+                    image_prod = self.cat_action_2.mult(image_name_g,image_name_f)
+                except:
+                    ## N(g) and N(f) are not composable, so this is not a functor
+                    return False
+                ## Finally we check if we indeed have N(gf)=N(g)N(f)
+                if not self.get_image_morphism(prod)==image_prod:
+                    return False
+        return True
+
+    def is_automorphism(self):
+
+        if not self.cat_action_1 == self.cat_action_2:
+            return False
+
+        ## We first need to check that the object mapping is bijective
+
+        num_objects = len(self.cat_action_1.get_objects())
+        if not (len(set(self.object_mapping.keys()))==num_objects and \
+               len(set(self.object_mapping.values()))==num_objects):
+           return False
+
+        ## Then we need to check if the morphism mapping is bijective
+
+        num_morphisms = len(self.cat_action_1.get_morphisms())
+
+        if not (len(set(self.morphisms_mapping.keys()))==num_morphisms and \
+               len(set(self.morphisms_mapping.values()))==num_morphisms):
+           return False
+
+        return True
+
+class CategoryActionFunctor(object):
+    def __init__(self,cat_action_1,cat_action_2,category_morphism,nat_transform):
+        ## Nat transform is a dictionary of CatMorphism, with keys the object
+        ## names of cat_action_1
+
+        if not isinstance(cat_action_1,CategoryAction):
+           raise Exception("Source is not a valid CategoryAction class\n")
+        if not isinstance(cat_action_2,CategoryAction):
+            raise Exception("Target is not a valid CategoryAction class\n")
+        if not isinstance(category_morphism,CategoryFunctor):
+            raise Exception("The category morphism is not a valid CategoryFunctor class\n")
+        self.cat_action_1 = cat_action_1
+        self.cat_action_2 = cat_action_2
+        self.category_morphism = category_morphism
+        self.nat_transform = nat_transform
+
+    def is_valid(self):
+        ## see def of Rel_PKNets
+        ## names of cat_action_1
+        for name_f,f in self.cat_action_1.get_morphisms():
+            source_name = f.source.name
+            target_name = f.target.name
+            nat_transform_source = self.nat_transform[source_name]
+            nat_transform_target = self.nat_transform[target_name]
+            image_name_f = self.category_morphism.get_image_morphism(name_f)
+            image_morphism = self.cat_action_2.morphisms[image_name_f]
+            if not (nat_transform_target*f)<=(image_morphism*nat_transform_source):
+                return False
         return True
