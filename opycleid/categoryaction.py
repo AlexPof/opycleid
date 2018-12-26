@@ -10,45 +10,159 @@ import time
 
 class CatObject(object):
     def __init__(self,name,elements):
+        """Initializes a category object (set)
+
+        Parameters
+        ----------
+        name: a string representing the name of the object
+        elements: a list of strings representing the elements of the set
+
+        Returns
+        -------
+        None
+        """
         self.name = name
         self.dict_elem2idx = dict([(x,i) for i,x in enumerate(elements)])
         self.dict_idx2elem = dict([(i,x) for i,x in enumerate(elements)])
 
     def get_idx_by_name(self,elem):
+        """Returns the index of the given element
+
+        Parameters
+        ----------
+        elem: the name of the element
+
+        Returns
+        -------
+        The index of the element in the set
+        """
         if not elem in self.dict_elem2idx:
             raise Exception("The specified element cannot be found")
         return self.dict_elem2idx.get(elem)
 
     def get_name_by_idx(self,idx):
+        """Returns the name of the given element
+
+        Parameters
+        ----------
+        idx: the index of the element in the set
+
+        Returns
+        -------
+        The name of the element
+        """
         return self.dict_idx2elem.get(idx)
 
     def get_elements(self):
+        """Returns the list of the elements in this object
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        The list of element names in this object
+        """
         return sorted(self.dict_elem2idx.keys())
 
     def get_cardinality(self):
+        """Returns the cardinality of this object (set)
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        An int corresponding to the number of elements in this object
+        """
         return len(self.dict_idx2elem)
 
     def is_in(self,elem):
+        """Checks if a given element is in this object
+
+        Parameters
+        ----------
+        elem: the name of the element to be checked
+
+        Returns
+        -------
+        True if the element is inside the set, False otherwise
+        """
         return elem in self.dict_elem2idx
 
 class CatMorphism(object):
     def __init__(self,name,source,target):
+        """Initializes a category morphism between two objects
+
+        Parameters
+        ----------
+        name: a string representing the name of the morphism
+        source: an instance of CatObject representing the domain of the morphism
+        target: an instance of CatObject representing the codomain of
+                the morphism
+
+        Returns
+        -------
+        None
+        """
+        if not isinstance(source,CatObject):
+           raise Exception("Source is not a valid CatObject class\n")
+        if not isinstance(target,CatObject):
+            raise Exception("Target is not a valid CatObject class\n")
         self.name = name
         self.source = source
         self.target = target
 
     def set_name(self,name):
+        """Sets the name of the morphism
+
+        Parameters
+        ----------
+        name: a string representing the new name of the morphism
+
+        Returns
+        -------
+        None
+        """
         if not len(name):
             raise Exception("The specified morphism name is empty")
         self.name = name
 
     def set_to_identity(self):
+        """Sets the morphism to be an identity morphism. The domain and codomain
+        must be identical.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         if not (self.source==self.target):
             raise Exception("Source and target should be identical")
         card_source = self.source.get_cardinality()
         self.matrix = np.eye(card_source,dtype=bool)
 
     def set_mapping(self,mapping):
+        """Sets the mapping of elements between the domain and the codomain
+
+        Parameters
+        ----------
+        mapping: a dictionary, with:
+                - keys: the element names in the domain of the morphism
+                - values: a list of element names in the codomain of the morphism
+
+        The mapping can be one-on-many as we are working in the category Rel of
+        finite sets and relations
+
+        Returns
+        -------
+        None
+        """
         card_source = self.source.get_cardinality()
         card_target = self.target.get_cardinality()
         self.matrix = np.zeros((card_target,card_source),dtype=bool)
@@ -59,18 +173,61 @@ class CatMorphism(object):
                 self.matrix[id_image,id_elem] = True
 
     def set_mapping_matrix(self,matrix):
+        """Sets the mapping of elements between the domain and the codomain
+
+        Parameters
+        ----------
+        matrix: a boolean matrix (m,n), where m is the cardinality of the codomain
+        and n the cardinality of the domain, indicating the image of the elements.
+
+        Returns
+        -------
+        None
+        """
         self.matrix = matrix
 
     def get_mapping(self):
+        """Retrieves the mapping in the form of a dictionary
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A dictionary, with:
+                - keys: the element names in the domain of the morphism
+                - values: a list of element names in the codomain of the morphism
+        """
         dest_cardinality,source_cardinality = self.matrix.shape
         return dict([(self.source.get_name_by_idx(i),
                 [self.target.get_name_by_idx(x) for x in np.where(self.matrix[:,i])[0]]) \
                 for i in range(source_cardinality)])
 
     def get_mapping_matrix(self):
+        """Retrieves the mapping in matrix form
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A boolean matrix representing the morphism in Rel
+        """
         return self.matrix
 
     def copy(self):
+        """Copy the current morphism
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A new instance of CatMorphism with the same domain, codomain, and mapping
+        """
         U = CatMorphism(self.name,self.source,self.target)
         U.set_mapping_matrix(self.get_mapping_matrix())
 
@@ -196,7 +353,7 @@ class CatMorphism(object):
 
         Returns
         -------
-        True if 'self' is included in 'morphism'
+        True if 'self' is strictly included in 'morphism'
         """
 
         return (self<=morphism) and (not self==morphism)
@@ -204,12 +361,33 @@ class CatMorphism(object):
 
 class CategoryAction(object):
     def __init__(self):
+        """Instantiates a CategoryAction class
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         self.objects={}
         self.generators={}
         self.morphisms={}
         self.equivalences=[]
 
     def set_objects(self,list_objects):
+        """Sets the objects constituting the category action.
+
+        Parameters
+        ----------
+        list_objects: a list of CatObject classes representing the objects in
+        the category.
+
+        Returns
+        -------
+        None
+        """
         self.objects={}
         self.generators={}
         self.morphisms={}
@@ -218,29 +396,112 @@ class CategoryAction(object):
             self.objects[catobject.name] = catobject
 
     def get_objects(self):
+        """Returns the objects in the category action.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A list of pairs (x,y), where:
+            - x is the name of the object
+            - y is the corresponding instance of CatObject
+        """
         return list(sorted(self.objects.items()))
 
     def get_morphisms(self):
+        """Returns the morphisms in the category action.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A list of pairs (x,y), where:
+            - x is the name of the morphism
+            - y is the corresponding instance of CatMorphism
+        """
         return list(sorted(self.morphisms.items()))
 
     def get_generators(self):
+        """Returns the generators in the category action.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A list of pairs (x,y), where:
+            - x is the name of the generator
+            - y is the corresponding instance of CatMorphism
+        """
         return list(sorted(self.generators.items()))
 
     def add_generators(self,list_morphisms):
+        """Add generators to the category action.
+
+        Parameters
+        ----------
+        list_morphisms: a list of CatMorphism instances representing the
+                        generator morphisms to be added.
+
+        Returns
+        -------
+        None
+        """
         for catmorphism in list_morphisms:
             self.generators[catmorphism.name] = catmorphism
 
     def add_morphisms(self,list_morphisms):
+        """Add morphisms to the category action.
+
+        Parameters
+        ----------
+        list_morphisms: a list of CatMorphism instances representing the
+                        morphisms to be added.
+
+        Returns
+        -------
+        None
+        """
         for catmorphism in list_morphisms:
             self.morphisms[catmorphism.name] = catmorphism
 
     def add_identities(self):
+        """Automatically add identity morphisms on each object of the category
+        action
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         for name,catobject in sorted(self.objects.items()):
             identity_morphism = CatMorphism("id_"+name,catobject,catobject)
             identity_morphism.set_to_identity()
             self.add_morphisms([identity_morphism])
 
     def generate_category(self):
+        """Generates all morphisms in the category based on the given list of
+        generators. The generation proceeds by successive multiplication of
+        generators and morphisms until completion. This is suited to small
+        category action, but the performance would be prohibitive for very
+        large categories containing many morphisms.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         self.morphisms = self.generators.copy()
         self.add_identities()
         new_liste = self.generators.copy()
@@ -264,23 +525,69 @@ class CategoryAction(object):
             new_liste = added_liste
 
     def mult(self,name_g,name_f):
+        """Multiplies two morphisms and returns the corresponding morphism.
+
+        Parameters
+        ----------
+        name_g, name_f: a string representing the names of the morphisms
+                        to be multiplied.
+
+        Returns
+        -------
+        A string representing the name of the morphism corresponding
+        to name_g*name_f.
+        """
         new_morphism = self.morphisms[name_g]*self.morphisms[name_f]
         return [name_x for name_x,x in self.get_morphisms() if x==new_morphism][0]
 
-    def apply_operation(self,name_f,elem):
-        return self.morphisms[name_f]>>elem
+    def apply_operation(self,name_f,element):
+        """Applies a morphism to a given element.
 
-    def get_operation(self,elem1,elem2):
+        Parameters
+        ----------
+        name_f: a string representing the name of the morphisms to be applied.
+        elem: a string representing the name of the element.
+
+        Returns
+        -------
+        A list of strings representing the images of elem by name_f
+        """
+        return self.morphisms[name_f]>>element
+
+    def get_operation(self,element_1,element_2):
+        """Returns the operations taking the element element_1 to the element
+        element_2.
+
+        Parameters
+        ----------
+        element_1,element_2 : strings representing the name of the elements.
+
+        Returns
+        -------
+        A list of strings representing the morphisms f such that element_2 is
+        an image of element_1 by f.
+        """
         res = []
         for name_f,f in self.get_morphisms():
             try:
-                if elem2 in f>>elem1:
+                if element_2 in f>>element_1:
                     res.append(name_f)
             except:
                 pass
         return res
 
     def rename_operation(self,name_f,new_name):
+        """Renames a morphism in the category
+
+        Parameters
+        ----------
+        name_f: a string representing the name of the morphism to be renamed.
+        new_name: a string representing the new name of the morphism.
+
+        Returns
+        -------
+        None
+        """
         if not name_f in self.morphisms:
             raise Exception("The specified operation cannot be found")
         new_op = self.morphisms[name_f].copy()
@@ -289,6 +596,17 @@ class CategoryAction(object):
         self.morphisms[new_name] = new_op
 
     def rewrite_operations(self):
+        """Rewrites morphism names in the category action by trying to reduce
+        repeated substrings.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         operation_names = sorted(self.morphisms.keys())
         for op_name in operation_names:
             self.rename_operation(op_name,self.rewrite(op_name))
@@ -299,6 +617,17 @@ class CategoryAction(object):
         self.equivalences = equivalences_new
 
     def rewrite(self,the_string):
+        """Rewrites a string by trying to reduce repeated patterns of the
+        category action generator names.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         if "id" in the_string:
             return the_string
 
@@ -327,6 +656,16 @@ class CategoryAction(object):
 
 
     def get_description(self,name_f):
+        """Gets a string description of a given morphism.
+
+        Parameters
+        ----------
+        name_f: a string representing the name of the morphism
+
+        Returns
+        -------
+        A string representing the corresponding morphism
+        """
         return str(self.morphisms[name_f])
 
     def get_automorphisms(self):
@@ -338,8 +677,7 @@ class CategoryAction(object):
 
         Returns
         -------
-        A list of dictionaries. Each dictionary maps the generators (the keys)
-        to their image in the monoid (the values)
+        A list of CategoryFunctor instances corresponding to an automorphism.
         """
         l1 = sorted(self.generators.keys())
         l2 = sorted(self.morphisms.keys())
@@ -614,6 +952,19 @@ class MonoidAction(CategoryAction):
 
 class CategoryFunctor(object):
     def __init__(self,cat_action_1,cat_action_2):
+        """Instantiates a CategoryFunctor class, i.e. a functor from one category
+        to another. Although we are dealing with category action, a CategoryFunctor
+        object only focuses on morphisms and their images.
+
+        Parameters
+        ----------
+        cat_action_1, cat_action_2: instances of CategoryAction, the domain
+        and codomain of the functor
+
+        Returns
+        -------
+        None
+        """
         if not isinstance(cat_action_1,CategoryAction):
            raise Exception("Source is not a valid CategoryAction class\n")
         if not isinstance(cat_action_2,CategoryAction):
@@ -626,6 +977,24 @@ class CategoryFunctor(object):
 
 
     def set_fullmapping(object_mapping,morphism_mapping):
+        """Sets the mapping of morphisms and objects between the domain and
+        codomain category actions. The method checks if the given mappings are
+        valid and returns the corresponding True/False values.
+
+        Parameters
+        ----------
+        object_mapping: a dictionary, the keys of which are object names in the
+                        source category action, the values of which are object
+                        names in the target category action.
+
+        morphism_mapping: a dictionary, the keys of which are morphism names in
+                         the source category action, the values of which are
+                         morphism names in the target category action.
+
+        Returns
+        -------
+        True if the given mappings are valid, False otherwise.
+        """
         self.object_mapping = object_mapping
         self.morphisms_mapping = morphism_mapping
         self.generators_mapping = {}
@@ -634,6 +1003,21 @@ class CategoryFunctor(object):
         return self.is_valid()
 
     def set_from_generator_mapping(self,gen_mapping):
+        """Sets the mapping of morphisms and objects between the domain and
+        codomain category actions from a mapping of the generators. The method
+        checks if the given mappings are valid and returns the corresponding
+        True/False values.
+
+        Parameters
+        ----------
+        gen_mapping: a dictionary, the keys of which are generator names in the
+                        source category action, the values of which are morphism
+                        names in the target category action.
+
+        Returns
+        -------
+        True if the given mappings is valid, False otherwise.
+        """
 
         if not gen_mapping.keys()==self.cat_action_1.generators.keys():
             return False
@@ -695,12 +1079,44 @@ class CategoryFunctor(object):
         return True
 
     def get_image_object(self,object_name):
+        """Gets the image of an object by the category functor.
+
+        Parameters
+        ----------
+        object_name: a string representing the name of an object in the domain
+        category of this functor.
+
+        Returns
+        -------
+        A string representing the image of the object by this functor.
+        """
         return self.object_mapping[object_name]
 
     def get_image_morphism(self,morphism_name):
+        """Gets the image of a morphism by the category functor.
+
+        Parameters
+        ----------
+        morphism_name: a string representing the name of a morphism in the domain
+        category of this functor.
+
+        Returns
+        -------
+        A string representing the image of the morphism by this functor.
+        """
         return self.morphisms_mapping[morphism_name]
 
     def is_valid(self):
+        """Checks if the specified functor is a valid one.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        True if the given mapping is valid, False otherwise.
+        """
         ## We first need that the source and targets of each morphisms
         ## are correctly mapped, i.e. to check that for f:X->Y in the source
         ## category, the image N(f) is a morphism from N(X) to N(Y)
@@ -742,6 +1158,16 @@ class CategoryFunctor(object):
         return True
 
     def is_automorphism(self):
+        """Checks if the specified functor is an automorphism.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        True if the given mapping is an automorphism, False otherwise.
+        """
 
         if not self.cat_action_1 == self.cat_action_2:
             return False
@@ -765,6 +1191,29 @@ class CategoryFunctor(object):
 
 class CategoryActionFunctor(object):
     def __init__(self,cat_action_1,cat_action_2,category_morphism,nat_transform):
+        """Instantiates a CategoryActionFunctor class, i.e. a functor from one
+        category action S:C->Rel to another S':C'->Rel. This corresponds to the
+        data of a functor N: C->C' along with a natural transformation
+        eta: S->S'N.
+
+        Parameters
+        ----------
+        cat_action_1, cat_action_2: instances of CategoryAction, the domain
+        and codomain of the category action functor.
+
+        category_morphism: an instance of CategoryFunctor, the functor N:C->C'.
+
+        nat_transform: a dictionary representing the natural transformation
+                       eta:S->S'N, where:
+                       - the keys are object names in the source category action
+                       S:C->Rel
+                       - the values are instances of CatMorphism from the object
+                       to their images.
+
+        Returns
+        -------
+        None
+        """
         ## Nat transform is a dictionary of CatMorphism, with keys the object
         ## names of cat_action_1
 
@@ -780,6 +1229,25 @@ class CategoryActionFunctor(object):
         self.nat_transform = nat_transform
 
     def is_valid(self):
+        """Checks if the given mappings are valid.
+           In particular, the commutativity condition of the natural
+           transformation should be respected.
+           In the 2-category Rel, given a lax natural transformation N between
+           two functors F and G, this means that there should be a 2-morphism
+           from N_Y*F(f) to G(f)*N_X (i.e. the relation N_Y*F(f) is included in
+           G(f)*N_X) for all morphisms f.
+           
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        True if the given category action functor is valid, False otherwise
+        """
+        if not self.category_morphism.is_valid():
+            return False
+
         ## see def of Rel_PKNets
         ## names of cat_action_1
         for name_f,f in self.cat_action_1.get_morphisms():
