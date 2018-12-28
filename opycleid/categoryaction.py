@@ -1229,6 +1229,22 @@ class CategoryFunctor(object):
 
         return new_cat_functor
 
+    def __eq__(self,cat_functor):
+        """Test if two functors are equal.
+
+        Parameters
+        ----------
+        cat_functor : an instance of CategoryFunctor
+
+        Returns
+        -------
+        Returns True if the morphisms mappings are identical, False otherwise.
+        """
+        if not isinstance(cat_functor,CategoryFunctor):
+           raise Exception("RHS is not a category functor\n")
+
+        return cat_functor.morphisms_mapping==self.morphisms_mapping
+
 class CategoryActionFunctor(object):
     def __init__(self,cat_action_1,cat_action_2,category_functor,nat_transform):
         """Instantiates a CategoryActionFunctor class, i.e. a functor from one
@@ -1330,3 +1346,19 @@ class CategoryActionFunctor(object):
                                                         new_nat_transform)
 
         return new_cat_action_functor
+
+    def __eq__(self,cat_action_functor):
+        """Tests if two category action functors are equal
+
+        Parameters
+        ----------
+        cat_action_functor : an instance of CategoryActionFunctor
+
+        Returns
+        -------
+        Returns True if both the category functor, and the natural transformation
+        are equal.
+        """
+
+        return self.category_functor==cat_action_functor.category_functor and \
+               self.nat_transform==cat_action_functor.nat_transform
