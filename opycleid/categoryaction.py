@@ -1106,6 +1106,19 @@ class CategoryFunctor(object):
         """
         return self.morphisms_mapping[morphism_name]
 
+    def get_object_mapping(self):
+        """Gets the mapping of objects by the category functor.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A dictionary representing the mapping of the objects.
+        """
+        return self.object_mapping
+
     def get_morphism_mapping(self):
         """Gets the mapping of a morphisms by the category functor.
 
