@@ -27,7 +27,8 @@ class PKNet(object):
 
     def set_mappings(self,transf_dict,elements_dict):
         F = CategoryFunctor(self.diagram_action,self.cat_action)
-        F.set_from_generator_mapping(transf_dict)
+        if not F.set_from_generator_mapping(transf_dict):
+            raise Exception("Edge mapping is not correct")
 
         phi = {}
         object_mapping = F.get_object_mapping()
@@ -42,6 +43,8 @@ class PKNet(object):
             phi[name_obj] = phi_component
 
         self.cat_action_functor = CategoryActionFunctor(self.diagram_action,self.cat_action,F,phi)
+        if not self.cat_action_functor.is_valid():
+            raise Exception("Element mapping is not correct")
 
     def get_edge_mapping(self):
         return self.cat_action_functor.category_functor.get_morphism_mapping()
