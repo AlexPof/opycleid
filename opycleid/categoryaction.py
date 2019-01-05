@@ -951,7 +951,7 @@ class MonoidAction(CategoryAction):
 
 
 class CategoryFunctor(object):
-    def __init__(self,cat_action_1,cat_action_2):
+    def __init__(self,cat_action_source,cat_action_target):
         """Instantiates a CategoryFunctor class, i.e. a functor from one category
         to another. Although we are dealing with category action, a CategoryFunctor
         object only focuses on morphisms and their images.
@@ -965,12 +965,12 @@ class CategoryFunctor(object):
         -------
         None
         """
-        if not isinstance(cat_action_1,CategoryAction):
+        if not isinstance(cat_action_source,CategoryAction):
            raise Exception("Source is not a valid CategoryAction class\n")
-        if not isinstance(cat_action_2,CategoryAction):
+        if not isinstance(cat_action_target,CategoryAction):
             raise Exception("Target is not a valid CategoryAction class\n")
-        self.cat_action_1 = cat_action_1
-        self.cat_action_2 = cat_action_2
+        self.cat_action_source = cat_action_source
+        self.cat_action_target = cat_action_target
         self.object_mapping = None
         self.morphisms_mapping = None
         self.generators_mapping = None
@@ -998,7 +998,7 @@ class CategoryFunctor(object):
         self.object_mapping = object_mapping
         self.morphisms_mapping = morphism_mapping
         self.generators_mapping = {}
-        for name_f,f in self.cat_action_1.get_generators():
+        for name_f,f in self.cat_action_source.get_generators():
             self.generators_mapping[name_f] = morphism_mapping[name_f]
         return self.is_valid()
 
@@ -1019,19 +1019,19 @@ class CategoryFunctor(object):
         True if the given mappings is valid, False otherwise.
         """
 
-        if not gen_mapping.keys()==self.cat_action_1.generators.keys():
+        if not gen_mapping.keys()==self.cat_action_source.generators.keys():
             return False
 
         ## First we need to check if the mapping defines a valid mapping
         ## between objects
-        num_objects = len(self.cat_action_1.get_objects())
+        num_objects = len(self.cat_action_source.get_objects())
 
         object_mapping=[]
         for f,image_f in gen_mapping.items():
-            s1 = self.cat_action_1.morphisms[f].source.name
-            s2 = self.cat_action_2.morphisms[image_f].source.name
-            t1 = self.cat_action_1.morphisms[f].target.name
-            t2 = self.cat_action_2.morphisms[image_f].target.name
+            s1 = self.cat_action_source.morphisms[f].source.name
+            s2 = self.cat_action_target.morphisms[image_f].source.name
+            t1 = self.cat_action_source.morphisms[f].target.name
+            t2 = self.cat_action_target.morphisms[image_f].target.name
             object_mapping.append((s1,s2))
             object_mapping.append((t1,t2))
         object_mapping = set(object_mapping)
@@ -1042,8 +1042,8 @@ class CategoryFunctor(object):
         for obj,image_obj in object_mapping:
             full_mapping["id_"+obj] = "id_"+image_obj
 
-        new_liste = self.cat_action_1.generators.copy()
-        added_liste = self.cat_action_1.generators.copy()
+        new_liste = self.cat_action_source.generators.copy()
+        added_liste = self.cat_action_source.generators.copy()
 
         ## This is a variant of the category action generation method.
         ## It generates the category and their images by the map of generators.
@@ -1053,10 +1053,10 @@ class CategoryFunctor(object):
         while(len(added_liste)>0):
             added_liste = []
             for name_x in new_liste:
-                for name_g,g in self.cat_action_1.get_generators():
+                for name_g,g in self.cat_action_source.get_generators():
                     try:
-                        name_product = self.cat_action_1.mult(name_g,name_x)
-                        name_imageproduct = self.cat_action_2.mult(full_mapping[name_g],full_mapping[name_x])
+                        name_product = self.cat_action_source.mult(name_g,name_x)
+                        name_imageproduct = self.cat_action_target.mult(full_mapping[name_g],full_mapping[name_x])
                         if not name_product in full_mapping:
                             added_liste.append(name_product)
                             full_mapping[name_product] = name_imageproduct
@@ -1147,14 +1147,14 @@ class CategoryFunctor(object):
         ## are correctly mapped, i.e. to check that for f:X->Y in the source
         ## category, the image N(f) is a morphism from N(X) to N(Y)
 
-        for name_f,f in self.cat_action_1.get_morphisms():
+        for name_f,f in self.cat_action_source.get_morphisms():
             source_name = f.source.name
             target_name = f.target.name
 
             image_name_f = self.get_image_morphism(name_f)
 
-            source_image_name = self.cat_action_2.morphisms[image_name_f].source.name
-            target_image_name = self.cat_action_2.morphisms[image_name_f].target.name
+            source_image_name = self.cat_action_target.morphisms[image_name_f].source.name
+            target_image_name = self.cat_action_target.morphisms[image_name_f].target.name
             if not ((self.get_image_object(source_name)==source_image_name) and \
                     (self.get_image_object(target_name)==target_image_name)):
                 return False
@@ -1162,10 +1162,10 @@ class CategoryFunctor(object):
         ## Then we need to check if N is an actual functor, i.e. for all
         ## f:X->Y and g:Y->Z in the source category, we have N(gf)=N(g)N(f)
 
-        for name_f,f in self.cat_action_1.get_morphisms():
-            for name_g,g in self.cat_action_1.get_morphisms():
+        for name_f,f in self.cat_action_source.get_morphisms():
+            for name_g,g in self.cat_action_source.get_morphisms():
                 try:
-                    prod = self.cat_action_1.mult(name_g,name_f)
+                    prod = self.cat_action_source.mult(name_g,name_f)
                 except:
                     ## g and f are not composable, so no need to check any
                     ## further
@@ -1174,7 +1174,7 @@ class CategoryFunctor(object):
                 image_name_f = self.get_image_morphism(name_f)
                 image_name_g = self.get_image_morphism(name_g)
                 try:
-                    image_prod = self.cat_action_2.mult(image_name_g,image_name_f)
+                    image_prod = self.cat_action_target.mult(image_name_g,image_name_f)
                 except:
                     ## N(g) and N(f) are not composable, so this is not a functor
                     return False
@@ -1195,19 +1195,19 @@ class CategoryFunctor(object):
         True if the given mapping is an automorphism, False otherwise.
         """
 
-        if not self.cat_action_1 == self.cat_action_2:
+        if not self.cat_action_source == self.cat_action_target:
             return False
 
         ## We first need to check that the object mapping is bijective
 
-        num_objects = len(self.cat_action_1.get_objects())
+        num_objects = len(self.cat_action_source.get_objects())
         if not (len(set(self.object_mapping.keys()))==num_objects and \
                len(set(self.object_mapping.values()))==num_objects):
            return False
 
         ## Then we need to check if the morphism mapping is bijective
 
-        num_morphisms = len(self.cat_action_1.get_morphisms())
+        num_morphisms = len(self.cat_action_source.get_morphisms())
 
         if not (len(set(self.morphisms_mapping.keys()))==num_morphisms and \
                len(set(self.morphisms_mapping.values()))==num_morphisms):
@@ -1228,14 +1228,14 @@ class CategoryFunctor(object):
         The product self * cat_functor. Raises an exception if the two morphisms
         are not composable
         """
-        if not cat_functor.cat_action_2==self.cat_action_1:
+        if not cat_functor.cat_action_target==self.cat_action_source:
             raise Exception("Functors are not composable")
 
 
-        new_cat_functor =  CategoryFunctor(cat_functor.cat_action_1,
-                                           self.cat_action_2)
+        new_cat_functor =  CategoryFunctor(cat_functor.cat_action_source,
+                                           self.cat_action_target)
         gen_mapping = {}
-        for name_g,g in cat_functor.cat_action_1.get_generators():
+        for name_g,g in cat_functor.cat_action_source.get_generators():
             image_name_g = cat_functor.morphisms_mapping[name_g]
             gen_mapping[name_g] = self.morphisms_mapping[image_name_g]
         new_cat_functor.set_from_generator_mapping(gen_mapping)
@@ -1259,7 +1259,8 @@ class CategoryFunctor(object):
         return cat_functor.morphisms_mapping==self.morphisms_mapping
 
 class CategoryActionFunctor(object):
-    def __init__(self,cat_action_1,cat_action_2,category_functor,nat_transform):
+    def __init__(self,cat_action_source,cat_action_target,
+                      cat_functor,nat_transform):
         """Instantiates a CategoryActionFunctor class, i.e. a functor from one
         category action S:C->Rel to another S':C'->Rel. This corresponds to the
         data of a functor N: C->C' along with a natural transformation
@@ -1267,8 +1268,8 @@ class CategoryActionFunctor(object):
 
         Parameters
         ----------
-        cat_action_1, cat_action_2: instances of CategoryAction, the domain
-        and codomain of the category action functor.
+        cat_action_source, cat_action_target: instances of CategoryAction,
+                    the domain and codomain of the category action functor.
 
         category_functor: an instance of CategoryFunctor, the functor N:C->C'.
 
@@ -1286,15 +1287,15 @@ class CategoryActionFunctor(object):
         ## Nat transform is a dictionary of CatMorphism, with keys the object
         ## names of cat_action_1
 
-        if not isinstance(cat_action_1,CategoryAction):
+        if not isinstance(cat_action_source,CategoryAction):
            raise Exception("Source is not a valid CategoryAction class\n")
-        if not isinstance(cat_action_2,CategoryAction):
+        if not isinstance(cat_action_target,CategoryAction):
             raise Exception("Target is not a valid CategoryAction class\n")
-        if not isinstance(category_functor,CategoryFunctor):
+        if not isinstance(cat_functor,CategoryFunctor):
             raise Exception("The category morphism is not a valid CategoryFunctor class\n")
-        self.cat_action_1 = cat_action_1
-        self.cat_action_2 = cat_action_2
-        self.category_functor = category_functor
+        self.cat_action_source = cat_action_source
+        self.cat_action_target = cat_action_target
+        self.cat_functor = cat_functor
         self.nat_transform = nat_transform
 
     def is_valid(self):
@@ -1314,18 +1315,18 @@ class CategoryActionFunctor(object):
         -------
         True if the given category action functor is valid, False otherwise
         """
-        if not self.category_functor.is_valid():
+        if not self.cat_functor.is_valid():
             return False
 
         ## see def of Rel_PKNets
         ## names of cat_action_1
-        for name_f,f in self.cat_action_1.get_morphisms():
+        for name_f,f in self.cat_action_source.get_morphisms():
             source_name = f.source.name
             target_name = f.target.name
             nat_transform_source = self.nat_transform[source_name]
             nat_transform_target = self.nat_transform[target_name]
-            image_name_f = self.category_functor.get_image_morphism(name_f)
-            image_morphism = self.cat_action_2.morphisms[image_name_f]
+            image_name_f = self.cat_functor.get_image_morphism(name_f)
+            image_morphism = self.cat_action_target.morphisms[image_name_f]
             if not (nat_transform_target*f)<=(image_morphism*nat_transform_source):
                 return False
         return True
@@ -1343,18 +1344,18 @@ class CategoryActionFunctor(object):
         The product self * cat_action_functor. Raises an exception if the two morphisms
         are not composable
         """
-        if not cat_action_functor.cat_action_2==self.cat_action_1:
+        if not cat_action_functor.cat_action_target==self.cat_action_source:
             raise Exception("Category Action Functors are not composable")
 
-        new_cat_functor = self.category_functor*cat_action_functor.category_functor
+        new_cat_functor = self.cat_functor*cat_action_functor.cat_functor
 
         new_nat_transform = {}
         for obj,component in cat_action_functor.nat_transform.items():
             image_obj = component.target.name
             new_nat_transform[obj] = self.nat_transform[image_obj]*component
 
-        new_cat_action_functor =  CategoryActionFunctor(cat_action_functor.cat_action_1,
-                                                        self.cat_action_2,
+        new_cat_action_functor =  CategoryActionFunctor(cat_action_functor.cat_action_source,
+                                                        self.cat_action_target,
                                                         new_cat_functor,
                                                         new_nat_transform)
 
@@ -1373,5 +1374,5 @@ class CategoryActionFunctor(object):
         are equal.
         """
 
-        return self.category_functor==cat_action_functor.category_functor and \
+        return self.cat_functor==cat_action_functor.cat_functor and \
                self.nat_transform==cat_action_functor.nat_transform
