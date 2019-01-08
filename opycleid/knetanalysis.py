@@ -224,11 +224,56 @@ class PKNet(object):
             - and whose category action functor is the product of the initial
               category action functor by cat_action_functor
         """
-        new_PKNet = PKNet(self.cat_action_functor.cat_action_source)
+        new_PKNet = PKNet(self.cat_action_functor.cat_action_target)
         new_PKNet.diagram_action = self.diagram_action
         new_PKNet.cat_action_functor = cat_action_functor*self.cat_action_functor
 
         return new_PKNet
+
+    def local_transform(self,cat_functor,local_dict):
+        """XXXXXXXXXXXXXXXXXXXXXXXXX
+        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        XXXXXXXXXX VERIFICATION NEEDED !!! XXXXXXXXXXXXXXX
+        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        XXXXXXXXXXXXXXXXXXXXXXXXX
+        """
+
+        new_PKNet = PKNet(self.context_action)
+        new_PKNet.diagram_action = self.diagram_action
+
+        new_cat_functor = cat_functor*self.cat_action_functor.cat_functor
+        if not cat_functor.is_automorphism():
+            raise Exception("Not an automorphism")
+
+        edge_mapping = self.get_edge_mapping()
+        cat_functor_morphism_mapping = new_cat_functor.get_morphism_mapping()
+        ## Testing for the natural transformation condition
+        for name_f,f in self.diagram_action.get_morphisms():
+            source_obj_name = f.source.name
+            target_obj_name = f.target.name
+
+            image_name_f = edge_mapping[name_f]
+            if not self.context_action.mult(local_dict[target_obj_name],image_name_f) == \
+                   self.context_action.mult(cat_functor_morphism_mapping[name_f],local_dict[source_obj_name]):
+                raise Exception("Natural transformation condition not verified")
+
+        new_nat_transform = {}
+        for obj,component in self.cat_action_functor.nat_transform.items():
+            new_nat_transform[obj] = self.context_action.morphisms[local_dict[obj]]*component
+
+        new_cat_action_functor = CategoryActionFunctor(self.diagram_action,
+                                                       self.context_action,
+                                                       new_cat_functor,
+                                                       new_nat_transform
+                                                       )
+        if not new_cat_action_functor.is_valid():
+            raise Exception("Local transform is not valid")
+
+        new_PKNet.cat_action_functor = new_cat_action_functor
+
+        return new_PKNet
+
 
     def __repr__(self):
         """Returns a verbose description of the PK-Net.
