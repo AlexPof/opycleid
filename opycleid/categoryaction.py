@@ -377,7 +377,8 @@ class CategoryAction(object):
         self.equivalences=[]
 
     def set_objects(self,list_objects):
-        """Sets the objects constituting the category action.
+        """Sets the objects constituting the category action. This erases
+        all previous objects, morphisms, and generators.
 
         Parameters
         ----------
@@ -386,12 +387,20 @@ class CategoryAction(object):
 
         Returns
         -------
-        None
+        None. Checks if all objects have distinct elements, raises an Exception
+        otherwise.
         """
         self.objects={}
         self.generators={}
         self.morphisms={}
         self.equivalences=[]
+
+        all_elements = []
+        for catobject in list_objects:
+             all_elements.append(catobject.get_elements())
+        if not len(all_elements)==len(np.unique(all_elements)):
+            raise Exception("Objects must have distinct elements")
+
         for catobject in list_objects:
             self.objects[catobject.name] = catobject
 
@@ -440,8 +449,9 @@ class CategoryAction(object):
         """
         return list(sorted(self.generators.items()))
 
-    def add_generators(self,list_morphisms):
-        """Add generators to the category action.
+    def set_generators(self,list_morphisms):
+        """Set generators to the category action. This erases
+        all previous objects, morphisms, and generators.
 
         Parameters
         ----------
@@ -450,12 +460,24 @@ class CategoryAction(object):
 
         Returns
         -------
-        None
+        None. Checks if all generators have distinct names, raises an Exception
+        otherwise.
         """
+        self.objects={}
+        self.generators={}
+        self.morphisms={}
+        self.equivalences=[]
+
+        all_gennames = []
+        for catmorphism in list_morphisms:
+             all_gennames.append(catmorphism.name)
+        if not len(all_gennames)==len(np.unique(all_gennames)):
+            raise Exception("Generators must have distinct names")
+
         for catmorphism in list_morphisms:
             self.generators[catmorphism.name] = catmorphism
 
-    def add_morphisms(self,list_morphisms):
+    def _add_morphisms(self,list_morphisms):
         """Add morphisms to the category action.
 
         Parameters
@@ -470,7 +492,7 @@ class CategoryAction(object):
         for catmorphism in list_morphisms:
             self.morphisms[catmorphism.name] = catmorphism
 
-    def add_identities(self):
+    def _add_identities(self):
         """Automatically add identity morphisms on each object of the category
         action
 
@@ -485,7 +507,7 @@ class CategoryAction(object):
         for name,catobject in sorted(self.objects.items()):
             identity_morphism = CatMorphism("id_"+name,catobject,catobject)
             identity_morphism.set_to_identity()
-            self.add_morphisms([identity_morphism])
+            self._add_morphisms([identity_morphism])
 
     def generate_category(self):
         """Generates all morphisms in the category based on the given list of
@@ -503,7 +525,7 @@ class CategoryAction(object):
         None
         """
         self.morphisms = self.generators.copy()
-        self.add_identities()
+        self._add_identities()
         new_liste = self.generators.copy()
         added_liste = self.generators.copy()
         while(len(added_liste)>0):
