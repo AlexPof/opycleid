@@ -451,7 +451,7 @@ class CategoryAction(object):
 
     def set_generators(self,list_morphisms):
         """Set generators to the category action. This erases
-        all previous objects, morphisms, and generators.
+        all previous morphisms and generators.
 
         Parameters
         ----------
@@ -463,7 +463,6 @@ class CategoryAction(object):
         None. Checks if all generators have distinct names, raises an Exception
         otherwise.
         """
-        self.objects={}
         self.generators={}
         self.morphisms={}
         self.equivalences=[]
