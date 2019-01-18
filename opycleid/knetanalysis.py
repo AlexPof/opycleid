@@ -207,7 +207,7 @@ class PKNet(object):
             for op in next_ops:
                 yield list_op+[op]
 
-    def transform(self,cat_action_functor):
+    def global_transform(self,cat_action_functor):
         """Apply a category action functor and returns the corresponding new
         PK-Net.
 
@@ -231,12 +231,29 @@ class PKNet(object):
         return new_PKNet
 
     def local_transform(self,cat_functor,local_dict):
-        """XXXXXXXXXXXXXXXXXXXXXXXXX
-        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        XXXXXXXXXX VERIFICATION NEEDED !!! XXXXXXXXXXXXXXX
-        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        XXXXXXXXXXXXXXXXXXXXXXXXX
+        """Apply a local transformation and returns the corresponding new
+        PK-Net.
+
+        Parameters
+        ----------
+        cat_functor: an instance of Category Functor, which should be an
+                     automorphism.
+
+        local_dict:  a dictionary defining a natural transformation, the keys of
+                     which are objects names in the diagram category action, the
+                     values of which are morphism names in the context category
+                     action.
+
+        Returns
+        -------
+        A new PK-Net
+            - with the same diagram action and context action,
+            - and whose category action functor is the product of the initial
+              category action functor by the image by S of the natural
+              transformation defined by local_dict.
+
+        Raises an exception if local_dict does not define a valid natural
+        transformation, or if cat_functor is not an automorphism.
         """
 
         new_PKNet = PKNet(self.context_action)
@@ -275,7 +292,7 @@ class PKNet(object):
         return new_PKNet
 
 
-    def __repr__(self):
+    def __str__(self):
         """Returns a verbose description of the PK-Net.
         Overloads the 'str' operator of Python
 

@@ -630,14 +630,14 @@ class CategoryAction(object):
         """
         operation_names = sorted(self.morphisms.keys())
         for op_name in operation_names:
-            self.rename_operation(op_name,self.rewrite(op_name))
+            self.rename_operation(op_name,self._rewrite(op_name))
 
         equivalences_new=[]
         for x,y in self.equivalences:
-            equivalences_new.append([self.rewrite(x),self.rewrite(y)])
+            equivalences_new.append([self._rewrite(x),self._rewrite(y)])
         self.equivalences = equivalences_new
 
-    def rewrite(self,the_string):
+    def _rewrite(self,the_string):
         """Rewrites a string by trying to reduce repeated patterns of the
         category action generator names.
 
@@ -690,7 +690,7 @@ class CategoryAction(object):
         return str(self.morphisms[name_f])
 
     def get_automorphisms(self):
-        """Returns all automorphisms of the monoid as a list of dictionaries.
+        """Returns all automorphisms of the category action.
 
         Parameters
         ----------
@@ -745,7 +745,7 @@ class MonoidAction(CategoryAction):
 
         Parameters
         ----------
-        object_list : a list of XXXX should
+        object_list : a list with a single object.
 
         Returns
         -------
