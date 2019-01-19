@@ -233,6 +233,21 @@ class CatMorphism(object):
 
         return U
 
+    def _is_lefttotal(self):
+        """Checks if the morphism is left total
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        True if the morphism is left total, False otherwise.
+        """
+
+        return np.all(np.sum(self.matrix,axis=0))
+
+
     def __str__(self):
         """Returns a verbose description of the morphism
         Overloads the 'str' operator of Python

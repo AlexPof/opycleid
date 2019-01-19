@@ -89,37 +89,45 @@ What chord do we get if we apply that same operation to a D major chord (Answer:
 In its ninth symphony, Beethoven uses a succession of R and L operations to cycle
 through almost all 24 major and minor triads. We can model this cycle using opycleid.
 
+
+
+
+
+
+
+
+
+
     >>> from opycleid.musicmonoids import PRL_Group
-    >>> from opycleid.knetanalysis import KNet
+    >>> from opycleid.knetanalysis import PKNet
     >>> my_group = PRL_Group()
-    >>> #Create a path K-Net for the famous Beethoven example
-    >>> my_knet = KNet(my_group)
-    >>> my_knet.set_vertices(["C_M","A_m","F_M","D_m","Bb_M","G_m","Eb_M","C_m","Gs_M","F_m","Cs_M","Bb_m"])
-    >>> my_knet.path_knet_from_vertices()
-    >>> print(my_knet)
-    K-Net description:
-       R   
-    C_M->A_m
-       L   
-    A_m->F_M
-       R   
-    F_M->D_m
-       L    
-    D_m->Bb_M
-        R   
-    Bb_M->G_m
-       L    
-    G_m->Eb_M
-        R   
-    Eb_M->C_m
-       L    
-    C_m->Gs_M
-        R   
-    Gs_M->F_m
-       L    
-    F_m->Cs_M
-        R    
-    Cs_M->Bb_m
+    >>> my_knet = PKNet(my_group)
+    >>> beethoven_chords = ["C_M","A_m","F_M","D_m","Bb_M","G_m","Eb_M","C_m","Gs_M","F_m","Cs_M","Bb_m"]
+    >>> for pknet in my_knet.from_progression(beethoven_chords):
+    >>>     print(pknet)
+    X_0 -- R --> X_1
+    [['C_M']] -> [['A_m']]
+    X_1 -- L --> X_2
+    [['A_m']] -> [['F_M']]
+    X_10 -- R --> X_11
+    [['Cs_M']] -> [['Bb_m']]
+    X_2 -- R --> X_3
+    [['F_M']] -> [['D_m']]
+    X_3 -- L --> X_4
+    [['D_m']] -> [['Bb_M']]
+    X_4 -- R --> X_5
+    [['Bb_M']] -> [['G_m']]
+    X_5 -- L --> X_6
+    [['G_m']] -> [['Eb_M']]
+    X_6 -- R --> X_7
+    [['Eb_M']] -> [['C_m']]
+    X_7 -- L --> X_8
+    [['C_m']] -> [['Gs_M']]
+    X_8 -- R --> X_9
+    [['Gs_M']] -> [['F_m']]
+    X_9 -- L --> X_10
+    [['F_m']] -> [['Cs_M']]
+
 
 ## Help and Support
 

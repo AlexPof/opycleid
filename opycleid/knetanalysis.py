@@ -65,7 +65,7 @@ class PKNet(object):
                 unique_objects.append(edge.target)
         self.diagram_action = CategoryAction()
         self.diagram_action.set_objects(unique_objects)
-        self.diagram_action.add_generators(list_edges)
+        self.diagram_action.set_generators(list_edges)
         self.diagram_action.generate_category()
 
     def set_mappings(self,edges_map,elements_map):
@@ -105,6 +105,8 @@ class PKNet(object):
                 component_map[elem] = elements_map[elem]
             phi_component = CatMorphism("phi_{}".format(name_obj),obj,target_obj)
             phi_component.set_mapping(component_map)
+            if not phi_component._is_lefttotal():
+                raise Exception("Element mappings must be left total")
             phi[name_obj] = phi_component
 
         self.cat_action_functor = CategoryActionFunctor(self.diagram_action,

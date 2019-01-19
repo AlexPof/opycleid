@@ -183,7 +183,7 @@ The argument <code>context_action</code> is an instance of <code>opycleid.catego
 <p><code>edges_map</code> : a dictionary, the keys of which are the names of the edges (i.e. the generating morphisms of the diagram action), the values of which are the names of morphisms in the context action.</p>
 </li>
 <li>
-<p><code>elements_map</code> : a dictionary, the keys of which are the names of the elements in the objects of the diagram action, the values of which are lists of elements names in the objects of the context action. The method will automatically build the components of the natural transformation of the category action functor.</p>
+<p><code>elements_map</code> : a dictionary, the keys of which are the names of the elements in the objects of the diagram action, the values of which are lists of elements names in the objects of the context action. The method will automatically build the components of the natural transformation of the category action functor. Each component must be left total, an exception will be raised otherwise.</p>
 </li>
 </ul>
 <hr />
