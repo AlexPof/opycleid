@@ -68,7 +68,7 @@
         
             <li><a class="toctree-l3" href="#defining-monoid-action-morphisms">Defining monoid action morphisms</a></li>
         
-            <li><a class="toctree-l3" href="#k-net-analysis">K-Net analysis</a></li>
+            <li><a class="toctree-l3" href="#klumpenhouwer-and-poly-klumpenhouwer-network-analysis">Klumpenhouwer and poly-Klumpenhouwer network analysis</a></li>
         
         </ul>
     
@@ -405,64 +405,123 @@ print(Neta.is_valid())
 ## Prints True
 </code></pre>
 
-<h6 id="_1"></h6>
-<h6 id="_2"></h6>
-<h6 id="should-from-here"># SHOULD FROM HERE</h6>
-<h6 id="_3"></h6>
-<h6 id="_4"></h6>
-<h2 id="k-net-analysis">K-Net analysis</h2>
-<p>Opycleid provides the means to perform basic Klumpenhouwer network (K-Net) analysis.</p>
+<p>Category action morphisms are especially useful for network analysis, which is presented below.</p>
+<h2 id="klumpenhouwer-and-poly-klumpenhouwer-network-analysis">Klumpenhouwer and poly-Klumpenhouwer network analysis</h2>
+<p>Opycleid provides the means to perform Klumpenhouwer network (K-Net) and poly-Klumpenhouwer network (PK-Net) analysis.</p>
 <p>Informally, a K-Net is a directed graph, the vertices of which are labelled with musical objects,
 and the arrows of which are labelled with transformations between them. Arrows are understood to be composable: the label
 of a resulting composite arrow should be equal to the label of the composition of the two original arrows.</p>
 <p>A K-Net allows one to study the interconnections between different musical elements,
 for example in the study of the different intervals in the constitutive elements of chords in post-tonal music.</p>
-<p>Opycleid proposes a simplified version of this approach, by focusing on networks using monoid actions, in which vertices are labelled with singletons.
-To illustrate this, we go back to the Beethoven example above, and create a K-net from the chord progression. We need to instantiate <code>opycleid.knetanalysis.KNet</code> by
-specifying a monoid action, in our case the <script type="math/tex"> T\text{/}I </script> group.</p>
-<pre><code class="python">from opycleid.musicmonoids import TI_Group_Triads
+<p>Recent research (see <em>Alexandre Popoff, Moreno Andreatta, Andrée Ehresmann: Relational poly-Klumpenhouwer networks for transformational and voice-leading analysis, Journal of Mathematics and Music, 12:1 (2018), pp. 35-55</em>) has proposed to extend the traditional framework of Klumpenhouwer networks. The categorical formalizations of the K-Net notion, leads to the notion of poly-Klumpenhouwer network which corresponds to the data <script type="math/tex"> (R,S,F,\phi) </script> of</p>
+<ul>
+<li>a lax functor <script type="math/tex"> R \colon \Delta \to \mathbf{Rel} </script>, called the <em>diagram action</em>,</li>
+<li>a functor <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script> where <script type="math/tex"> \mathbf{C} </script> is a finite category called the <em>context action</em>, and</li>
+<li>a category action morphism <script type="math/tex"> (F, \phi) </script> between them, i.e. a functor <script type="math/tex"> F \colon \Delta \to \mathbf{C} </script>, and a lax natural transformation <script type="math/tex"> \phi \colon R \to SF </script> (left-total on all components).</li>
+</ul>
+<p>The diagram category action represents the network itself. The context category action is, as its name indicates, the context for analysis, i.e. musical transformations and their action on musical elements. The role of the functor <script type="math/tex"> F \colon \Delta \to \mathbf{C} </script> is to label the arrows of the network in the diagram category action by morphisms (musical transformations) in the context category action , whereas the role of the natural transformation <script type="math/tex"> \phi </script> is to label the elements of the network with musical elements from the context.</p>
+<p>A PK-Net is created in Opycleid by instantiating the class <code>opycleid.knetanalysis.PKNet</code> using a category action which will serve as the context. For example, let's study the Beethoven progression we have seen above, this time using the <script type="math/tex"> T\text{/}I </script> group acting on major and minor triads.</p>
+<pre><code class="python">## G is the previously instantiated TI_Group_Triads (see above)
 
-ti_group = TI_Group_Triads()
+from opycleid.knetanalysis import PKNet
 
-from opycleid.knetanalysis import KNet
-
-my_knet = KNet(ti_group)
-my_knet.set_vertices([&quot;C_M&quot;,&quot;A_m&quot;,&quot;F_M&quot;,&quot;D_m&quot;,&quot;Bb_M&quot;])
+my_knet = PKNet(G)
 </code></pre>
 
-<p>Since the <script type="math/tex"> T\text{/}I </script> group is simply transitive, the determination of the musical transformations between the vertices is unambiguous, so we can call <code>path_knet_from_vertices()</code> to automatically determine them. Otherwise, edges have to be manually specified.</p>
-<pre><code class="python">my_knet.path_knet_from_vertices()
-print(str(my_knet))
+<p>As we will see later, Opycleid allows one to define complex networks by specifying edges and vertices. If one has a list of musical elements, Opycleid can also generate all the possible PK-Nets with a diagram category action in which</p>
+<ul>
+<li>objects are singletons, corresponding to each musical element, and</li>
+<li>there is only one morphism between pairs of objects corresponding to the musical transformation taking one element to another.</li>
+</ul>
+<p>These PK-Nets can be obtained by calling the Python generator <code>from_progression(list_elements)</code>, which takes a list of musical elements and yields all possible PK-Nets. Note that an exception will be raised if no transformation exists between musical elements.</p>
+<p>In the case of the Beethoven progression, the <script type="math/tex"> T\text{/}I </script> group acts simply transitively on major and minor triads, so only one PK-Net can be obtained, as shown below.</p>
+<pre><code class="python">beethoven_progression = [&quot;C_M&quot;,&quot;A_m&quot;,&quot;F_M&quot;,&quot;D_m&quot;,&quot;Bb_M&quot;]
+for pknet in my_knet.from_progression(beethoven_progression):
+    print(pknet)
 '''
-K-Net description:
-       I4   
-    C_M--&gt;A_m
-       I9   
-    A_m--&gt;F_M
-       I2   
-    F_M--&gt;D_m
-       I7    
-    D_m--&gt;Bb_M
-'''
-</code></pre>
-
-<p>Finally, we can transform a K-net into another by using a monoid action morphism. If we use the monoid action morphism we defined in the previous section, we get the following new K-net.</p>
-<pre><code class="python">new_knet = my_knet.apply_knet_morphism(action_morphism)
-print(str(new_knet))
-'''
-K-Net description:
-         z     
-    major-&gt;minor
-         z     
-    minor-&gt;major
-         z     
-    major-&gt;minor
-         z     
-    minor-&gt;major
+X_0 -- I4 --&gt; X_1
+[['C_M']] -&gt; [['A_m']]
+X_1 -- I9 --&gt; X_2
+[['A_m']] -&gt; [['F_M']]
+X_2 -- I2 --&gt; X_3
+[['F_M']] -&gt; [['D_m']]
+X_3 -- I7 --&gt; X_4
+[['D_m']] -&gt; [['Bb_M']]
 '''
 </code></pre>
 
-<p>As expected, we have transformed our original K-net describing chords and their transformations to a new K-net describing <em>chord types</em> and their transformations.</p>
+<p>The context of a PK-Net can be changed by using a category action morphism, which yields a new PK-Net in the new context category action. This is done by calling the method <code>global_tansform(cat_action_functor)</code>, where <code>cat_action_functor</code> is an instance of <code>opycleid.categoryaction.CategoryActionFunctor</code> representing the category action morphism. For example, if we use the monoid action morphism between the <script type="math/tex"> T\text{/}I </script> group and the <script type="math/tex"> \mathbb{Z}_{2} </script> group we defined in the previous section, we get the following new PK-net.</p>
+<pre><code class="python">pknet = list(my_knet.from_progression(beethoven_progression))[0]
+new_pknet = pknet.global_transform(Neta)
+print(new_pknet)
+'''
+X_0 -- z --&gt; X_1
+[['major']] -&gt; [['minor']]
+X_1 -- z --&gt; X_2
+[['minor']] -&gt; [['major']]
+X_2 -- z --&gt; X_3
+[['major']] -&gt; [['minor']]
+X_3 -- z --&gt; X_4
+[['minor']] -&gt; [['major']]
+'''
+</code></pre>
+
+<p>As expected, we have transformed our original PK-net describing chords and their transformations to a new PK-net describing <em>chord types</em> and their transformations.</p>
+<p>A PK-Net can also be defined from scratch by specifying all the edges and vertices. For example, we would like to define the complex network of pitch classes and their transformations in the <script type="math/tex"> T\text{/}I </script> group (acting on pitch classes) which is shown below.</p>
+<p><img alt="complexpknet" src="../img/complex_pknet.jpg" /></p>
+<p>The following code defines the above PK-Net using Opycleid.</p>
+<pre><code class="python">from opycleid.categoryaction import CatObject, CatMorphism
+from opycleid.knetanalysis import PKNet
+from opycleid.musicmonoids import TI_Group_PC
+G = TI_Group_PC()
+
+X = CatObject(&quot;X&quot;,[&quot;pX1&quot;,&quot;pX2&quot;])
+Y = CatObject(&quot;Y&quot;,[&quot;pY1&quot;])
+W = CatObject(&quot;W&quot;,[&quot;pW1&quot;,&quot;pW2&quot;,&quot;pW3&quot;])
+Z = CatObject(&quot;Z&quot;,[&quot;pZ1&quot;])
+
+f = CatMorphism(&quot;f&quot;,X,W)
+f.set_mapping({&quot;pX1&quot;:[&quot;pW1&quot;],&quot;pX2&quot;:[&quot;pW2&quot;]})
+
+g = CatMorphism(&quot;g&quot;,Y,W)
+g.set_mapping({&quot;pY1&quot;:[&quot;pW3&quot;]})
+
+h = CatMorphism(&quot;h&quot;,Y,Z)
+h.set_mapping({&quot;pY1&quot;:[&quot;pZ1&quot;]})
+
+k = CatMorphism(&quot;k&quot;,Z,W)
+k.set_mapping({&quot;pZ1&quot;:[&quot;pW3&quot;]})
+
+my_pknet = PKNet(G)
+my_pknet.set_edges([f,g,h,k])
+my_pknet.set_mappings({&quot;f&quot;:&quot;T4&quot;,&quot;g&quot;:&quot;I3&quot;,&quot;h&quot;:&quot;I5&quot;,&quot;k&quot;:&quot;T10&quot;},
+                  {&quot;pX1&quot;:[&quot;D&quot;],&quot;pX2&quot;:[&quot;Fs&quot;],
+                   &quot;pY1&quot;:[&quot;Cs&quot;],
+                   &quot;pW1&quot;:[&quot;Fs&quot;],&quot;pW2&quot;:[&quot;Bb&quot;],&quot;pW3&quot;:[&quot;D&quot;],
+                   &quot;pZ1&quot;:[&quot;E&quot;]
+                  }
+                 )
+print(my_pknet)
+'''
+X -- T4 --&gt; W
+[['D'], ['Fs']] -&gt; [['Fs'], ['Bb'], ['D']]
+Y -- I3 --&gt; W
+[['Cs']] -&gt; [['Fs'], ['Bb'], ['D']]
+Y -- I5 --&gt; Z
+[['Cs']] -&gt; [['E']]
+Z -- T10 --&gt; W
+[['E']] -&gt; [['Fs'], ['Bb'], ['D']]
+'''
+</code></pre>
+
+<p>We define the four sets of the network <script type="math/tex"> X </script>, <script type="math/tex"> Y </script>, <script type="math/tex"> W </script>, and <script type="math/tex"> Z </script> as instances of <code>opycleid.categoryaction.CatObject</code>.
+Then we define the morphisms between these sets, i.e. the generating arrows/edges of our network, as instances of <code>opycleid.categoryaction.CatMorphism</code>.
+We then instantiate a new PK-Net with context category action the <script type="math/tex"> T\text{/}I </script> group acting on pitch classes, and we set the edges by calling the method <code>set_edges</code> with argument the list of <code>opycleid.categoryaction.CatMorphism</code> we just created. The diagram category action will then be created internally. Note that we do not need to explicitly specify the objects as they are automatically deduced from the morphisms. Finally, we define the mapping of edges and elements, by calling <code>set_mappings</code> with two arguments:</p>
+<ul>
+<li>The first dictionary corresponds to the mapping of the generating edges, i.e. the image of the generating morphisms in the context category action.</li>
+<li>The second dictionary corresponds to the mapping of the elements of the objects. The mappings must be left-total, i.e. each element must be related to at least one element in the context category action.</li>
+</ul>
+<p>Opycleid will detect non-valid mappings and raise exceptions accordingly.</p>
               
             </div>
           </div>
