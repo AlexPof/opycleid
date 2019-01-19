@@ -5,215 +5,316 @@
 ###
 
 import numpy as np
-from .categoryaction import MonoidAction
+from .categoryaction import CatObject,CatMorphism,CategoryAction,CategoryFunctor,CategoryActionFunctor
 
-class KNet:
-    """Class definition for a K-Net
+class PKNet(object):
+    """The class PKNet defines a relational PK-Net (Poly-Klumpenhouwer network)
+    as defined in the paper:
+    - Alexandre Popoff, Moreno Andreatta & Andrée Ehresmann (2018),
+      Relational poly-Klumpenhouwer networks for transformational and
+      voice-leading analysis, Journal of Mathematics and Music,
+      12:1, 35-55, DOI: 10.1080/17459737.2017.1406011.
+
+    It is basically a category action functor between a category action called
+    the 'diagram action', and a category action called the 'context action'.
+    The diagram action defines sets of elements and relations between them; the
+    category action functor maps the elements and the relations to musical
+    elements and transformations in the context action.
+
+    PKNets can be transformed by applying a category action functor, in order
+    to change the musical context action.
     """
 
+    def __init__(self,context_action):
+        """Instantiates a PKNet.
 
-    def __init__(self,category):
-        """Initialize a K_Net.
-        Variables
+        Parameters
         ----------
-        - vertices : dictionary, keys are index numbers, values are elements in the K_Net category/monoid
-        - edges : dictionary, keys are index numbers, values are 3-tuples (start,end,op) (see add_edges)
-        - category : an instance of a MonoidAction class
-        """
+        context_action : an instance of CategoryAction, representing the musical
+                         context of analysis for the PK-Net. Elements and
+                         relations have their 'image' in this category action.
 
-        if not isinstance(category,MonoidAction):
-            raise Exception("Not a valid monoid action\n")
+        Returns
+        -------
+        None
+        """
+        self.diagram_action = None
+        self.context_action = context_action
+        self.cat_action_functor = None
+
+
+    def set_edges(self,list_edges):
+        """Defines the generating edges of the PK-Net
+
+        Parameters
+        ----------
+        list_edges : a list of CatMorphism, each one representing a generating
+                     morphism for the 'diagram' category action. Objects need
+                     not be specified, as they will be automatically extracted
+                     from the list of morphisms.
+
+        Returns
+        -------
+        None
+        """
+        unique_objects = []
+        for edge in list_edges:
+            if not edge.source in unique_objects:
+                unique_objects.append(edge.source)
+            if not edge.target in unique_objects:
+                unique_objects.append(edge.target)
+        self.diagram_action = CategoryAction()
+        self.diagram_action.set_objects(unique_objects)
+        self.diagram_action.set_generators(list_edges)
+        self.diagram_action.generate_category()
+
+    def set_mappings(self,edges_map,elements_map):
+        """Defines the category action functor through the mapping of the edges
+           and of the elements of the diagram action.
+
+        Parameters
+        ----------
+        edges_map : a dictionary, the keys of which are the names of the
+                    edges (i.e. the generating morphisms of the diagram action),
+                    the values of which are the names of morphisms in the
+                    context action.
+
+        elements_map : a dictionary, the keys of which are the names of the
+                       elements in the objects of the diagram action, the values
+                       of which are lists of elements names in the objects of
+                       the context action. The method will automatically
+                       build the components of the natural transformation of
+                       the category action functor.
+        Returns
+        -------
+        None. Raises exceptions if the edge or elements mapping are not valid.
+        """
+        F = CategoryFunctor(self.diagram_action,self.context_action)
+        if not F.set_from_generator_mapping(edges_map):
+            raise Exception("Edge mapping is not valid")
+        object_mapping = F.get_object_mapping()
+
+        ## We now build the natural transformation, component by component, i.e.
+        ## object by object in the diagram action.
+        phi = {}
+        for name_obj,obj in self.diagram_action.get_objects():
+            target_obj = self.context_action.objects[object_mapping[name_obj]]
+
+            component_map = {}
+            for elem in obj.get_elements():
+                component_map[elem] = elements_map[elem]
+            phi_component = CatMorphism("phi_{}".format(name_obj),obj,target_obj)
+            phi_component.set_mapping(component_map)
+            if not phi_component._is_lefttotal():
+                raise Exception("Element mappings must be left total")
+            phi[name_obj] = phi_component
+
+        self.cat_action_functor = CategoryActionFunctor(self.diagram_action,
+                                                        self.context_action,
+                                                        F,phi)
+        if not self.cat_action_functor.is_valid():
+            raise Exception("Element mapping is not valid")
+
+    def get_edge_mapping(self):
+        """Gets the mapping of *all* edges in the diagram action.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A dictionary, the keys of which are morphism names in the diagram action,
+        the values of which are the names of the image morphisms in the context
+        action by the category functor of the category action functor which
+        defines this PK-Net.
+        """
+        return self.cat_action_functor.cat_functor.get_morphism_mapping()
+
+    def get_elements_mapping(self):
+        """Gets the mapping of all elements in the diagram action.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A dictionary, the keys of which are element names in the objects of the
+        diagram action, the values of which are the names of the image elements
+        in the context action by the natural transformation of the category
+        action functor which defines this PK-Net.
+        """
+        return {k:v for obj,morph in self.cat_action_functor.nat_transform.items()
+                      for k,v in morph.get_mapping().items()}
+
+    def from_progression(self,elements):
+        """From a list of n element names in the context action, yields all
+        PK-Nets with a diagram action built on the ordinal n category.
+        In other words, it yields all PK-Nets with n objects and n-1 edges,
+        each edge f_i corresponding to a transformation in the context action
+        between elements[i] and elements[i+1].
+
+        Parameters
+        ----------
+        elements: a list of element names in the objects of the context action.
+
+        Yields
+        -------
+        The next PK-Net with n objects and n-1 edges, each edge f_i
+        corresponding to a transformation in the context action between
+        elements[i] and elements[i+1].
+        Raises an exception if no transformation exists between consecutive
+        elements.
+        """
+        singletons = [CatObject("X_{}".format(i),["x_{}".format(i)]) for i in range(len(elements))]
+        edges = []
+        for i in range(len(elements)-1):
+            f = CatMorphism("f_{}".format(i),singletons[i],singletons[i+1])
+            f.set_mapping({"x_{}".format(i):["x_{}".format(i+1)]})
+            edges.append(f)
+
+        elements_mapping = {"x_{}".format(i):[v] for i,v in enumerate(elements)}
+        for list_operations in self._possible_operations(elements):
+            transf_mapping = {"f_{}".format(i):v for i,v in enumerate(list_operations)}
+            pknet = PKNet(self.context_action)
+            pknet.set_edges(edges)
+            pknet.set_mappings(transf_mapping,elements_mapping)
+
+            yield pknet
+
+    def _possible_operations(self,elements,list_op=[]):
+        """From a list of n element names, yields all transformations between
+        consecutive elements.
+
+        Parameters
+        ----------
+        elements: a list of element names in the objects of the context action.
+
+        Yields
+        -------
+        The next list of morphism names, such that the i-th morphism is a
+        transformation in the context action between elements[i] and
+        elements[i+1]. Raises an exception if no transformation exists between
+        consecutive elements.
+        """
+        next_ops = self.context_action.get_operation(elements[0],elements[1])
+        if not len(next_ops):
+            raise Exception("No transformation can be found between elements {} and {}".format(elements[0],elements[1]))
+        if len(elements)>2:
+            for op in next_ops:
+                for thelist in self._possible_operations(elements[1:],list_op+[op]):
+                    yield thelist
         else:
-            self.vertices = {}
-            self.edges = {}
-            self.category = category
+            for op in next_ops:
+                yield list_op+[op]
 
-
-    def set_vertices(self,list_vertices):
-        """Set vertices for the K_Net.
-        Checks if:
-            - the provided musical element is in the K_Net category action
+    def global_transform(self,cat_action_functor):
+        """Apply a category action functor and returns the corresponding new
+        PK-Net.
 
         Parameters
         ----------
-        list_vertices : list of musical elements
+        cat_action_functor: an instance of Category Action Functor.
 
         Returns
         -------
-        None
+        A new PK-Net
+            - with the same diagram action,
+            - whose context action corresponds to the target category
+              action of cat_action_functor,
+            - and whose category action functor is the product of the initial
+              category action functor by cat_action_functor
         """
-        self.edges = {}
-        for x in list_vertices:
-            if self.category.get_object()[1].is_in(x):
-                self.vertices[len(self.vertices)] = x
-            else:
-                raise Exception("Element "+str(x)+" is not in the category action\n")
+        new_PKNet = PKNet(self.cat_action_functor.cat_action_target)
+        new_PKNet.diagram_action = self.diagram_action
+        new_PKNet.cat_action_functor = cat_action_functor*self.cat_action_functor
 
-    def add_edges(self,list_edges):
-        """Add labelled edges to a K_Net.
-        Checks if:
-            - There does not already an edge between the indicated vertices
-            - The provided operation exists in the K_Net category
-            - The provided operation is a valid one given the corresponding vertices
-        Parameters
-        ----------
-        list_edges : list of 3-tuples (start,end,op), where
-                - start is the index of the starting vertex
-                - end is the index of the ending vertex
-                - op is an operation in the K_Net category/monoid
+        return new_PKNet
 
-        Returns
-        -------
-        None
-        """
-        for id_vertex_A,id_vertex_B,operation in list_edges:
-
-            for edge_start,edge_end,edge_op in self.edges.values():
-                if edge_start == id_vertex_A and id_vertex_B == edge_end:
-                    raise Exception("There already exists an edge between vertices "+str(edge_start)+" and "+str(edge_end)+"\n")
-
-            if not operation in self.category.operations.keys():
-                raise Exception(str(operation)+" is not a valid operation in the category\n")
-
-            if operation in self.category.get_operation(self.vertices[id_vertex_A],self.vertices[id_vertex_B]):
-                self.edges[len(self.edges)] = (id_vertex_A,id_vertex_B,operation)
-            else:
-                raise Exception(str(operation)+" is not a valid operation for the corresponding vertices\n")
-
-    def path_knet_from_vertices(self):
-        """Creates automatically all edges between successive vertices of the K_Net.
-        Checks if:
-            - the K_Net category/monoid action is simply transitive. Fails otherwise, since the determination of operations is ambiguous
+    def local_transform(self,cat_functor,local_dict):
+        """Apply a local transformation and returns the corresponding new
+        PK-Net.
 
         Parameters
         ----------
-        None
+        cat_functor: an instance of Category Functor, which should be an
+                     automorphism.
+
+        local_dict:  a dictionary defining a natural transformation, the keys of
+                     which are objects names in the diagram category action, the
+                     values of which are morphism names in the context category
+                     action.
 
         Returns
         -------
-        None
-        """
-        if not self.category.is_simplytransitive():
-            raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
-        else:
-            for i in range(len(self.vertices)-1):
-                self.add_edges([(i,i+1,self.category.get_operation(self.vertices[i],self.vertices[i+1])[0])])
+        A new PK-Net
+            - with the same diagram action and context action,
+            - and whose category action functor is the product of the initial
+              category action functor by the image by S of the natural
+              transformation defined by local_dict.
 
-    def complete_knet_from_vertices(self):
-        """Creates automatically all edges between vertex i and all vertices j>i of the K_Net.
-        Checks if:
-            - the K_Net category/monoid action is simply transitive. Fails otherwise, since the determination of operations is ambiguous
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-        """
-        if not self.category.is_simplytransitive():
-            raise Exception("The category does not act in a simple transitive way: ambiguous determination of operations")
-        else:
-            for i in range(len(self.vertices)):
-                for j in range(i+1,len(self.vertices)):
-                    self.add_edges([(i,j,self.category.get_operation(self.vertices[i],self.vertices[j])[0])])
-
-
-    def is_valid(self):
-        """Checks the consistency of the K_Net.
-        A K_Net is considered as consistent if:
-            - it does not contain cycles
-            - path consistency is respected:
-                given two edges A->B, and B->C, with operations f, and g, respectively,
-                the edge A->C (if it exists) has operation gf.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-        """
-        ## Get the adjacency matrix
-        n_obj = len(self.vertices)
-        adj_matrix = np.zeros((n_obj,n_obj),dtype=bool)
-        for x in self.edges:
-            adj_matrix[self.edges[x][1],self.edges[x][0]] = True
-
-        ## Check for the presence of cycles
-        for i in range(2,n_obj+1):
-            C = np.linalg.matrix_power(adj_matrix,i)
-            if np.sum(C[range(n_obj),range(n_obj)]):
-                return False
-
-        ## Build the labelled adjacency matrix
-        lbl_adj_matrix = np.zeros((n_obj,n_obj),dtype=object)
-        for x in self.edges:
-            lbl_adj_matrix[self.edges[x][1],self.edges[x][0]] = self.edges[x][2]
-
-            ## Matrix multiplication with values in a monoid
-            for i in range(n_obj):
-                for j in range(n_obj):
-                    l=[]
-                    for k in range(n_obj):
-                        if not (lbl_adj_matrix[i,k] == 0 or lbl_adj_matrix[k,j] == 0):
-                            l.append(self.category.mult(lbl_adj_matrix[i,k],lbl_adj_matrix[k,j]))
-                    if len(l):
-                        if len(l)>1:
-                            return False
-                        if not lbl_adj_matrix[i,j] == 0 and not l[0] == lbl_adj_matrix[i,j]:
-                            return False
-
-        return True
-
-
-    def apply_knet_morphism(self,monoidactionmorphism):
-        """Apply a K-Net morphism to a given K_Net.
-        A K-Net morphism consists in
-            - a monoid morphism, defining how operations are transformed
-            - a natural transformation, defining how the musical elements are transformed
-
-        Parameters
-        ----------
-        monoidactionmorphism : a instance of MonoidActionMorphism
-
-        Returns
-        -------
-        A new K-Net, whose vertices and edges are the images of the vertices and edges of the initial K-Net by the given K_net morphism
+        Raises an exception if local_dict does not define a valid natural
+        transformation, or if cat_functor is not an automorphism.
         """
 
-        if monoidactionmorphism.is_valid():
-            new_knet = KNet(monoidactionmorphism.monoidaction_dest)
-            new_knet.vertices=self.vertices.copy()
-            new_knet.edges=self.edges.copy()
+        new_PKNet = PKNet(self.context_action)
+        new_PKNet.diagram_action = self.diagram_action
 
-            for i in range(len(new_knet.vertices)):
-                vertex_image = monoidactionmorphism.nat_trans>>new_knet.vertices[i]
-                if len(vertex_image)>1:
-                    raise Exception("Rel-based MonoidAction morphisms are not implemented")
-                new_knet.vertices[i] = vertex_image[0]
-            for i in range(len(new_knet.edges)):
-                id_vertex_A,id_vertex_B,operation = new_knet.edges[i]
-                new_knet.edges[i] = (id_vertex_A,id_vertex_B,monoidactionmorphism.monoid_morphism[operation])
+        new_cat_functor = cat_functor*self.cat_action_functor.cat_functor
+        if not cat_functor.is_automorphism():
+            raise Exception("Not an automorphism")
 
-            return new_knet
-        else:
-            raise Exception("The given monoid morphism and/or the natural transformation do not constitute a valid K-Net morphism")
+        edge_mapping = self.get_edge_mapping()
+        cat_functor_morphism_mapping = new_cat_functor.get_morphism_mapping()
+        ## Testing for the natural transformation condition
+        for name_f,f in self.diagram_action.get_morphisms():
+            source_obj_name = f.source.name
+            target_obj_name = f.target.name
 
+            image_name_f = edge_mapping[name_f]
+            if not self.context_action.mult(local_dict[target_obj_name],image_name_f) == \
+                   self.context_action.mult(cat_functor_morphism_mapping[name_f],local_dict[source_obj_name]):
+                raise Exception("Natural transformation condition not verified")
 
-    ################################################
-    ## KNet display
+        new_nat_transform = {}
+        for obj,component in self.cat_action_functor.nat_transform.items():
+            new_nat_transform[obj] = self.context_action.morphisms[local_dict[obj]]*component
+
+        new_cat_action_functor = CategoryActionFunctor(self.diagram_action,
+                                                       self.context_action,
+                                                       new_cat_functor,
+                                                       new_nat_transform
+                                                       )
+        if not new_cat_action_functor.is_valid():
+            raise Exception("Local transform is not valid")
+
+        new_PKNet.cat_action_functor = new_cat_action_functor
+
+        return new_PKNet
 
 
     def __str__(self):
-        descr = "K-Net description: \n"
-        for x in self.edges:
-            name_A = self.vertices[self.edges[x][0]]
-            name_B = self.vertices[self.edges[x][1]]
-            name_op = self.edges[x][2]
-            descr += "    "+" "*len(name_A)+name_op+" "*len(name_B)+"\n"
-            descr += "    "+self.vertices[self.edges[x][0]]
-            descr += "-"*len(name_op)+">"+self.vertices[self.edges[x][1]]+"\n"
-        return descr
+        """Returns a verbose description of the PK-Net.
+        Overloads the 'str' operator of Python
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A description of the PK-Net listing for each edge its name, its source
+        and target, and the corresponding maps between elements, expressed as
+        their image in the context action.
+        """
+        str_rep=""
+        edge_mapping = self.get_edge_mapping()
+        elements_mapping = self.get_elements_mapping()
+        for name_f,f in self.diagram_action.get_generators():
+            edge_name = edge_mapping[name_f]
+            source_elements = [elements_mapping[x] for x in f.source.get_elements()]
+            target_elements = [elements_mapping[x] for x in f.target.get_elements()]
+            str_rep += "{} -- {} --> {}\n".format(f.source.name,edge_name,f.target.name)
+            str_rep+="{} -> {}\n".format(source_elements,target_elements)
+        return str_rep

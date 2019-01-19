@@ -70,10 +70,6 @@
                     
     <a class="" href="../musicmonoids/">opycleid.musicmonoids</a>
                 </li>
-                <li class="">
-                    
-    <a class="" href="../monoidactionmorphism/">opycleid.monoidactionmorphism</a>
-                </li>
                 <li class=" current">
                     
     <a class="current" href="./">opycleid.knetanalysis</a>
@@ -133,21 +129,22 @@
               
                 <h1 id="opycleidknetanalysis">opycleid.knetanalysis</h1>
 <h2 id="overview">Overview</h2>
-<p>This module defines a class for performing basic Klumpenhouwer network (K-Net) analysis.</p>
+<p>This module defines a class for performing Klumpenhouwer network (K-Net) and poly-Klumpenhouwer network (PK-Net) analysis.</p>
 <p>Informally, a K-Net is a directed graph, the vertices of which are labelled with musical objects,
 and the arrows of which are labelled with transformations between them. Arrows are understood to be composable: the label
 of a resulting composite arrow should be equal to the label of the composition of the two original arrows.</p>
 <p>A K-Net allows one to study the interconnections between different musical elements, for example in the study of the different intervals in the constitutive elements of chords in post-tonal music.</p>
 <p>Recent research (see below) has proposed new categorical formalizations of the K-Net notion, in which a K-Net can be conceived as the data <script type="math/tex"> (R,S,F,\phi) </script> of</p>
 <ul>
-<li>a lax functor <script type="math/tex"> R \colon \Delta \to \mathbf{Rel} </script>,</li>
-<li>a functor <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script> where <script type="math/tex"> \mathbf{C} </script> is a small category, and</li>
+<li>a lax functor <script type="math/tex"> R \colon \Delta \to \mathbf{Rel} </script>, called the <em>diagram action</em>,</li>
+<li>a functor <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script> where <script type="math/tex"> \mathbf{C} </script> is a finite category called the <em>context action</em>, and</li>
 <li>a category action morphism <script type="math/tex"> (F, \phi) </script> between them, i.e. a functor <script type="math/tex"> F \colon \Delta \to \mathbf{C} </script>, and a lax natural transformation <script type="math/tex"> \phi \colon R \to SF </script> (left-total on all components).</li>
 </ul>
-<p>Category action morphisms <script type="math/tex"> (N, \nu) </script> between functors <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script> and <script type="math/tex"> S' \colon \mathbf{C'} \to \mathbf{Rel} </script> then allows one to define new K-Nets <script type="math/tex"> (R,S',F'=NF,\phi'=\nu \circ \phi) </script>.</p>
-<p>Opycleid proposes a simplified version of this approach, by focusing on networks using monoid actions, in which vertices are labelled with singletons. Instances of <code>opycleid.monoidactionmorphism.MonoidActionMorphism</code> can be used to transform a K-Net into another.
-In addition, Opycleid currently does not allow the underlying graph of the K-Net to have cycles.
-A K-Net is <em>valid</em> if it does not contain any cycle, and if composability of the transformations on the edges is respected.</p>
+<p><em>Complete</em> and <em>local</em> homographies allow to transform PK-Nets into one another. More precisely,</p>
+<ul>
+<li>Complete homographies correspond to category action morphisms <script type="math/tex"> (N, \nu) </script> between functors <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script> and <script type="math/tex"> S' \colon \mathbf{C'} \to \mathbf{Rel} </script> and yield the new PK-Net <script type="math/tex"> (R,S',F'=NF,\phi'=\nu \circ \phi) </script>.</li>
+<li>Local homographies correspond to the data <script type="math/tex"> N, \tilde{\nu} </script> of a functor <script type="math/tex"> N \colon \mathbf{C} \to \mathbf{C'} </script> and a natural transformations <script type="math/tex"> \tilde{\nu} </script> between functors <script type="math/tex"> F \colon \Delta \to \mathbf{C} </script> and <script type="math/tex"> NF \colon \Delta \to \mathbf{C'} </script>, which yields the new PK-Net <script type="math/tex"> (R,S',F'=NF,\phi'=S\tilde{\nu} \circ \phi) </script>.</li>
+</ul>
 <h3 id="references">References</h3>
 <p>Reference literature on Klumpenhouwer networks:</p>
 <ul>
@@ -160,61 +157,81 @@ A K-Net is <em>valid</em> if it does not contain any cycle, and if composability
 <li>Guerino Mazzola, Moreno Andreatta: From a Categorical Point of View: K-Nets as Limit Denotators, Perspectives of New Music, 44(2), pp. 88–113, (2006).</li>
 <li>Alexandre Popoff, Moreno Andreatta, Andrée Ehresmann: A Categorical Generalization of Klumpenhouwer Networks, Proceedings of MCM 2015, Vol. 9110 of Lecture Notes in Computer Science, pp. 303–314, Springer .</li>
 <li>Alexandre Popoff, Carlos Agon, Moreno Andreatta, Andrée Ehresmann: From K-nets to PK-nets: a Categorical Approach, Perspectives of New Music, 54(2), pp. 5–63, (2016).</li>
+<li>Alexandre Popoff, Moreno Andreatta, Andrée Ehresmann: Relational poly-Klumpenhouwer networks for transformational and voice-leading analysis, Journal of Mathematics and Music, 12:1 (2018), pp. 35-55, DOI: 10.1080/17459737.2017.1406011.</li>
 </ul>
 <h2 id="knet">KNet</h2>
-<pre><code class="python">opycleid.knetanalysis.KNet(monoidaction)
+<pre><code class="python">opycleid.knetanalysis.PKNet(context_action)
 </code></pre>
 
-<p>Defines a new K-Net.
-Instances of this class store internally
-<em> an instance of <code>opycleid.categoryaction.MonoidAction</code> defining the monoid action used in the K-Net,
-</em> a dictionary of vertices, the keys of which are integer indices, the values of which are strings representing musical elements in the single object of the monoid action,
-* a dictionary of edges, the keys of which are integer indices, the values of which are triples <code>(id_s,id_t,label)</code> where <code>id_s</code> is the integer index of the starting vertex, <code>id_t</code> is the integer index of the target vertex, and <code>label</code> is the name of an operation in the monoid action.</p>
-<h3 id="arguments">Arguments</h3>
-<ul>
-<li><strong>monoidaction</strong>: an instance of <code>opycleid.categoryaction.MonoidAction</code> defining the monoid action used in the K-Net for labelling vertices and edges.</li>
-</ul>
+<p>Instantiates a new poly-Klumpenhouwer network (PK-Net) as defined above.
+The argument <code>context_action</code> is an instance of <code>opycleid.categoryaction.CategoryAction</code> and defines the <em>context action</em> of the PK-Net.</p>
 <hr />
 <h3 id="methods">Methods</h3>
-<h4 id="set_vertices">set_vertices</h4>
-<pre><code class="python">set_vertices(list_edges)
+<h4 id="set_edges">set_edges</h4>
+<pre><code class="python">set_edges(list_edges)
 </code></pre>
 
-<p>Defines the list of vertices for this K-Net. The argument <code>list_vertices</code> is a list of strings representing musical elements in the single object of the defined monoid action. Calling this method erases previous data on edges.</p>
+<p>Defines the generating edges of the PK-Net.</p>
+<p>Defines the list of vertices for this K-Net. The argument <code>list_edges</code> is a list of instances of <code>opycleid.categoryaction.CatMorphism</code>, each one representing a generating morphism for the <em>'diagram' category action</em>. Objects need not be specified, as they will be automatically extracted from the list of morphisms.</p>
 <hr />
-<h4 id="add_edges">add_edges</h4>
-<pre><code class="python">add_edges(list_vertices)
+<h4 id="set_mappings">set_mappings</h4>
+<pre><code class="python">set_mappings(edges_map,elements_map)
 </code></pre>
 
-<p>Adds edges to this K-Net. The argument <code>list_edges</code> is a list of triples <code>(id_s,id_t,label)</code> where <code>id_s</code> is the integer index of the starting vertex, <code>id_t</code> is the integer index of the target vertex, and <code>label</code> is the name of an operation in the monoid action. The method checks if <code>label</code> is a valid transformation between the musical elements at the corresponding vertices, and raises an exception if this is not the case.</p>
+<p>Defines the category action functor through the mapping of the edges and of the elements of the diagram action. The method will raise exceptions if the edge or elements mapping are not valid. The arguments are as follows.</p>
+<ul>
+<li>
+<p><code>edges_map</code> : a dictionary, the keys of which are the names of the edges (i.e. the generating morphisms of the diagram action), the values of which are the names of morphisms in the context action.</p>
+</li>
+<li>
+<p><code>elements_map</code> : a dictionary, the keys of which are the names of the elements in the objects of the diagram action, the values of which are lists of elements names in the objects of the context action. The method will automatically build the components of the natural transformation of the category action functor. Each component must be left total, an exception will be raised otherwise.</p>
+</li>
+</ul>
 <hr />
-<h4 id="path_knet_from_vertices">path_knet_from_vertices</h4>
-<pre><code class="python">path_knet_from_vertices()
+<h4 id="get_edge_mapping">get_edge_mapping</h4>
+<pre><code class="python">get_edge_mapping()
 </code></pre>
 
-<p>Automatically add edges to this K-Net. If <script type="math/tex"> n </script> is the number of vertices in the K-Net, calling this method adds an edge between vertices <script type="math/tex"> i </script> and <script type="math/tex"> i+1 </script> for all <script type="math/tex"> i = 0\ldots(n-1) </script>. The determination of the edge label can only be done if the monoid action is simply transitive.</p>
+<p>Returns the mapping of <em>all</em> edges in the diagram action as a dictionary, the keys of which are morphism names in the diagram action, the values of which are the names of the image morphisms in the context action by the category functor of the category action functor which defines this PK-Net.</p>
 <hr />
-<h4 id="complete_knet_from_vertices">complete_knet_from_vertices</h4>
-<pre><code class="python">complete_knet_from_vertices()
+<h4 id="get_elements_mapping">get_elements_mapping</h4>
+<pre><code class="python">get_elements_mapping()
 </code></pre>
 
-<p>Automatically add edges to this K-Net. If <script type="math/tex"> n </script> is the number of vertices in the K-Net, calling this method adds an edge between vertices <script type="math/tex"> i </script> and <script type="math/tex"> j </script> for all <script type="math/tex"> i = 0\ldots(n-1), j = 0\ldots(n-1), j>i </script>. The determination of the edge label can only be done if the monoid action is simply transitive.</p>
+<p>Returns the mapping of all elements in the diagram action as a dictionary, the keys of which are element names in the objects of the diagram action, the values of which are the names of the image elements in the context action by the natural transformation of the category action functor which defines this PK-Net.</p>
 <hr />
-<h4 id="is_valid">is_valid</h4>
-<pre><code class="python">is_valid()
+<h4 id="from_progression">from_progression</h4>
+<pre><code class="python">from_progression(elements)
 </code></pre>
 
-<p>Checks if the K-Net is a valid one, i.e. it does not contain any cycle, and composability of the transformations on the edges is respected. Returns <code>True</code> if valid.</p>
+<p>From a list <code>elements</code> of <script type="math/tex"> n </script> element names in the context action, yields all PK-Nets with a diagram action built on the ordinal <script type="math/tex"> n </script> category, i.e. all PK-Nets with <script type="math/tex"> n </script> objects and <script type="math/tex"> n-1 </script> edges, each edge <script type="math/tex"> f_i </script> corresponding to a transformation in the context action between <code>elements[i]</code> and <code>elements[i+1]</code>. Raises an exception if no transformation exists between consecutive elements.</p>
 <hr />
-<h4 id="apply_knet_morphism">apply_knet_morphism</h4>
-<pre><code class="python">apply_knet_morphism(monoidactionmorphism)
+<h4 id="global_transform">global_transform</h4>
+<pre><code class="python">global_transform(cat_action_functor)
 </code></pre>
 
-<p>Transforms a K-Net by applying a monoid action morphism. The argument <code>monoidactionmorphism</code> should be an instance of <code>opycleid.monoidactionmorphism.MonoidActionMorphism</code>. Calling this method checks if the given monoid action morphism is a valid one, and returns a newly labelled K-Net if this is the case.
-Note that since Opycleid only allows networks in which vertices are labelled with singletons, monoid action morphisms in which musical elements have multiple images are not allowed.</p>
+<p>Apply complete homography, i.e. a category action functor <code>cat_action_functor</code> (an instance of <code>opycleid.categoryaction.CategoryActionFunctor</code> and returns the corresponding new PK-Net. This new PK-Net has</p>
+<ul>
+<li>the same diagram action,</li>
+<li>a context action which corresponds to the target category action of <code>cat_action_functor</code>, and</li>
+<li>a category action functor which is the product of the initial category action functor by <code>cat_action_functor</code>.</li>
+</ul>
+<hr />
+<h4 id="local_transform">local_transform</h4>
+<pre><code class="python">local_transform(cat_functor,local_dict)
+</code></pre>
+
+<p>Apply a local homography, defined by the instance <code>cat_functor</code> of <code>opycleid.categoryaction.CategoryFunctor</code> (which should be an automorphism) and <code>local_dict</code>, and returns the corresponding new PK-Net. The argument <code>local_dict</code> defines the natural transformations <script type="math/tex"> \tilde{\nu} </script> between functors <script type="math/tex"> F \colon \Delta \to \mathbf{C} </script> and <script type="math/tex"> NF \colon \Delta \to \mathbf{C'} </script> (N being defined by <code>cat_functor</code>). Its keys are objects names in the diagram category action, its values are morphism names in the context category action.</p>
+<p>Returns a new PK-Net</p>
+<ul>
+<li>with the same diagram action and context action, and</li>
+<li>whose category action functor is the product of the initial category action functor by the image by S of the natural transformation defined by <code>local_dict</code>.</li>
+</ul>
+<p>Raises an exception if local_dict does not define a valid natural transformation, or if <code>cat_functor</code> is not an automorphism.</p>
 <hr />
 <h4 id="str"><strong>str</strong></h4>
-<p>Overloads Python <code>str</code> to return a string description of all edges in the K-Net.</p>
+<p>Overloads Python <code>str</code> to return a string description of the PK_Net.
+Returns a description of the PK-Net which lists for each edge its name, its source and target, and the corresponding maps between elements, expressed as their image in the context action.</p>
               
             </div>
           </div>
@@ -223,7 +240,7 @@ Note that since Opycleid only allows networks in which vertices are labelled wit
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="../monoidactionmorphism/" class="btn btn-neutral" title="opycleid.monoidactionmorphism"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../musicmonoids/" class="btn btn-neutral" title="opycleid.musicmonoids"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -249,7 +266,7 @@ Note that since Opycleid only allows networks in which vertices are labelled wit
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../monoidactionmorphism/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../musicmonoids/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
     </span>

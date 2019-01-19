@@ -79,6 +79,10 @@
         
             <li><a class="toctree-l4" href="#monoidaction">MonoidAction</a></li>
         
+            <li><a class="toctree-l4" href="#categoryfunctor">CategoryFunctor</a></li>
+        
+            <li><a class="toctree-l4" href="#categoryactionfunctor">CategoryActionFunctor</a></li>
+        
         </ul>
     
 
@@ -87,10 +91,6 @@
                 <li class="">
                     
     <a class="" href="../musicmonoids/">opycleid.musicmonoids</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../monoidactionmorphism/">opycleid.monoidactionmorphism</a>
                 </li>
                 <li class="">
                     
@@ -256,10 +256,15 @@ If <code>CatMorphism</code> is an endomorphism, i.e. its target is the same obje
 A typical use is <code>CatMorphism_2 == CatMorphism_1</code>.
 Returns <code>True</code> if the sources, targets, and relations of both morphisms are equal.</p>
 <hr />
+<h4 id="le"><strong>le</strong></h4>
+<p>Overloads the <code>&lt;=</code> operator in order to check for morphism inclusion.
+A typical use is <code>CatMorphism_2 &lt;= CatMorphism_1</code>.
+Returns <code>True</code> if the sources, and targets of both morphisms are equal, and if the relation of <code>CatMorphism_2</code> is equal or included in the relation of <code>CatMorphism_1</code>.</p>
+<hr />
 <h4 id="lt"><strong>lt</strong></h4>
-<p>Overloads the <code>&lt;</code> operator in order to check for morphism inclusion.
+<p>Overloads the <code>&lt;</code> operator in order to check for strict morphism inclusion.
 A typical use is <code>CatMorphism_2 &lt; CatMorphism_1</code>.
-Returns <code>True</code> if the sources, and targets of both morphisms are equal, and if the relation of <code>CatMorphism_2</code> is included in the relation of <code>CatMorphism_1</code>.</p>
+Returns <code>True</code> if the sources, and targets of both morphisms are equal, and if the relation of <code>CatMorphism_2</code> is non-trivially included in the relation of <code>CatMorphism_1</code> (i.e. it is included but not equal).</p>
 <hr />
 <h2 id="categoryaction">CategoryAction</h2>
 <pre><code class="python">opycleid.categoryaction.CategoryAction()
@@ -267,10 +272,12 @@ Returns <code>True</code> if the sources, and targets of both morphisms are equa
 
 <p>Defines a category action object, i.e. a faithful functor <script type="math/tex"> F \colon \mathbf{C} \to \mathbf{Rel} </script>,
 where <script type="math/tex"> \mathbf{C} </script> is a small category, and <script type="math/tex"> \mathbf{Rel} </script> is the 2-category of finite sets and relations.
-Instances of this class store internally
-<em> a dictionary of <code>opycleid.categoryaction.CatObject</code> instances, indexed by their name
-</em> a dictionary of <code>opycleid.categoryaction.CatMorphism</code> instances, indexed by their name, corresponding to the generators of the category,
-* a dictionary of <code>opycleid.categoryaction.CatMorphism</code> instances, indexed by their name, corresponding to all the operations of the category.</p>
+Instances of this class store internally</p>
+<ul>
+<li>a dictionary of <code>opycleid.categoryaction.CatObject</code> instances, indexed by their name</li>
+<li>a dictionary of <code>opycleid.categoryaction.CatMorphism</code> instances, indexed by their name, corresponding to the generators of the category,</li>
+<li>a dictionary of <code>opycleid.categoryaction.CatMorphism</code> instances, indexed by their name, corresponding to all the operations of the category.</li>
+</ul>
 <hr />
 <h3 id="methods_2">Methods</h3>
 <h4 id="set_objects">set_objects</h4>
@@ -278,37 +285,26 @@ Instances of this class store internally
 </code></pre>
 
 <p>The argument <code>list_objects</code> should be a list of <code>opycleid.categoryaction.CatObject</code> instances. Calling this method stores the <code>CatObject</code> instances
-in the internal dictionary, and resets the generators and operations of the category.</p>
-<hr />
-<h4 id="add_generators">add_generators</h4>
-<pre><code class="python">add_generators(list_morphisms)
-</code></pre>
-
-<p>The argument <code>list_morphisms</code> should be a list of <code>opycleid.categoryaction.CatMorphism</code> instances. These instances are added to the internal dictionary of generators.</p>
-<hr />
-<h4 id="add_morphisms">add_morphisms</h4>
-<pre><code class="python">add_morphisms(list_morphisms)
-</code></pre>
-
-<p>The argument <code>list_morphisms</code> should be a list of <code>opycleid.categoryaction.CatMorphism</code> instances. These instances are added to the internal dictionary of operations.</p>
-<hr />
-<h4 id="add_identities">add_identities</h4>
-<pre><code class="python">add_identities()
-</code></pre>
-
-<p>Add identity operations to the internal dictionary of operations corresponding to all objects present in this category.</p>
-<hr />
-<h4 id="generate_category">generate_category</h4>
-<pre><code class="python">generate_category()
-</code></pre>
-
-<p>Generates the category from the internal dictionary of generators. This means that for any operation <script type="math/tex"> f </script> and any generator <script type="math/tex"> g </script> of this category, the composite operation <script type="math/tex"> g \circ f </script> will be added to the internal dictionary of operations, if not already present, until the generation is complete.</p>
+in the internal dictionary, and resets the generators and operations of the category.
+The objects must have distinct elements; an exception will be raised if this is not the case.</p>
 <hr />
 <h4 id="get_objects">get_objects()</h4>
 <pre><code class="python">get_objects()
 </code></pre>
 
 <p>Returns the objects in this category, as a list of tuples <code>(String,CatObject)</code>, where the <code>CatObject</code> instance is an object of the category, and <code>String</code> corresponds to its name.</p>
+<hr />
+<h4 id="set_generators">set_generators</h4>
+<pre><code class="python">set_generators(list_morphisms)
+</code></pre>
+
+<p>The argument <code>list_morphisms</code> should be a list of <code>opycleid.categoryaction.CatMorphism</code> instances with distinct names (an exception will be raised if this is not the case). Calling this method will erase the previous internal dictionaries of generators and morphisms (but not objects). The internal dictionary of generators is then updated with the instances of <code>list_morphisms</code>.</p>
+<hr />
+<h4 id="generate_category">generate_category</h4>
+<pre><code class="python">generate_category()
+</code></pre>
+
+<p>Generates the category from the internal dictionary of generators. This means that for any operation <script type="math/tex"> f </script> and any generator <script type="math/tex"> g </script> of this category, the composite operation <script type="math/tex"> g \circ f </script> will be added to the internal dictionary of operations, if not already present, until the generation is complete.</p>
 <hr />
 <h4 id="get_generators">get_generators()</h4>
 <pre><code class="python">get_generators()
@@ -356,13 +352,27 @@ Returns the images of <code>elem</code> by the category operation with name <cod
 <p>The arguments <code>elem_1</code> and <code>elem_2</code> are elements in the objects of the category.
 Returns all the operations <script type="math/tex">f</script> in the category such that <code>elem_2</code> is the image of <code>elem_1</code> by <script type="math/tex"> f </script>.</p>
 <hr />
+<h4 id="get_description">get_description</h4>
+<pre><code class="python">get_description(name)
+</code></pre>
+
+<p>Returns a string description of the morphism with name <code>name</code>.</p>
+<hr />
+<h4 id="get_automorphisms">get_automorphisms</h4>
+<pre><code class="python">get_automorphisms()
+</code></pre>
+
+<p>Computes the automorphisms of the category <script type="math/tex"> \mathbf{C} </script> of the current category action <script type="math/tex"> F \colon \mathbf{C} \to \mathbf{Rel} </script>.
+Returns a list of <code>CategoryFunctor</code> instances, each one corresponding to an automorphism <script type="math/tex"> \mathbf{C} \to \mathbf{C}</script>.</p>
+<p>In the current implementation, calling this method enumerates every mapping from the generators to the morphisms. It is not optimized, and therefore should not be used for large category actions.</p>
+<hr />
 <h2 id="monoidaction">MonoidAction</h2>
 <pre><code class="python">opycleid.categoryaction.MonoidAction()
 </code></pre>
 
 <p>Defines a monoid action object, i.e. a faithful functor <script type="math/tex"> F \colon \mathbf{C} \to \mathbf{Rel} </script>,
 where <script type="math/tex"> \mathbf{C} </script> is a single-object category, and <script type="math/tex"> \mathbf{Rel} </script> is the 2-category of finite sets and relations.
-This class inherits from <code>opycleid.categoryaction.MonoidAction</code>, and implements methods specific to the case of monoids and groups.</p>
+This class inherits from <code>opycleid.categoryaction.CategoryAction</code>, and implements methods specific to the case of monoids and groups.</p>
 <hr />
 <h3 id="methods_3">Methods</h3>
 <h4 id="set_objects_1">set_objects</h4>
@@ -376,28 +386,6 @@ This class inherits from <code>opycleid.categoryaction.MonoidAction</code>, and 
 </code></pre>
 
 <p>Returns the single object of the monoid action as a tuple <code>(String,CatObject)</code>, where the <code>CatObject</code> instance is the single object of the monoid, and <code>String</code> corresponds to its name. This is equivalent to <code>get_objects()[0]</code>.</p>
-<hr />
-<h4 id="get_automorphisms">get_automorphisms</h4>
-<pre><code class="python">get_automorphisms()
-</code></pre>
-
-<p>Computes all possible automorphisms of the monoid. Returns a list of dictionaries: each dictionary maps the generators (the keys) to their image in the monoid (the values).</p>
-<p>In the current implementation, calling this method enumerates every mapping from the generators to the operations. It is not optimized, and therefore should not be used for large monoids.</p>
-<hr />
-<h4 id="is_automorphism">is_automorphism</h4>
-<pre><code class="python">is_automorphism(autom_dict,full_map=False)
-</code></pre>
-
-<p>Checks if a given mapping is a valid automorphism.</p>
-<ul>
-<li><code>autom_dict</code>:  a dictionary, the keys of which are names of the generators, the values of which are names of operations corresponding to the image of the generators by the proposed automorphism.</li>
-<li><code>full_map</code>: a boolean indicating if the full automorphism mapping should be returned.</li>
-</ul>
-<p>Returns a tuple <code>(valid,fullmapping)</code>, where</p>
-<ul>
-<li><code>valid</code> is a boolean indicating if the map defined by <code>autom_dict</code> is a valid automorphism, and</li>
-<li><code>fullmapping</code> is <code>None</code> if <code>full_map=False</code>, a dictionary mapping all operations of the monoid (keys) to their image (values) if <code>full_map=True</code>.</li>
-</ul>
 <hr />
 <h4 id="is_simplytransitive">is_simplytransitive</h4>
 <pre><code class="python">is_simplytransitive()
@@ -456,6 +444,127 @@ A right ideal is a subset <script type="math/tex">X</script> of the monoid, such
 </code></pre>
 
 <p>Returns <code>True</code> if the subset <script type="math/tex">S</script> is a right ideal in the monoid.</p>
+<hr />
+<h2 id="categoryfunctor">CategoryFunctor</h2>
+<pre><code class="python">opycleid.categoryaction.CategoryFunctor(cat_action_source,cat_action_target)
+</code></pre>
+
+<p>A <code>CategoryFunctor</code> instance represents a functor <script type="math/tex"> N \colon \mathbf{C} \to \mathbf{C}' </script> between the categories <script type="math/tex"> \mathbf{C} </script> and <script type="math/tex"> \mathbf{C}' </script> corresponding to the category actions <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script> and <script type="math/tex"> S' \colon \mathbf{C'} \to \mathbf{Rel} </script>.</p>
+<p>It is instantiated by specifying two instances <code>cat_action_source</code> and <code>cat_action_target</code> of <code>opycleid.categoryaction.CategoryAction</code>, i.e. the domain and codomain of the functor <script type="math/tex"> N \colon \mathbf{C} \to \mathbf{C}' </script>.</p>
+<hr />
+<h3 id="methods_4">Methods</h3>
+<h4 id="set_fullmapping">set_fullmapping</h4>
+<pre><code class="python">set_fullmapping(object_mapping,morphism_mapping)
+</code></pre>
+
+<p>Sets the mapping of morphisms and objects between the domain and codomain category actions. The method checks that the given mappings are
+valid, i.e. that</p>
+<ul>
+<li>for every morphism <script type="math/tex"> f \colon X \to Y </script> of <script type="math/tex"> \mathbf{C} </script>, the image morphism by <script type="math/tex"> N </script> is a morphism from <script type="math/tex"> N(X) </script> to <script type="math/tex"> N(Y) </script>.</li>
+<li>for every morphisms <script type="math/tex"> f,g </script> of <script type="math/tex"> \mathbf{C} </script>, we have <script type="math/tex"> N(g \circ f) = N(g) \circ N(f) </script>.</li>
+</ul>
+<p>The arguments of this method are as follows.</p>
+<ul>
+<li><code>object_mapping</code> is a dictionary, the keys of which are object names in the source category action, the values of which are object names in the target category action.</li>
+<li><code>morphism_mapping</code> is a dictionary, the keys of which are morphism names in the source category action, the values of which are morphism names in the target category action.</li>
+</ul>
+<p>Returns <code>True</code> if the given mappings are valid, <code>False</code> otherwise.</p>
+<hr />
+<h4 id="set_fullmapping_1">set_fullmapping</h4>
+<pre><code class="python">set_from_generator_mapping(gen_mapping)
+</code></pre>
+
+<p>Sets the mapping of morphisms and objects between the domain and codomain category actions from a mapping of the generators of the source category action.
+The argument <code>gen_mapping</code> is a dictionary, the keys of which are generator names in the source category action, the values of which are morphism names in the target category action. The full mapping of objects and morphisms is deduced from the generator mapping.
+The method checks that the given generator mapping is valid, and returns <code>True</code> if this is case, <code>False</code> otherwise.</p>
+<hr />
+<h4 id="get_image_object">get_image_object</h4>
+<pre><code class="python">get_image_object(object_name)
+</code></pre>
+
+<p>Returns the image of an object of the source category action by the category functor. The argument <code>object_name</code> is a string representing the name of an object in the source category of this functor. A string representing the image of <code>object_name</code> in the target category action of this functor is returned.</p>
+<hr />
+<h4 id="get_image_morphism">get_image_morphism</h4>
+<pre><code class="python">get_image_morphism(morphism_name)
+</code></pre>
+
+<p>Returns the image of a morphism of the source category action by the category functor. The argument <code>morphism_name</code> is a string representing the name of a morphism in the source category of this functor. A string representing the image of <code>morphism_name</code> in the target category action of this functor is returned.</p>
+<hr />
+<h4 id="get_object_mapping">get_object_mapping</h4>
+<pre><code class="python">get_object_mapping()
+</code></pre>
+
+<p>Returns the full mapping of objects by the category functor as a dictionary.</p>
+<hr />
+<h4 id="get_morphism_mapping">get_morphism_mapping</h4>
+<pre><code class="python">get_morphism_mapping()
+</code></pre>
+
+<p>Returns the full mapping of morphisms by the category functor as a dictionary.</p>
+<p>--</p>
+<h4 id="is_valid">is_valid</h4>
+<pre><code class="python">is_valid()
+</code></pre>
+
+<p>Checks if the category functor is a valid one, returns <code>True</code> if this is case, <code>False</code> otherwise.</p>
+<p>--</p>
+<h4 id="is_automorphism">is_automorphism</h4>
+<pre><code class="python">is_automorphism()
+</code></pre>
+
+<p>Checks if the category functor is an automorphism, i.e. the source and target categories are identical, and the mapping of objects and morphisms is bijective. Returns <code>True</code> if this is case, <code>False</code> otherwise.</p>
+<hr />
+<h4 id="mul_1"><strong>mul</strong></h4>
+<p>Overloads the <code>*</code> operator in order to represent category functor composition.
+A typical use is <code>CategoryFunctor_2 * CategoryFunctor_1</code>.
+If the target category of <code>CategoryFunctor_1</code> is identical to the source category of <code>CategoryFunctor_2</code>, this returns the corresponding composite functor.
+Otherwise, the two functors are not composable and an exception will be raised.</p>
+<hr />
+<h4 id="eq_1"><strong>eq</strong></h4>
+<p>Overloads the <code>==</code> operator in order to represent category functor equality.
+A typical use is <code>CategoryFunctor_2 == CategoryFunctor_1</code>.
+Returns <code>True</code> if this the mapping of objects and morphisms are identical, <code>False</code> otherwise.</p>
+<hr />
+<h2 id="categoryactionfunctor">CategoryActionFunctor</h2>
+<pre><code class="python">opycleid.categoryaction.CategoryActionFunctor(cat_action_source,cat_action_target,cat_functor,nat_transform)
+</code></pre>
+
+<p>A <code>CategoryActionFunctor</code> instance represents a morphism between two category actions <script type="math/tex"> F \colon \mathbf{C} \to \mathbf{Rel} </script> and <script type="math/tex"> F' \colon \mathbf{C'} \to \mathbf{Rel} </script>. Such a morphism is the data of a pair <script type="math/tex"> (N,\nu) </script> where</p>
+<ul>
+<li>
+<script type="math/tex"> N </script> is a functor from <script type="math/tex"> \mathbf{C} </script> to <script type="math/tex"> \mathbf{C'} </script>, and</li>
+<li>
+<script type="math/tex"> \nu </script> is a lax natural transformation from <script type="math/tex"> S </script> to <script type="math/tex"> S'N </script>.</li>
+</ul>
+<p>It is instantiated by specifying</p>
+<ul>
+<li>two instances <code>cat_action_source</code> and <code>cat_action_target</code> of <code>opycleid.categoryaction.CategoryAction</code>, i.e. the domain and codomain of the functor <script type="math/tex"> N \colon \mathbf{C} \to \mathbf{C}' </script>,</li>
+<li>an instance <code>cat_functor</code> of <code>opycleid.categoryaction.CategoryFunctor</code> representing the functor <script type="math/tex"> N \colon \mathbf{C} \to \mathbf{C}' </script>, and</li>
+<li>a dictionary <code>nat_transform</code> representing the natural transformation <script type="math/tex"> \nu \colon S \to S'N </script>. The keys of this dictionary are object names in the source category action <script type="math/tex"> S \colon \mathbf{C} \to \mathbf{Rel} </script>, the values are instances of <code>opycleid.categoryactionCatMorphism</code> from the object to their images.</li>
+</ul>
+<hr />
+<h3 id="methods_5">Methods</h3>
+<h4 id="is_valid_1">is_valid</h4>
+<pre><code class="python">is_valid()
+</code></pre>
+
+<p>Checks if the category action functor is a valid one, i.e. that</p>
+<ul>
+<li>the functor <script type="math/tex"> N \mathbf{C} \to \mathbf{C'} </script> is a valid one, and</li>
+<li>the lax natural transformation <script type="math/tex"> \nu </script> is valid, i.e. that for any morphism <script type="math/tex"> f \colon X \to Y </script> in the source category action, the relation <script type="math/tex"> \nu_Y \circ S(f) </script> is included in the relation <script type="math/tex"> S'N(f) \circ \nu_X </script>.</li>
+</ul>
+<p>Returns <code>True</code> if the category action functor is a valid one, <code>False</code> otherwise.</p>
+<hr />
+<h4 id="mul_2"><strong>mul</strong></h4>
+<p>Overloads the <code>*</code> operator in order to represent category action functor composition.
+A typical use is <code>CategoryActionFunctor_2 * CategoryActionFunctor_1</code>.
+If the target category action of <code>CategoryActionFunctor_1</code> is identical to the source category action of <code>CategoryActionFunctor_2</code>, this returns the corresponding composite category action functor, corresponding to the data of <script type="math/tex"> (N_2 \circ N_1,N_1\nu_2 \circ \nu_1) </script>
+Otherwise, the two category action functors are not composable and an exception will be raised.</p>
+<hr />
+<h4 id="eq_2"><strong>eq</strong></h4>
+<p>Overloads the <code>==</code> operator in order to represent category action functor equality.
+A typical use is <code>CategoryActionFunctor_2 == CategoryActionFunctor_1</code>.
+Returns <code>True</code> if this both the category functor and the natural transformation are equal, <code>False</code> otherwise.</p>
               
             </div>
           </div>

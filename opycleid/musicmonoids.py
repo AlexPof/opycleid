@@ -31,7 +31,7 @@ class Noll_Monoid(MonoidAction):
             M_G[(8*i+4)%12,i] = True
         G.set_mapping_matrix(M_G)
 
-        self.add_generators([F,G])
+        self.set_generators([F,G])
         self.generate_category()
 
 
@@ -56,22 +56,22 @@ class TI_Group_PC(MonoidAction):
             M_I[(-i)%12,i]=True
         I.set_mapping_matrix(M_I)
 
-        self.add_generators([T,I])
-        self.add_identities()
-        self.add_morphisms([T,I])
+        self.set_generators([T,I])
+        self._add_identities()
+        self._add_morphisms([T,I])
         for i in range(2,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = T*x
             x.set_name("T"+str(i))
-            self.add_morphisms([x])
+            self._add_morphisms([x])
         for i in range(1,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = T*x
             y = x*I
             y.set_name("I"+str(i))
-            self.add_morphisms([y])
+            self._add_morphisms([y])
 
 
 class TI_Group_Triads(MonoidAction):
@@ -98,22 +98,22 @@ class TI_Group_Triads(MonoidAction):
             M_I[(5-i)%12, i+12]=True
         I.set_mapping_matrix(M_I)
 
-        self.add_generators([T,I])
-        self.add_identities()
-        self.add_morphisms([T,I])
+        self.set_generators([T,I])
+        self._add_identities()
+        self._add_morphisms([T,I])
         for i in range(2,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = T*x
             x.set_name("T"+str(i))
-            self.add_morphisms([x])
+            self._add_morphisms([x])
         for i in range(1,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = T*x
             y = x*I
             y.set_name("I"+str(i))
-            self.add_morphisms([y])
+            self._add_morphisms([y])
 
 class PRL_Group(MonoidAction):
     """Defines the neo-Riemannian PRL group acting on the set
@@ -147,8 +147,8 @@ class PRL_Group(MonoidAction):
             M_P[i%12,12+i]=True
         P.set_mapping_matrix(M_P)
 
-        self.add_generators([P,R,L])
-        self.add_identities()
+        self.set_generators([P,R,L])
+        self._add_identities()
         self.generate_category()
 
 class UTT_Group(MonoidAction):
@@ -181,7 +181,7 @@ class UTT_Group(MonoidAction):
             M_I[i, i+12]=True
         I.set_mapping_matrix(M_I)
 
-        self.add_generators([T,I])
+        self.set_generators([T,I])
         self.generate_category()
 
         ## Quick rewriting of the operation names to conform to
@@ -201,8 +201,8 @@ class UTT_Group(MonoidAction):
             new_operations.append(new_morphism)
 
         self.set_objects([X]) ## This erases previous morphisms
-        self.add_morphisms(new_operations)
-        self.generators = {"<1,0,+>":self.operations["<1,0,+>"],"<0,0,->":self.operations["<0,0,->"]}
+        self._add_morphisms(new_operations)
+        self.generators = {"<1,0,+>":self.morphisms["<1,0,+>"],"<0,0,->":self.morphisms["<0,0,->"]}
 
 class Left_Z3Q8_Group(MonoidAction):
     """Defines a simply transitive generalized neo-Riemannian group acting
@@ -230,22 +230,22 @@ class Left_Z3Q8_Group(MonoidAction):
             M_J[(-i+6)%12, i+12]=True
         J.set_mapping_matrix(M_J)
 
-        self.add_generators([T,J])
-        self.add_identities()
-        self.add_morphisms([T,J])
+        self.set_generators([T,J])
+        self._add_identities()
+        self._add_morphisms([T,J])
         for i in range(2,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = x*T
             x.set_name("T"+str(i))
-            self.add_morphisms([x])
+            self._add_morphisms([x])
         for i in range(1,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = x*T
             y=x*J
             y.set_name("J"+str(i))
-            self.add_morphisms([y])
+            self._add_morphisms([y])
 
 class Right_Z3Q8_Group(MonoidAction):
     """Defines a simply transitive generalized neo-Riemannian group acting
@@ -273,22 +273,22 @@ class Right_Z3Q8_Group(MonoidAction):
             M_J[(i+6)%12, i+12]=True
         J.set_mapping_matrix(M_J)
 
-        self.add_generators([T,J])
-        self.add_identities()
-        self.add_morphisms([T,J])
+        self.set_generators([T,J])
+        self._add_identities()
+        self._add_morphisms([T,J])
         for i in range(2,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = x*T
             x.set_name("T"+str(i))
-            self.add_morphisms([x])
+            self._add_morphisms([x])
         for i in range(1,12):
-            x = self.operations['id_.']
+            x = self.morphisms['id_.']
             for j in range(i):
                 x = x*T
             y=x*J
             y.set_name("J"+str(i))
-            self.add_morphisms([y])
+            self._add_morphisms([y])
 
 
 class UPL_Monoid(MonoidAction):
@@ -337,7 +337,7 @@ class UPL_Monoid(MonoidAction):
             M_U[12+i,24+((i+3)%4)]=True
         U.set_mapping_matrix(M_U)
 
-        self.add_generators([P,L,U])
+        self.set_generators([P,L,U])
         self.generate_category()
 
 
@@ -372,7 +372,7 @@ class S_Monoid(MonoidAction):
             M_S[i,12+(i+4)%12]=True
         S.set_mapping_matrix(M_S)
 
-        self.add_generators([S])
+        self.set_generators([S])
         self.generate_category()
 
 
@@ -421,7 +421,7 @@ class T_Monoid(MonoidAction):
             M_T[12+i,12+(i+8)%12]=True
         T.set_mapping_matrix(M_T)
 
-        self.add_generators([T])
+        self.set_generators([T])
         self.generate_category()
 
 
@@ -456,7 +456,7 @@ class K_Monoid(MonoidAction):
             M_K[12+i,24+((i+2)%4)]=True
         K.set_mapping_matrix(M_K)
 
-        self.add_generators([K])
+        self.set_generators([K])
         self.generate_category()
 
 
@@ -491,7 +491,7 @@ class W_Monoid(MonoidAction):
             M_W[12+i,24+((i+1)%4)]=True
         W.set_mapping_matrix(M_W)
 
-        self.add_generators([W])
+        self.set_generators([W])
         self.generate_category()
 
 
@@ -554,5 +554,5 @@ class ST_Monoid(MonoidAction):
             M_T[12+i,12+(i+8)%12]=True
         T.set_mapping_matrix(M_T)
 
-        self.add_generators([S,T])
+        self.set_generators([S,T])
         self.generate_category()
