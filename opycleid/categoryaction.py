@@ -410,7 +410,7 @@ class CategoryAction(object):
         self.morphisms={}
         self.equivalences=[]
 
-        all_elements = [x for for catobject in list_objects for x in catobject.get_elements()]
+        all_elements = [x for catobject in list_objects for x in catobject.get_elements()]
         if not len(all_elements)==len(np.unique(all_elements)):
             raise Exception("Objects must have distinct elements")
 
