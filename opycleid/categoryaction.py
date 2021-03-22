@@ -22,6 +22,10 @@ class CatObject(object):
         None
         """
         self.name = name
+        if not len(elements):
+            raise Exception("Empty sets are not admissible")
+        if not len(np.unique(elements))==len(elements):
+            raise Exception("Set elements are not unique")
         self.dict_elem2idx = dict([(x,i) for i,x in enumerate(elements)])
         self.dict_idx2elem = dict([(i,x) for i,x in enumerate(elements)])
 
@@ -93,7 +97,7 @@ class CatObject(object):
         return elem in self.dict_elem2idx
 
 class CatMorphism(object):
-    def __init__(self,name,source,target):
+    def __init__(self,name,source,target,mapping=None):
         """Initializes a category morphism between two objects
 
         Parameters
@@ -102,6 +106,9 @@ class CatMorphism(object):
         source: an instance of CatObject representing the domain of the morphism
         target: an instance of CatObject representing the codomain of
                 the morphism
+        mapping: optional argument representing the mapping of elements
+                 between the domain and the codomain. The mapping can be 
+                 given as a NumPy array matrix or as a dictionary.
 
         Returns
         -------
@@ -114,6 +121,11 @@ class CatMorphism(object):
         self.name = name
         self.source = source
         self.target = target
+        if mapping is not None:
+            if isinstance(mapping,np.ndarray)==False:
+                self.set_mapping(mapping)
+            else:
+                self.set_mapping_matrix(mapping)
 
     def set_name(self,name):
         """Sets the name of the morphism
@@ -266,9 +278,8 @@ class CatMorphism(object):
             descr += s+"->"+(",".join(t))+"\n"
         return descr
 
-    def __rshift__(self,elem):
+    def __call__(self,elem):
         """Apply the current morphism to an element of its domain
-        Overloads the '>>' operator of Python
 
         Parameters
         ----------
@@ -316,8 +327,12 @@ class CatMorphism(object):
         The product self * morphism. Raises an exception if the two morphisms
         are not composable
         """
+        
+        if not isinstance(morphism,CatMorphism):
+           raise Exception("RHS is not a valid CatMorphism class\n")
+        
         if not morphism.target==self.source:
-            raise Exception("Morphisms are not composable")
+            return None
         new_morphism =  CatMorphism(self.name+morphism.name,morphism.source,self.target)
         new_morphism.set_mapping_matrix((self.matrix.dot(morphism.matrix))>0)
 
@@ -335,6 +350,10 @@ class CatMorphism(object):
         -------
         True if 'self' is equal to 'morphism'
         """
+        if not isinstance(morphism,CatMorphism):
+           raise Exception("RHS is not a valid CatMorphism class\n")
+        if self is None or morphism is None:
+           return False
         return (self.source == morphism.source) and \
                (self.target == morphism.target) and \
                (np.array_equal(self.matrix,morphism.matrix))
@@ -352,7 +371,10 @@ class CatMorphism(object):
         -------
         True if 'self' is included in 'morphism'
         """
-
+        if not isinstance(morphism,CatMorphism):
+           raise Exception("RHS is not a valid CatMorphism class\n")
+        if self is None or morphism is None:
+            return False
         if not (self.source == morphism.source) and (self.target == morphism.target):
             raise Exception("Morphisms should have the same domain and codomain")
         return np.array_equal(self.matrix,self.matrix & morphism.matrix)
@@ -371,16 +393,27 @@ class CatMorphism(object):
         True if 'self' is strictly included in 'morphism'
         """
 
+        if not isinstance(morphism,CatMorphism):
+           raise Exception("RHS is not a valid CatMorphism class\n")
+        if self is None or morphism is None:
+           return False
         return (self<=morphism) and (not self==morphism)
 
 
 class CategoryAction(object):
-    def __init__(self):
+    def __init__(self,objects=None,generators=None,generate=True):
         """Instantiates a CategoryAction class
 
         Parameters
         ----------
-        None
+        objects: optional list of CatObject instances representing
+                 the objects in the category.
+                 
+        generators: optional list of CatMorphism instances
+                 representing the generators of the category.
+                 
+        generator: optional boolean indicating whether the category
+                   should be generated upon instantiation.
 
         Returns
         -------
@@ -390,6 +423,12 @@ class CategoryAction(object):
         self.generators={}
         self.morphisms={}
         self.equivalences=[]
+        if objects is not None:
+            self.set_objects(objects)
+        if generators is not None:
+            self.set_generators(generators)
+            if generate==True:
+                self.generate_category()
 
     def set_objects(self,list_objects):
         """Sets the objects constituting the category action. This erases
@@ -402,17 +441,17 @@ class CategoryAction(object):
 
         Returns
         -------
-        None. Checks if all objects have distinct elements, raises an Exception
+        None. Checks if all objects have distinct names, raises an Exception
         otherwise.
         """
         self.objects={}
         self.generators={}
         self.morphisms={}
         self.equivalences=[]
-
-        all_elements = [x for catobject in list_objects for x in catobject.get_elements()]
-        if not len(all_elements)==len(np.unique(all_elements)):
-            raise Exception("Objects must have distinct elements")
+        
+        ob_names = [catobject.name for catobject in list_objects]
+        if not len(ob_names)==len(np.unique(ob_names)):
+            raise Exception("Objects should have distinct names")
 
         for catobject in list_objects:
             self.objects[catobject.name] = catobject
@@ -473,21 +512,28 @@ class CategoryAction(object):
 
         Returns
         -------
-        None. Checks if all generators have distinct names, raises an Exception
+        None.
+        Checks if sources and targets of generators are objects present
+        in the category, raises an Exception otherwise
+        Checks if all generators have distinct names, raises an Exception
         otherwise.
         """
         self.generators={}
         self.morphisms={}
         self.equivalences=[]
 
-        all_gennames = []
-        for catmorphism in list_morphisms:
-             all_gennames.append(catmorphism.name)
+        all_gennames = [m.name for m in list_morphisms]
         if not len(all_gennames)==len(np.unique(all_gennames)):
             raise Exception("Generators must have distinct names")
+            
+        cat_obj_names = [x[0] for x in self.get_objects()]
 
-        for catmorphism in list_morphisms:
-            self.generators[catmorphism.name] = catmorphism
+        for m in list_morphisms:
+            if not m.source.name in cat_obj_names:
+                raise Exception("Domain or codomain of a generator is not present in the category")
+            if not m.target.name in cat_obj_names:
+                raise Exception("Domain or codomain of a generator is not present in the category")
+            self.generators[m.name] = m
 
     def _add_morphisms(self,list_morphisms):
         """Add morphisms to the category action.
@@ -500,9 +546,23 @@ class CategoryAction(object):
         Returns
         -------
         None
+        Checks if sources and targets of generators are objects present
+        in the category, raises an Exception otherwise.
+        Checks if the morphisms have a distinct name, raises an Exception
+        otherwise.
         """
-        for catmorphism in list_morphisms:
-            self.morphisms[catmorphism.name] = catmorphism
+        
+        cat_obj_names = [x[0] for x in self.get_objects()]
+        cat_mor_names = [x[0] for x in self.get_morphisms()]
+        
+        for m in list_morphisms:
+            if not m.source.name in cat_obj_names:
+                raise Exception("Domain or codomain of a generator is not present in the category")
+            if not m.target.name in cat_obj_names:
+                raise Exception("Domain or codomain of a generator is not present in the category")
+            if m.name in cat_mor_names:
+                raise Exception("Morphisms should have distinct names")
+            self.morphisms[m.name] = m
 
     def _add_identities(self):
         """Automatically add identity morphisms on each object of the category
@@ -544,9 +604,9 @@ class CategoryAction(object):
             added_liste = {}
             for name_x,morphism_x in sorted(new_liste.items()):
                 for name_g,morphism_g in self.get_generators():
-                    try:
+                    new_morphism = morphism_g*morphism_x
+                    if not new_morphism is None:
                         c=0
-                        new_morphism = morphism_g*morphism_x
                         for name_y,morphism_y in self.get_morphisms():
                             if new_morphism==morphism_y:
                                 c=1
@@ -554,8 +614,6 @@ class CategoryAction(object):
                         if c==0:
                             added_liste[new_morphism.name] = new_morphism
                             self.morphisms[new_morphism.name] = new_morphism
-                    except:
-                        pass
             new_liste = added_liste
 
     def mult(self,name_g,name_f):
@@ -572,7 +630,10 @@ class CategoryAction(object):
         to name_g*name_f.
         """
         new_morphism = self.morphisms[name_g]*self.morphisms[name_f]
-        return [name_x for name_x,x in self.get_morphisms() if x==new_morphism][0]
+        if new_morphism is None:
+            return new_morphism
+        else:
+            return [name_x for name_x,x in self.get_morphisms() if x==new_morphism][0]
 
     def apply_operation(self,name_f,element):
         """Applies a morphism to a given element.
@@ -586,7 +647,7 @@ class CategoryAction(object):
         -------
         A list of strings representing the images of elem by name_f
         """
-        return self.morphisms[name_f]>>element
+        return self.morphisms[name_f](element)
 
     def get_operation(self,element_1,element_2):
         """Returns the operations taking the element element_1 to the element
@@ -604,7 +665,7 @@ class CategoryAction(object):
         res = []
         for name_f,f in self.get_morphisms():
             try:
-                if element_2 in f>>element_1:
+                if element_2 in f(element_1):
                     res.append(name_f)
             except:
                 pass
@@ -1008,7 +1069,7 @@ class CategoryFunctor(object):
         self.object_mapping = None
         self.morphisms_mapping = None
         self.generators_mapping = None
-
+        
 
     def set_fullmapping(self,object_mapping,morphism_mapping):
         """Sets the mapping of morphisms and objects between the domain and
@@ -1088,20 +1149,16 @@ class CategoryFunctor(object):
             added_liste = []
             for name_x in new_liste:
                 for name_g,g in self.cat_action_source.get_generators():
-                    try:
-                        name_product = self.cat_action_source.mult(name_g,name_x)
-                        name_imageproduct = self.cat_action_target.mult(full_mapping[name_g],full_mapping[name_x])
+                    name_product = self.cat_action_source.mult(name_g,name_x)
+                    name_imageproduct = self.cat_action_target.mult(full_mapping[name_g],full_mapping[name_x])
+                    if name_product is not None and name_imageproduct is not None:
                         if not name_product in full_mapping:
                             added_liste.append(name_product)
                             full_mapping[name_product] = name_imageproduct
-                        else:
+                        elif not full_mapping[name_product] == name_imageproduct:
                             ## If the generated element already exists, we check that its existing image corresponds
                             ## to the image which has just been calculated
-                            if not full_mapping[name_product] == name_imageproduct:
-                                ## We have a multi-valued function so the algorithm stops there
-                                return False
-                    except:
-                        pass
+                            return False
             new_liste = added_liste[:]
 
         self.generators_mapping = gen_mapping.copy()
@@ -1111,6 +1168,29 @@ class CategoryFunctor(object):
         ## By construction, this is functorial, so there is no need to check
         ## with the is_valid() method
         return True
+        
+    def __call__(self,rhs):
+        """Gets the image of an object or a morphism by the category functor.
+
+        Parameters
+        ----------
+        rhs: a string representing the name of an object or the name
+        of a morphism in the domain category of this functor.
+
+        Returns
+        -------
+        A string representing the image of the object by this functor.
+        """    
+        
+        source_obj_names = [x[0] for x in self.cat_action_source.get_objects()]
+        source_mor_names = [x[0] for x in self.cat_action_source.get_morphisms()]
+        
+        if rhs in source_obj_names:
+            return self.get_image_object(rhs)
+        elif rhs in source_mor_names:
+            return self.get_image_morphism(rhs)
+        else:
+            raise Exception("Not an object or a morphism")
 
     def get_image_object(self,object_name):
         """Gets the image of an object by the category functor.
@@ -1151,7 +1231,7 @@ class CategoryFunctor(object):
         -------
         A dictionary representing the mapping of the objects.
         """
-        return self.object_mapping
+        return sorted(self.object_mapping)
 
     def get_morphism_mapping(self):
         """Gets the mapping of a morphisms by the category functor.
@@ -1164,7 +1244,7 @@ class CategoryFunctor(object):
         -------
         A dictionary representing the mapping of the morphisms.
         """
-        return self.morphisms_mapping
+        return sorted(self.morphisms_mapping)
 
     def is_valid(self):
         """Checks if the specified functor is a valid one.
@@ -1185,12 +1265,12 @@ class CategoryFunctor(object):
             source_name = f.source.name
             target_name = f.target.name
 
-            image_name_f = self.get_image_morphism(name_f)
+            image_name_f = self(name_f)
 
             source_image_name = self.cat_action_target.morphisms[image_name_f].source.name
             target_image_name = self.cat_action_target.morphisms[image_name_f].target.name
-            if not ((self.get_image_object(source_name)==source_image_name) and \
-                    (self.get_image_object(target_name)==target_image_name)):
+            if not ((self(source_name)==source_image_name) and \
+                    (self(target_name)==target_image_name)):
                 return False
 
         ## Then we need to check if N is an actual functor, i.e. for all
@@ -1198,23 +1278,17 @@ class CategoryFunctor(object):
 
         for name_f,f in self.cat_action_source.get_morphisms():
             for name_g,g in self.cat_action_source.get_morphisms():
-                try:
-                    prod = self.cat_action_source.mult(name_g,name_f)
-                except:
-                    ## g and f are not composable, so no need to check any
-                    ## further
-                    continue
-
-                image_name_f = self.get_image_morphism(name_f)
-                image_name_g = self.get_image_morphism(name_g)
-                try:
+                prod = self.cat_action_source.mult(name_g,name_f)
+                if prod is not None:
+                    image_name_f = self(name_f)
+                    image_name_g = self(name_g)
                     image_prod = self.cat_action_target.mult(image_name_g,image_name_f)
-                except:
-                    ## N(g) and N(f) are not composable, so this is not a functor
-                    return False
-                ## Finally we check if we indeed have N(gf)=N(g)N(f)
-                if not self.get_image_morphism(prod)==image_prod:
-                    return False
+                    if image_prod is None:
+                        ## N(g) and N(f) are not composable, so this is not a functor
+                        return False
+                    ## Finally we check if we indeed have N(gf)=N(g)N(f)
+                    if not self(prod)==image_prod:
+                        return False
         return True
 
     def is_automorphism(self):
@@ -1237,7 +1311,7 @@ class CategoryFunctor(object):
         num_objects = len(self.cat_action_source.get_objects())
         if not (len(set(self.object_mapping.keys()))==num_objects and \
                len(set(self.object_mapping.values()))==num_objects):
-           return False
+            return False
 
         ## Then we need to check if the morphism mapping is bijective
 
@@ -1245,7 +1319,7 @@ class CategoryFunctor(object):
 
         if not (len(set(self.morphisms_mapping.keys()))==num_morphisms and \
                len(set(self.morphisms_mapping.values()))==num_morphisms):
-           return False
+            return False
 
         return True
 
@@ -1259,19 +1333,19 @@ class CategoryFunctor(object):
 
         Returns
         -------
-        The product self * cat_functor. Raises an exception if the two morphisms
+        The product self * cat_functor. Returns None if the two morphisms
         are not composable
         """
         if not cat_functor.cat_action_target==self.cat_action_source:
-            raise Exception("Functors are not composable")
+            return None
 
 
         new_cat_functor =  CategoryFunctor(cat_functor.cat_action_source,
                                            self.cat_action_target)
         gen_mapping = {}
         for name_g,g in cat_functor.cat_action_source.get_generators():
-            image_name_g = cat_functor.morphisms_mapping[name_g]
-            gen_mapping[name_g] = self.morphisms_mapping[image_name_g]
+            image_name_g = cat_functor(name_g)
+            gen_mapping[name_g] = self(image_name_g)
         new_cat_functor.set_from_generator_mapping(gen_mapping)
 
         return new_cat_functor
@@ -1288,7 +1362,10 @@ class CategoryFunctor(object):
         Returns True if the morphisms mappings are identical, False otherwise.
         """
         if not isinstance(cat_functor,CategoryFunctor):
-           raise Exception("RHS is not a category functor\n")
+            raise Exception("RHS is not a category functor\n")
+           
+        if self is None or cat_functor is None:
+            return False
 
         return cat_functor.morphisms_mapping==self.morphisms_mapping
 
@@ -1359,7 +1436,7 @@ class CategoryActionFunctor(object):
             target_name = f.target.name
             nat_transform_source = self.nat_transform[source_name]
             nat_transform_target = self.nat_transform[target_name]
-            image_name_f = self.cat_functor.get_image_morphism(name_f)
+            image_name_f = self.cat_functor(name_f)
             image_morphism = self.cat_action_target.morphisms[image_name_f]
             if not (nat_transform_target*f)<=(image_morphism*nat_transform_source):
                 return False
@@ -1375,11 +1452,11 @@ class CategoryActionFunctor(object):
 
         Returns
         -------
-        The product self * cat_action_functor. Raises an exception if the two morphisms
+        The product self * cat_action_functor. Returns None if the two morphisms
         are not composable
         """
         if not cat_action_functor.cat_action_target==self.cat_action_source:
-            raise Exception("Category Action Functors are not composable")
+            return None
 
         new_cat_functor = self.cat_functor*cat_action_functor.cat_functor
 
