@@ -11,44 +11,150 @@ from .categoryaction import CatObject
 
 class MultQ(object):
     def __init__(self,x):
+        """Initializes an element of the multiplicative quantale.
+
+        Parameters
+        ----------
+        x: a float value between 0 and 1
+
+        Returns
+        -------
+        None
+        Raise an exception if the float value is not in the interval [0,1].
+        """
         if x<0 or x>1:
             raise Exception("Real number should be comprised between 0 and 1")
         self.x = x
 
     @staticmethod
     def Unit():
+        """Static method returning the unit of the monoid operation in the
+        quantale.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        The unit of the multiplicative quantale for the monoid operation.
+        """
         return MultQ(1.0)
 
     @staticmethod
     def Zero():
+        """Static method returning the zero value in the
+        quantale.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        The zero value in the quantale.
+        """
         return MultQ(0.0)
 
     def __mul__(self,rhs):
+        """Compose two numbers in the multiplicative quantale
+        Overloads the '*' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of MultQ
+
+        Returns
+        -------
+        The product self * rhs.
+        In the case of the multiplicative quantale, it is the ordinary
+        product of the two numbers.
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid MultQ")
         return self.__class__(self.x*rhs.x)
 
     def __add__(self,rhs):
+        """Compute the supremum in the multiplicative quantale
+        Overloads the '+' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of MultQ
+
+        Returns
+        -------
+        The supremum self v rhs.
+        In the case of the multiplicative quantale, 'v' is the maximum
+        of the two numbers.
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid MultQ")
         return self.__class__(max([self.x,rhs.x]))
 
     def __eq__(self,rhs):
+        """Checks if the two numbers in the multiplicative quantale are equal.
+        Overloads the '==' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of MultQ
+
+        Returns
+        -------
+        True if 'self' is equal to 'rhs'
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid MultQ")
         return self.x==rhs.x
 
     def __lt__(self,rhs):
+        """Checks if the given number is strictly inferior to the rhs given the
+        poset structure of the multiplicative quantale.
+        Overloads the '<' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of MultQ
+
+        Returns
+        -------
+        True if 'self' is strictly inferior 'rhs'
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid MultQ")
         return self.x<rhs.x
 
     def __le__(self,rhs):
+        """Checks if the given number is inferior to the rhs given the
+        poset structure of the multiplicative quantale.
+        Overloads the '<=' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of MultQ
+
+        Returns
+        -------
+        True if 'self' is inferior or equal to 'rhs'
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid MultQ")
         return self.x<=rhs.x
 
     def __str__(self):
+        """Returns a verbose description of the number in the multiplicative
+        quantale.
+        Overloads the 'str' operator of Python
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A string description of the number value.
+        """
         return str(self.x)
 
     def __repr__(self):
@@ -56,44 +162,149 @@ class MultQ(object):
 
 class IntvQ(object):
     def __init__(self,x):
+        """Initializes an element of the interval quantale.
+
+        Parameters
+        ----------
+        x: a float value between 0 and 1
+
+        Returns
+        -------
+        None
+        Raise an exception if the float value is not in the interval [0,1].
+        """
         if x<0 or x>1:
             raise Exception("Real number should be comprised between 0 and 1")
         self.x = x
 
     @staticmethod
     def Unit():
+        """Static method returning the unit of the monoid operation in the
+        quantale.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        The unit of the multiplicative quantale for the monoid operation.
+        """
         return IntvQ(1.0)
 
     @staticmethod
     def Zero():
+        """Static method returning the zero value in the
+        quantale.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        The zero value in the quantale.
+        """
         return IntvQ(0.0)
 
     def __mul__(self,rhs):
+        """Compose two numbers in the interval quantale
+        Overloads the '*' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of IntvQ
+
+        Returns
+        -------
+        The product self * rhs.
+        In the case of the interval quantale, it is the min of the two numbers.
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid IntvQ")
         return self.__class__(min([self.x,rhs.x]))
 
     def __add__(self,rhs):
+        """Compute the supremum in the interval quantale
+        Overloads the '+' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of IntvQ
+
+        Returns
+        -------
+        The supremum self v rhs.
+        In the case of the interval quantale, 'v' is the maximum
+        of the two numbers.
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid IntvQ")
         return self.__class__(max([self.x,rhs.x]))
 
     def __eq__(self,rhs):
+        """Checks if the two numbers in the interval quantale are equal.
+        Overloads the '==' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of IntvQ
+
+        Returns
+        -------
+        True if 'self' is equal to 'rhs'
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid IntvQ")
         return self.x==rhs.x
 
     def __lt__(self,rhs):
+        """Checks if the given number is strictly inferior to the rhs given the
+        poset structure of the interval quantale.
+        Overloads the '<' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of IntvQ
+
+        Returns
+        -------
+        True if 'self' is strictly inferior 'rhs'
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid IntvQ")
         return self.x<rhs.x
 
     def __le__(self,rhs):
+        """Checks if the given number is inferior to the rhs given the
+        poset structure of the interval quantale.
+        Overloads the '<=' operator of Python
+
+        Parameters
+        ----------
+        rhs : an instance of IntvQ
+
+        Returns
+        -------
+        True if 'self' is inferior or equal to 'rhs'
+        """
         if not isinstance(rhs,self.__class__):
             raise Exception("RHS is not a valid IntvQ")
         return self.x<=rhs.x
 
     def __str__(self):
+        """Returns a verbose description of the number in the interval
+        quantale.
+        Overloads the 'str' operator of Python
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A string description of the number value.
+        """
         return str(self.x)
 
     def __repr__(self):
@@ -102,16 +313,51 @@ class IntvQ(object):
 
 class Lin3Q(IntvQ):
     def __init__(self,x):
+        """Initializes an element of the linear order quantale with 3 elements.
+        It is a sub-quantale of the interval quantale with values 0, 1/2, and 1.
+
+        Parameters
+        ----------
+        x: a float value between being either 0, 1/2, or 1.
+
+        Returns
+        -------
+        None
+        Raise an exception if the float value is not one of the above-mentionned
+        values.
+        """
         if not (x==0 or x==0.5 or x==1):
             raise Exception("The possibles values are 0, 1/2, and 1")
         super().__init__(x)
 
     @staticmethod
     def Unit():
+        """Static method returning the unit of the monoid operation in the
+        quantale.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        The unit of the linear order quantale for the monoid operation.
+        """
         return Lin3Q(1.0)
 
     @staticmethod
     def Zero():
+        """Static method returning the zero value in the
+        quantale.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        The zero value in the quantale.
+        """
         return Lin3Q(0.0)
 
     def __str__(self):
@@ -125,7 +371,7 @@ class Lin3Q(IntvQ):
 
 class QMorphism(object):
     def __init__(self,name,source,target,qtype=None,mapping=None):
-        """Initializes a category quantale morphism between two objects
+        """Initializes a quantaloid morphism between two sets.
 
         Parameters
         ----------
@@ -141,6 +387,10 @@ class QMorphism(object):
         Returns
         -------
         None
+        Raises an exception if
+        - the source is not an instance of a CatObject
+        - the target is not an instance of a CatObject
+        - the type (class) of quantale is not specified
         """
         if not isinstance(source,CatObject):
             raise Exception("Source is not a valid CatObject class\n")
@@ -205,11 +455,11 @@ class QMorphism(object):
         ----------
         mapping: a dictionary, with:
                 - keys: the element names in the domain of the morphism
-                - values: a list of pairs of element names in the codomain of the morphism
-                         and a number in the specified quantale
+                - values: a list of pairs of element names in the codomain of
+                          the morphism and a number in the specified quantale.
 
-        The mapping can be one-on-many as we are working in the category Rel of
-        finite sets and relations
+        The mapping can be one-on-many as we are working in the category Rel(Q)
+        of finite sets and quantale-valued relations.
 
         Returns
         -------
@@ -234,7 +484,7 @@ class QMorphism(object):
 
         Parameters
         ----------
-        matrix: a boolean matrix (m,n), where m is the cardinality of the codomain
+        matrix: a quantale-valued matrix (m,n), where m is the cardinality of the codomain
         and n the cardinality of the domain, indicating the image of the elements.
 
         Returns
@@ -277,7 +527,7 @@ class QMorphism(object):
 
         Returns
         -------
-        A boolean matrix representing the morphism in Rel
+        A boolean matrix representing the morphism in Rel(Q)
         """
         return self.matrix
 
@@ -290,7 +540,7 @@ class QMorphism(object):
 
         Returns
         -------
-        A new instance of CatMorphism with the same domain, codomain, and mapping
+        A new instance of QMorphism with the same domain, codomain, and mapping
         """
         U = QMorphism(self.name,self.source,self.target,qtype=self.qtype)
         U.set_mapping_matrix(self.get_mapping_matrix())
@@ -339,7 +589,8 @@ class QMorphism(object):
 
         Returns
         -------
-        The image of elem by the current morphism
+        List of pairs of elements and quantale values mapped by the given
+        QMorphism.
         """
         idx_elem = self.source.get_idx_by_name(elem)
         return [(self.target.get_name_by_idx(j),v.x) for j,v in enumerate(self.matrix[:,idx_elem]) if v!=self.qtype.Zero()]
@@ -354,7 +605,8 @@ class QMorphism(object):
 
         Returns
         -------
-        The power self^int_power. Raises an exception if the morphism is not an endomorphism
+        The power self^int_power. Raises an exception if the morphism is not an
+        endomorphism.
         """
         if not self.target==self.source:
             raise Exception("Morphism should be an endomorphism")
@@ -377,8 +629,10 @@ class QMorphism(object):
 
         Returns
         -------
-        The product self * morphism. Raises an exception if the two morphisms
-        are not composable
+        The product self * morphism.
+        Raises an exception if the rhs is not a QMorphism, or if the two
+        QMorphisms are of different quantale types.
+        Returns None if the two morphisms are not composable.
         """
 
         if not isinstance(morphism,QMorphism):
@@ -394,18 +648,20 @@ class QMorphism(object):
 
     def __eq__(self,morphism):
         """Checks if the given morphism is equal to 'morphism'
-        Overloads the '=' operator of Python
+        Overloads the '==' operator of Python
 
         Parameters
         ----------
-        morphism : an instance of CatMorphism
+        morphism : an instance of QMorphism
 
         Returns
         -------
         True if 'self' is equal to 'morphism'
+        Raises an exception if the rhs is not a QMorphism, or if the two
+        QMorphisms are of different quantale types.
         """
         if not isinstance(morphism,QMorphism):
-            raise Exception("RHS is not a valid CatMorphism class\n")
+            raise Exception("RHS is not a valid QMorphism class\n")
         if not self.qtype==morphism.qtype:
             raise Exception("QMorphisms use different quantales")
         if self is None or morphism is None:
@@ -422,11 +678,14 @@ class QMorphism(object):
 
         Parameters
         ----------
-        morphism : an instance of CatMorphism
+        morphism : an instance of QMorphism
 
         Returns
         -------
         True if 'self' is included in 'morphism'
+        Raises an exception if the rhs is not a QMorphism, or if the two
+        QMorphisms are of different quantale types, or if the domain and codomain
+        differ.
         """
         if not isinstance(morphism,QMorphism):
             raise Exception("RHS is not a valid CatMorphism class\n")
@@ -450,12 +709,17 @@ class QMorphism(object):
         Returns
         -------
         True if 'self' is strictly included in 'morphism'
+        Raises an exception if the rhs is not a QMorphism, or if the two
+        QMorphisms are of different quantale types, or if the domain and codomain
+        differ.
         """
 
         if not isinstance(morphism,QMorphism):
             raise Exception("RHS is not a valid CatMorphism class\n")
         if not self.qtype==morphism.qtype:
             raise Exception("QMorphisms use different quantales")
+        if not (self.source == morphism.source) and (self.target == morphism.target):
+            raise Exception("Morphisms should have the same domain and codomain")
         if self is None or morphism is None:
             return False
         return np.all(self.matrix<morphism.matrix)
@@ -465,7 +729,7 @@ class QMorphism(object):
 
 class CategoryQAction(object):
     def __init__(self,qtype=None,objects=None,generators=None,generate=True):
-        """Instantiates a CategoryAction class with morphisms in a given
+        """Instantiates a CategoryQAction class with morphisms in a given
            quantale
 
         Parameters
@@ -482,6 +746,7 @@ class CategoryQAction(object):
         Returns
         -------
         None
+        Raises an exception if the quantale type (class) is not specified.
         """
         if qtype is None:
             raise Exception("Type of quantale should be specified")
@@ -549,7 +814,7 @@ class CategoryQAction(object):
         -------
         A list of pairs (x,y), where:
             - x is the name of the morphism
-            - y is the corresponding instance of CatMorphism
+            - y is the corresponding instance of QMorphism
         """
         return list(sorted(self.morphisms.items()))
 
@@ -564,7 +829,7 @@ class CategoryQAction(object):
         -------
         A list of pairs (x,y), where:
             - x is the name of the generator
-            - y is the corresponding instance of CatMorphism
+            - y is the corresponding instance of QMorphism
         """
         return list(sorted(self.generators.items()))
 
@@ -574,7 +839,7 @@ class CategoryQAction(object):
 
         Parameters
         ----------
-        list_morphisms: a list of CatMorphism instances representing the
+        list_morphisms: a list of QMorphism instances representing the
                         generator morphisms to be added.
 
         Returns
@@ -607,7 +872,7 @@ class CategoryQAction(object):
 
         Parameters
         ----------
-        list_morphisms: a list of CatMorphism instances representing the
+        list_morphisms: a list of QMorphism instances representing the
                         morphisms to be added.
 
         Returns
@@ -829,33 +1094,3 @@ class CategoryQAction(object):
         A string representing the corresponding morphism
         """
         return str(self.morphisms[name_f])
-
-    '''
-    #### TODO CHECK ABOUT AUTOMORPHISMS
-    def get_automorphisms(self):
-        """Returns all automorphisms of the category action.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        A list of CategoryFunctor instances corresponding to an automorphism.
-        """
-        l1 = sorted(self.generators.keys())
-        l2 = sorted(self.morphisms.keys())
-        list_automorphisms = []
-
-        ## Get all maps from the generator set to itself
-        for mapping in itertools.permutations(l2,len(l1)):
-            ## Builds a dictionary representing the generator mapping
-            gen_mapping=dict(zip(l1,mapping))
-
-            N = CategoryFunctor(self,self)
-            if N.set_from_generator_mapping(gen_mapping):
-                ## Tests if the given map of generators is indeed an automorphism...
-                if N.is_automorphism():
-                    list_automorphisms.append(N)
-        return list_automorphisms
-    '''

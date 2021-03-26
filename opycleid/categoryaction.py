@@ -20,6 +20,8 @@ class CatObject(object):
         Returns
         -------
         None
+        Raise an exception if the set is empty or if the set elements are not
+        distinct from each other.
         """
         self.name = name
         if not len(elements):
@@ -38,7 +40,8 @@ class CatObject(object):
 
         Returns
         -------
-        The index of the element in the set
+        The index of the element in the set.
+        Raises an exception if the element does not belong to the set.
         """
         if not elem in self.dict_elem2idx:
             raise Exception("The specified element cannot be found")
@@ -107,7 +110,7 @@ class CatMorphism(object):
         target: an instance of CatObject representing the codomain of
                 the morphism
         mapping: optional argument representing the mapping of elements
-                 between the domain and the codomain. The mapping can be 
+                 between the domain and the codomain. The mapping can be
                  given as a NumPy array matrix or as a dictionary.
 
         Returns
@@ -324,13 +327,13 @@ class CatMorphism(object):
 
         Returns
         -------
-        The product self * morphism. Raises an exception if the two morphisms
-        are not composable
+        The product self * morphism.
+        Returns None if the two morphisms are not composable
         """
-        
+
         if not isinstance(morphism,CatMorphism):
            raise Exception("RHS is not a valid CatMorphism class\n")
-        
+
         if not morphism.target==self.source:
             return None
         new_morphism =  CatMorphism(self.name+morphism.name,morphism.source,self.target)
@@ -408,10 +411,10 @@ class CategoryAction(object):
         ----------
         objects: optional list of CatObject instances representing
                  the objects in the category.
-                 
+
         generators: optional list of CatMorphism instances
                  representing the generators of the category.
-                 
+
         generator: optional boolean indicating whether the category
                    should be generated upon instantiation.
 
@@ -448,7 +451,7 @@ class CategoryAction(object):
         self.generators={}
         self.morphisms={}
         self.equivalences=[]
-        
+
         ob_names = [catobject.name for catobject in list_objects]
         if not len(ob_names)==len(np.unique(ob_names)):
             raise Exception("Objects should have distinct names")
@@ -525,7 +528,7 @@ class CategoryAction(object):
         all_gennames = [m.name for m in list_morphisms]
         if not len(all_gennames)==len(np.unique(all_gennames)):
             raise Exception("Generators must have distinct names")
-            
+
         cat_obj_names = [x[0] for x in self.get_objects()]
 
         for m in list_morphisms:
@@ -551,10 +554,10 @@ class CategoryAction(object):
         Checks if the morphisms have a distinct name, raises an Exception
         otherwise.
         """
-        
+
         cat_obj_names = [x[0] for x in self.get_objects()]
         cat_mor_names = [x[0] for x in self.get_morphisms()]
-        
+
         for m in list_morphisms:
             if not m.source.name in cat_obj_names:
                 raise Exception("Domain or codomain of a generator is not present in the category")
@@ -1069,7 +1072,7 @@ class CategoryFunctor(object):
         self.object_mapping = None
         self.morphisms_mapping = None
         self.generators_mapping = None
-        
+
 
     def set_fullmapping(self,object_mapping,morphism_mapping):
         """Sets the mapping of morphisms and objects between the domain and
@@ -1168,7 +1171,7 @@ class CategoryFunctor(object):
         ## By construction, this is functorial, so there is no need to check
         ## with the is_valid() method
         return True
-        
+
     def __call__(self,rhs):
         """Gets the image of an object or a morphism by the category functor.
 
@@ -1180,11 +1183,11 @@ class CategoryFunctor(object):
         Returns
         -------
         A string representing the image of the object by this functor.
-        """    
-        
+        """
+
         source_obj_names = [x[0] for x in self.cat_action_source.get_objects()]
         source_mor_names = [x[0] for x in self.cat_action_source.get_morphisms()]
-        
+
         if rhs in source_obj_names:
             return self.get_image_object(rhs)
         elif rhs in source_mor_names:
@@ -1363,7 +1366,7 @@ class CategoryFunctor(object):
         """
         if not isinstance(cat_functor,CategoryFunctor):
             raise Exception("RHS is not a category functor\n")
-           
+
         if self is None or cat_functor is None:
             return False
 
