@@ -90,6 +90,10 @@
                 </li>
                 <li class="">
                     
+    <a class="" href="../q_categoryaction/">opycleid.q_categoryaction</a>
+                </li>
+                <li class="">
+                    
     <a class="" href="../musicmonoids/">opycleid.musicmonoids</a>
                 </li>
                 <li class="">
@@ -97,6 +101,11 @@
     <a class="" href="../knetanalysis/">opycleid.knetanalysis</a>
                 </li>
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../releasenotes/">Release notes</a>
 	    </li>
           
         </ul>
@@ -192,6 +201,7 @@ source, its target, and a relation between the source sets and the target sets.<
 <li><strong>name</strong>: a string used to name the morphism.</li>
 <li><strong>source</strong>: an instance of <code>opycleid.categoryaction.CatObject</code> representing the source of the morphism.</li>
 <li><strong>target</strong>: an instance of <code>opycleid.categoryaction.CatObject</code> representing the target of the morphism.</li>
+<li><strong>mapping</strong>: an optional argument representing the mapping between the source and the target. It can be given either in matrix form, as a NumPy array of booleans, or as a dictionary (see the <code>set_mapping</code> method for the structure of the dictionary).</li>
 </ul>
 <hr />
 <h3 id="methods_1">Methods</h3>
@@ -235,16 +245,16 @@ i.e. the relation between the corresponding sets is the identity function.</p>
 <h4 id="str"><strong>str</strong></h4>
 <p>Overloads Python <code>str</code> to return a string description of the morphism, including its source, target, and the relation between them.</p>
 <hr />
-<h4 id="rshift"><strong>rshift</strong></h4>
-<p>Overloads the <code>&gt;&gt;</code> operator in order to represent a morphism action.
-A typical use is <code>CatMorphism &gt;&gt; elem</code> where <code>elem</code> is a string representing an element in the source set.
+<h4 id="call"><strong>call</strong></h4>
+<p>Makes the current instance callable.
+A typical use is <code>CatMorphism(elem)</code> where <code>elem</code> is a string representing an element in the source set.
 Returns a list of images in the target set.</p>
 <hr />
 <h4 id="mul"><strong>mul</strong></h4>
 <p>Overloads the <code>*</code> operator in order to represent morphism composition.
 A typical use is <code>CatMorphism_2 * CatMorphism_1</code>.
 If the target of <code>CatMorphism_1</code> is identical to the source of <code>CatMorphism_2</code>, this returns the corresponding composite morphism.
-Otherwise, the two morphisms are not composable and an exception will be raised.</p>
+Otherwise, the two morphisms are not composable and it returns <code>None</code>.</p>
 <hr />
 <h4 id="pow"><strong>pow</strong></h4>
 <p>Overloads the <code>**</code> operator in order to represent morphism iterated multiplication.
@@ -267,7 +277,7 @@ A typical use is <code>CatMorphism_2 &lt; CatMorphism_1</code>.
 Returns <code>True</code> if the sources, and targets of both morphisms are equal, and if the relation of <code>CatMorphism_2</code> is non-trivially included in the relation of <code>CatMorphism_1</code> (i.e. it is included but not equal).</p>
 <hr />
 <h2 id="categoryaction">CategoryAction</h2>
-<pre><code class="python">opycleid.categoryaction.CategoryAction()
+<pre><code class="python">opycleid.categoryaction.CategoryAction(objects=None,generators=None,generate=True)
 </code></pre>
 
 <p>Defines a category action object, i.e. a faithful functor <script type="math/tex"> F \colon \mathbf{C} \to \mathbf{Rel} </script>,
@@ -278,6 +288,12 @@ Instances of this class store internally</p>
 <li>a dictionary of <code>opycleid.categoryaction.CatMorphism</code> instances, indexed by their name, corresponding to the generators of the category,</li>
 <li>a dictionary of <code>opycleid.categoryaction.CatMorphism</code> instances, indexed by their name, corresponding to all the operations of the category.</li>
 </ul>
+<h3 id="arguments_2">Arguments</h3>
+<ul>
+<li><strong>objects</strong>: optional argument. A list of <code>opycleid.categoryaction.CatObject</code> instances with distinct names representing the objects in the category.</li>
+<li><strong>generators</strong>: optional argument. A list of <code>opycleid.categoryaction.CatMorphism</code> instances with distinct names (an exception will be raised if this is not the case) representing the generators of the category.</li>
+<li><strong>generate</strong>: boolean, optional argument. If objects and generators are given at instantiation, specifies whether the category should immediately be generated.</li>
+</ul>
 <hr />
 <h3 id="methods_2">Methods</h3>
 <h4 id="set_objects">set_objects</h4>
@@ -286,7 +302,7 @@ Instances of this class store internally</p>
 
 <p>The argument <code>list_objects</code> should be a list of <code>opycleid.categoryaction.CatObject</code> instances. Calling this method stores the <code>CatObject</code> instances
 in the internal dictionary, and resets the generators and operations of the category.
-The objects must have distinct elements; an exception will be raised if this is not the case.</p>
+The objects must have distinct elements and names; an exception will be raised if this is not the case.</p>
 <hr />
 <h4 id="get_objects">get_objects()</h4>
 <pre><code class="python">get_objects()
@@ -336,7 +352,8 @@ Renames an operation in the category.</p>
 </code></pre>
 
 <p>The arguments <code>operation_2</code> and <code>operation_1</code> are the names of category operations.
-Returns the name of the composite operation <script type="math/tex"> \text{operation_2} \circ \text{operation_1} </script> if present.</p>
+Returns the name of the composite operation <script type="math/tex"> \text{operation_2} \circ \text{operation_1} </script> if present.
+If <code>operation_2</code> and <code>operation_1</code> are not composable, returns <code>None</code>.</p>
 <hr />
 <h4 id="apply_operation">apply_operation</h4>
 <pre><code class="python">apply_operation(name,elem)
@@ -525,6 +542,11 @@ Otherwise, the two functors are not composable and an exception will be raised.<
 A typical use is <code>CategoryFunctor_2 == CategoryFunctor_1</code>.
 Returns <code>True</code> if this the mapping of objects and morphisms are identical, <code>False</code> otherwise.</p>
 <hr />
+<h4 id="call_1"><strong>call</strong></h4>
+<p>Makes the current instance callable.
+A typical use is <code>CategoryFunctor(x)</code>, where <code>x</code> is either an object name, or a morphism name, and returns the corresponding image.
+It is a practical shorthand for <code>get_image_object</code> or <code>get_image_morphism</code></p>
+<hr />
 <h2 id="categoryactionfunctor">CategoryActionFunctor</h2>
 <pre><code class="python">opycleid.categoryaction.CategoryActionFunctor(cat_action_source,cat_action_target,cat_functor,nat_transform)
 </code></pre>
@@ -572,7 +594,7 @@ Returns <code>True</code> if this both the category functor and the natural tran
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../musicmonoids/" class="btn btn-neutral float-right" title="opycleid.musicmonoids">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../q_categoryaction/" class="btn btn-neutral float-right" title="opycleid.q_categoryaction">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../gettingstarted/" class="btn btn-neutral" title="Tutorial"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -604,7 +626,7 @@ Returns <code>True</code> if this both the category functor and the natural tran
         <span><a href="../gettingstarted/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../musicmonoids/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../q_categoryaction/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

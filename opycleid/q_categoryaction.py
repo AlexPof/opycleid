@@ -577,7 +577,7 @@ class QMorphism(object):
         descr = self.name+":"+self.source.name+"->"+self.target.name+"\n\n"
         for s,t in sorted(self.get_mapping().items()):
             descr += " "*(len(self.name)+1)
-            descr += s+"->"+(",".join(t))+"\n"
+            descr += s+"->"+(",".join([(x[0],str(x[1])) for x in t]))+"\n"
         return descr
 
     def __call__(self,elem):
@@ -861,6 +861,8 @@ class CategoryQAction(object):
         cat_obj_names = [x[0] for x in self.get_objects()]
 
         for m in list_morphisms:
+            if not isinstance(m,QMorphism):
+                raise Exception("Generator is not a valid QMorphism class\n")
             if not m.source.name in cat_obj_names:
                 raise Exception("Domain or codomain of a generator is not present in the category")
             if not m.target.name in cat_obj_names:
@@ -977,7 +979,8 @@ class CategoryQAction(object):
 
         Returns
         -------
-        A list of strings representing the images of elem by name_f
+        A list of pairs representing the images of elem by name_f and their
+        quantale values.
         """
         return self.morphisms[name_f](element)
 

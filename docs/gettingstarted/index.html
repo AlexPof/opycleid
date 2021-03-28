@@ -86,6 +86,10 @@
                 </li>
                 <li class="">
                     
+    <a class="" href="../q_categoryaction/">opycleid.q_categoryaction</a>
+                </li>
+                <li class="">
+                    
     <a class="" href="../musicmonoids/">opycleid.musicmonoids</a>
                 </li>
                 <li class="">
@@ -93,6 +97,11 @@
     <a class="" href="../knetanalysis/">opycleid.knetanalysis</a>
                 </li>
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../releasenotes/">Release notes</a>
 	    </li>
           
         </ul>
@@ -197,14 +206,14 @@ T.set_mapping({&quot;C_M&quot;:[&quot;Cs_M&quot;],&quot;Cs_M&quot;:[&quot;D_M&qu
                &quot;Gs_M&quot;:[&quot;A_M&quot;],&quot;A_M&quot;:[&quot;Bb_M&quot;],&quot;Bb_M&quot;:[&quot;B_M&quot;],&quot;B_M&quot;:[&quot;C_M&quot;]})
 </code></pre>
 
-<p>Any instance of <code>opycleid.categoryaction.CatMorphism</code> overloads the <code>&gt;&gt;</code> Python operator in order to denote the action of a morphism on an element of its domain.
+<p>Any instance of <code>opycleid.categoryaction.CatMorphism</code> is callable: one thus can get the action of a morphism on an element of its domain.
 For example, if we would like to know what is the image of <script type="math/tex">F</script> major by the morphism <script type="math/tex">T</script>, we would write the following.</p>
-<pre><code class="python">print(T&gt;&gt;&quot;F_M&quot;) ## prints ['Fs_M']
+<pre><code class="python">print(T(&quot;F_M&quot;)) ## prints ['Fs_M']
 </code></pre>
 
 <p>Instances of <code>opycleid.categoryaction.CatMorphism</code> can be composed if their domain and codomain are compatible. For example, the composition of <script type="math/tex">T</script> with itself gives, as expected, a transposition operator which moves the root of a major triad by two semitones.</p>
 <pre><code class="python">T_2 = T*T
-print(T_2&gt;&gt;&quot;F_M&quot;) ## prints ['G_M']
+print(T_2(&quot;F_M&quot;)) ## prints ['G_M']
 </code></pre>
 
 <p>As we will see later, there is no need to explicitly calculate all possible compositions of morphisms. Instead, <em>generators</em> will be specified in a category, and Opycleid itself will generate the whole category.</p>
@@ -266,6 +275,14 @@ id_Y
 和同TT
 和同TTT
 '''  
+</code></pre>
+
+<p>This can also be done in one step during instantiation.</p>
+<pre><code class="python">from opycleid.categoryaction import CategoryAction
+
+my_category = CategoryAction(objects=[X,Y],generators=[T,I,J],generate=True)
+for name_f,f in my_category.get_morphisms():
+  print(name_f)
 </code></pre>
 
 <p>During the generation process, the names are obtained by concatenation. We can ask Opycleid to rewrite these operations.</p>

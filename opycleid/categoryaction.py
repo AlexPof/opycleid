@@ -532,6 +532,8 @@ class CategoryAction(object):
         cat_obj_names = [x[0] for x in self.get_objects()]
 
         for m in list_morphisms:
+            if not isinstance(m,CatMorphism):
+                raise Exception("Generator is not a valid CatMorphism class\n")
             if not m.source.name in cat_obj_names:
                 raise Exception("Domain or codomain of a generator is not present in the category")
             if not m.target.name in cat_obj_names:
