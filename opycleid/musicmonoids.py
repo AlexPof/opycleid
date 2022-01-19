@@ -287,7 +287,7 @@ class Right_Z3Q8_Group(MonoidAction):
             for j in range(i):
                 x = x*T
             y=x*J
-            y.set_name("J"+str(i))
+            y.set_name("J"+str((-i)%12))
             self._add_morphisms([y])
 
 
