@@ -93,6 +93,7 @@ class PKNet(object):
         if not F.set_from_generator_mapping(edges_map):
             raise Exception("Edge mapping is not valid")
         object_mapping = F.get_object_mapping()
+        print(">>>>",object_mapping)
 
         ## We now build the natural transformation, component by component, i.e.
         ## object by object in the diagram action.

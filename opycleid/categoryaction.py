@@ -1236,7 +1236,7 @@ class CategoryFunctor(object):
         -------
         A dictionary representing the mapping of the objects.
         """
-        return sorted(self.object_mapping)
+        return self.object_mapping
 
     def get_morphism_mapping(self):
         """Gets the mapping of a morphisms by the category functor.
@@ -1249,7 +1249,7 @@ class CategoryFunctor(object):
         -------
         A dictionary representing the mapping of the morphisms.
         """
-        return sorted(self.morphisms_mapping)
+        return self.morphisms_mapping
 
     def is_valid(self):
         """Checks if the specified functor is a valid one.
