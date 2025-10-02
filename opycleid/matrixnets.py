@@ -106,11 +106,24 @@ class MonoidRigElement(object):
 
 class MatrixNetwork(object):
     def __init__(self):
-        self.monoid = None
+        self.monoidelements = None
         self.matrix = None
         self.vector = None
         
     def set_network(self,matrix,vector):
+        """Defines the components of the matrix network.
+
+        Parameters
+        ----------
+        matrix: an idempotent instance of MonoidRigMatrix.
+        vector: an invariant instance of SetRigVector upon the action of 'matrix'
+
+        Returns
+        -------
+        The current instance of MatrixNetwork.
+        """
+        assert isinstance(matrix,MonoidRigMatrix),"matrix should be an instance of MonoidRigMatrix"
+        assert isinstance(vector,SetRigVector),"vector should be an instance of SetRigVector"
         assert matrix==matrix@matrix, "Network matrix should be idempotent"
         assert vector==matrix@vector, "Vector should be invariant by matrix application"
         
@@ -171,7 +184,6 @@ class MatrixNetwork(object):
             generators[digraph_name] = M
             vectors[digraph_name] = X
 
-        print(vectors)
         return self.from_generators(generators,np.sum([x for x in vectors.values()]),return_monoid=return_monoid)
         
     
@@ -198,24 +210,24 @@ class MatrixNetwork(object):
             of the elements in the monoid, and whose values are the matrices in the monoid.
         """
         unit_matrix = MonoidRigMatrix(list(generators.values())[0].shape,list(generators.values())[0].monoid).set_unit()
-        self.monoid = {"e":unit_matrix}
+        self.monoidelements = {"e":unit_matrix}
         added_elements = generators.copy()
         
         while len(added_elements)>0:
             for k,v in added_elements.items():
-                self.monoid[k] = v
+                self.monoidelements[k] = v
             added_elements = {}
             for name_m,m in generators.items():
-                for name_el,el in self.monoid.items():
+                for name_el,el in self.monoidelements.items():
                     new_matrix = m@el
-                    if not np.any([x==new_matrix for x in self.monoid.values()]):
+                    if not np.any([x==new_matrix for x in self.monoidelements.values()]):
                         if not np.any([x==new_matrix for x in added_elements.values()]):
                             added_elements[name_m+name_el] = new_matrix
-        self.matrix = np.sum(list(self.monoid.values()))
+        self.matrix = np.sum(list(self.monoidelements.values()))
         self.vector = self.matrix@vector
         
         if return_monoid:
-            return self,self.monoid
+            return self,self.monoidelements
         else:
             return self
 
@@ -248,6 +260,18 @@ class MatrixNetwork(object):
         
         
     def apply_categoryactionfunctor(self,catactionfunctor):
+        """Applies a category action functor to the matrix network and 
+            returns the corresponding matrix network image.
+
+        Parameters
+        ----------
+        catactionfunctor: an instance of CategoryActionFunctor to apply to
+                          the current network.
+
+        Returns
+        -------
+        An instance of MatrixNetwork.
+        """
         assert isinstance(catactionfunctor,CategoryActionFunctor),"Not a CategoryActionFunctor"
         
         new_matrix = MonoidRigMatrix(self.matrix.shape,catactionfunctor.cat_action_target)
@@ -262,7 +286,30 @@ class MatrixNetwork(object):
             image_elements = [y for x in (self.vector.vector)[i,0].element for y in catactionfunctor.nat_transform["."](x) ]
             new_vector.set_value([i],[set(image_elements)])
                 
-        return new_matrix,new_vector #MatrixNetwork().set_network(new_matrix,new_vector)
+        return new_matrix,new_vector
+        
+    
+    def is_conjugated(self,matnet,P):
+        """Determines if two matrix networks are conjugated by the matrix P, i.e.
+           if the matrices M and N of each network obey PM=NP, and the vectors X and Y
+           of each network obey Y=PX.
+
+        Parameters
+        ----------
+        matnet: an instance of MatrixNetwork.
+        P: an instance of MonoidRigMatrix
+
+        Returns
+        -------
+        True if the two matrix networks are conjugated, False otherwise.
+        """
+        assert isinstance(matnet,MatrixNetwork),"matnet should be an instance of MatrixNetwork"
+        assert isinstance(P,MonoidRigMatrix),"Conjugating matrix should be an instance of MonoidRigMatrix"
+        
+        check_matrices = np.array_equal(P@self.matrix,matnet.matrix@P)
+        check_vectors = np.array_equal(P@self.vector,matnet.vector)
+        
+        return (check_matrices and check_vectors)
                     
         
     
