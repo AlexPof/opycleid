@@ -38,8 +38,8 @@ class Noll_Monoid(MonoidAction):
 class TI_Group_PC(MonoidAction):
     """Defines the TI group acting on the set of the twelve pitch classes.
     """
-    def __init__(self):
-        super(TI_Group_PC,self).__init__()
+    def __init__(self,use_cayley_table=False):
+        super(TI_Group_PC,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C","Cs","D","Eb","E","F","Fs","G","Gs","A","Bb","B"])
         self.set_objects([X])
@@ -73,12 +73,15 @@ class TI_Group_PC(MonoidAction):
             y.set_name("I"+str(i))
             self._add_morphisms([y])
 
+        if use_cayley_table:
+            self._build_cayley_table()
+
 
 class TI_Group_Triads(MonoidAction):
     """Defines the TI group acting on the set of the 24 major and minor triads.
     """
-    def __init__(self):
-        super(TI_Group_Triads,self).__init__()
+    def __init__(self,use_cayley_table=False):
+        super(TI_Group_Triads,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
@@ -115,12 +118,15 @@ class TI_Group_Triads(MonoidAction):
             y.set_name("I"+str(i))
             self._add_morphisms([y])
 
+        if use_cayley_table:
+            self._build_cayley_table()
+
 class PRL_Group(MonoidAction):
     """Defines the neo-Riemannian PRL group acting on the set
     of the 24 major and minor triads.
     """
-    def __init__(self):
-        super(PRL_Group,self).__init__()
+    def __init__(self,use_cayley_table=False):
+        super(PRL_Group,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
@@ -160,8 +166,8 @@ class UTT_Group(MonoidAction):
         - if s is -, the element sends a major triad of root n to n+q,
                     and a minor triad of root n to n+p
     """
-    def __init__(self):
-        super(UTT_Group,self).__init__()
+    def __init__(self,use_cayley_table=False):
+        super(UTT_Group,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
@@ -204,13 +210,16 @@ class UTT_Group(MonoidAction):
         self._add_morphisms(new_operations)
         self.generators = {"<1,0,+>":self.morphisms["<1,0,+>"],"<0,0,->":self.morphisms["<0,0,->"]}
 
+        if use_cayley_table:
+            self._build_cayley_table()
+
 class Left_Z3Q8_Group(MonoidAction):
     """Defines a simply transitive generalized neo-Riemannian group acting
         on the left on the set of the 24 major and minor triads.
         The group is an extension of Z_12 by Z_2 with a non-trivial cocycle.
     """
-    def __init__(self):
-        super(Left_Z3Q8_Group,self).__init__()
+    def __init__(self,use_cayley_table=False):
+        super(Left_Z3Q8_Group,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
@@ -247,13 +256,16 @@ class Left_Z3Q8_Group(MonoidAction):
             y.set_name("J"+str(i))
             self._add_morphisms([y])
 
+        if use_cayley_table:
+            self._build_cayley_table()
+
 class Right_Z3Q8_Group(MonoidAction):
     """Defines a simply transitive generalized neo-Riemannian group acting
         on the right on the set of the 24 major and minor triads.
         The group is an extension of Z_12 by Z_2 with a non-trivial cocycle.
     """
-    def __init__(self):
-        super(Right_Z3Q8_Group,self).__init__()
+    def __init__(self,build_cayley_table=False):
+        super(Right_Z3Q8_Group,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m"])
@@ -287,8 +299,11 @@ class Right_Z3Q8_Group(MonoidAction):
             for j in range(i):
                 x = x*T
             y=x*J
-            y.set_name("J"+str(i))
+            y.set_name("J"+str((-i)%12))
             self._add_morphisms([y])
+
+        if use_cayley_table:
+            self._build_cayley_table()
 
 
 class UPL_Monoid(MonoidAction):
@@ -301,8 +316,8 @@ class UPL_Monoid(MonoidAction):
             is an augmented triad, and the other chord has
             two tones in common with x (or y)
     """
-    def __init__(self):
-        super(UPL_Monoid,self).__init__()
+    def __init__(self,use_cayley_table=False):
+        super(UPL_Monoid,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
@@ -348,8 +363,8 @@ class S_Monoid(MonoidAction):
         whenever the chord x differ from y by the movement
         of a single note by a semitone.
     """
-    def __init__(self):
-        super(S_Monoid,self).__init__()
+    def __init__(self,use_cayley_table):
+        super(S_Monoid,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
@@ -384,8 +399,8 @@ class T_Monoid(MonoidAction):
         whenever the chord x differ from y by the movement
         of two notes by a semitone each.
     """
-    def __init__(self):
-        super(T_Monoid,self).__init__()
+    def __init__(self,use_cayley_table):
+        super(T_Monoid,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
@@ -432,8 +447,8 @@ class K_Monoid(MonoidAction):
         whenever the chord x differ from y by the movement of two notes
         by a semitone each, and the remaining note by a tone.
     """
-    def __init__(self):
-        super(K_Monoid,self).__init__()
+    def __init__(self,use_cayley_table):
+        super(K_Monoid,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
@@ -467,8 +482,8 @@ class W_Monoid(MonoidAction):
         whenever the chord x differ from y by the movement of a single note
         by a semitone, and the remaining notes by a tone each.
     """
-    def __init__(self):
-        super(W_Monoid,self).__init__()
+    def __init__(self,build_cayley_table):
+        super(W_Monoid,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",
@@ -501,8 +516,8 @@ class ST_Monoid(MonoidAction):
         and augmented triads by relations.
         It is generated by the S and T operations presented above.
     """
-    def __init__(self):
-        super(ST_Monoid,self).__init__()
+    def __init__(self,use_cayley_table):
+        super(ST_Monoid,self).__init__(use_cayley_table)
 
         X = CatObject(".",["C_M","Cs_M","D_M","Eb_M","E_M","F_M","Fs_M","G_M","Gs_M","A_M","Bb_M","B_M",
                            "C_m","Cs_m","D_m","Eb_m","E_m","F_m","Fs_m","G_m","Gs_m","A_m","Bb_m","B_m",

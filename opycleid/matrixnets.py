@@ -6,6 +6,7 @@
 
 import numpy as np
 import itertools
+import networkx as nx
 from .categoryaction import *
 
 class SetRigElement(object):
@@ -117,47 +118,133 @@ class MatrixNetwork(object):
         self.vector = vector
         
         return self
+
+    def from_multidigraphs(self,multidigraph_dict,monoid,return_monoid=False):
+        """Build the network from networkx MultiDigraphs
         
+        Parameters
+        ----------
+        multidigraph_dict: a dictionary of MultiDiGraphs. The nodes must have an attribute
+                      named "element" with a list of valid values in the monoid.
+                      The edges must have an attribute named "operations" with a list of
+                      valid values in the monoid.
+
+        monoid:       an instance of MonoidAction.
+                      
+        Returns
+        -------
+        An instance of the matrix network, with self.matrix and self.vector set to be
+            the matrix and vector derived from the MultiDiGraph.
+        """
+
+        assert isinstance(monoid,MonoidAction),"This is not a valid instance of networkx MultiDiGraph"
+
+        generators={}
+        vectors={}
+        
+        for digraph_name,multidigraph in multidigraph_dict.items():
+        
+            assert isinstance(multidigraph,nx.MultiDiGraph),"This is not a valid instance of networkx MultiDiGraph"
+            for node in multidigraph.nodes:
+                assert multidigraph.nodes[node].get("element") is not None,"The node {} is missing the 'element' attribute".format(node)
+            for edge in multidigraph.edges:
+                assert multidigraph.edges[edge].get("operations") is not None,"The edge {} is missing the 'operations' attribute".format(edge)
+    
+            N_nodes,N_edges = len(multidigraph.nodes()),len(multidigraph.edges())
+            dict_idx2nodes = dict(enumerate(multidigraph.nodes()))
+            
+            M = MonoidRigMatrix(shape=(N_nodes,N_nodes),monoid=monoid)
+            X = SetRigVector(n=N_nodes,monoid=monoid)
+            
+            for idx_node,node in enumerate(multidigraph.nodes):
+                X.set_value([idx_node],[multidigraph.nodes[node]["element"]])
+            
+            for i in range(N_nodes):
+                for j in range(N_nodes):
+                    operations=[]
+                    for idx_edge,edge in enumerate(multidigraph.edges):
+                        src,trgt,_ = edge
+                        if src==dict_idx2nodes[i] and trgt==dict_idx2nodes[j]:
+                            operations.append(*multidigraph.edges[edge]["operations"])
+                    M = M.set_value([(j,i)],[operations])
+
+            generators[digraph_name] = M
+            vectors[digraph_name] = X
+
+        print(vectors)
+        return self.from_generators(generators,np.sum([x for x in vectors.values()]),return_monoid=return_monoid)
+        
+    
     def from_generators(self,generators,vector,return_monoid=False):
-        unit_matrix = MonoidRigMatrix(generators[0].shape,generators[0].monoid).set_unit()
-        all_elements = [unit_matrix]
-        added_elements = generators
+        """Build the network from generators
+
+        Parameters
+        ----------
+        generators: a dictionary, whose keys are strings indicating matrix names
+                    and whose values are matrices with values in a group rig.
+
+        vector: a matrix of shape (N,1), whose whose values are elements in a set rig.
+
+        return_monoid: a boolean. If True, returns all elements in the monoid as
+                       a dictionary.
+
+        Returns
+        -------
+        An instance of the matrix network, with self.matrix and self.vector set to be
+            the idempotent matrix and the fixed point vectors derived from the generators
+            and the given vector.
+
+            If return_monoid is True, it also returns a dictionary, whose keys are the names
+            of the elements in the monoid, and whose values are the matrices in the monoid.
+        """
+        unit_matrix = MonoidRigMatrix(list(generators.values())[0].shape,list(generators.values())[0].monoid).set_unit()
+        self.monoid = {"e":unit_matrix}
+        added_elements = generators.copy()
+        
         while len(added_elements)>0:
-            for x in added_elements:
-                all_elements.append(x)
-            added_elements = []
-            for g in generators:
-                for el in all_elements:
-                    new_matrix = g@el
-                    if not np.any([x==new_matrix for x in all_elements]):
-                        if not np.any([x==new_matrix for x in added_elements]):
-                            added_elements.append(new_matrix)
-        self.matrix = np.sum(all_elements)
+            for k,v in added_elements.items():
+                self.monoid[k] = v
+            added_elements = {}
+            for name_m,m in generators.items():
+                for name_el,el in self.monoid.items():
+                    new_matrix = m@el
+                    if not np.any([x==new_matrix for x in self.monoid.values()]):
+                        if not np.any([x==new_matrix for x in added_elements.values()]):
+                            added_elements[name_m+name_el] = new_matrix
+        self.matrix = np.sum(list(self.monoid.values()))
         self.vector = self.matrix@vector
         
         if return_monoid:
-            return self,all_elements
+            return self,self.monoid
         else:
             return self
 
-    def from_generator(self,matrix,vector,return_monoid=False):
-        unit_matrix = MonoidRigMatrix(matrix.shape,matrix.monoid).set_unit()
-        all_elements = [unit_matrix,matrix]
-        added_elements = 2
-        n=2
-        while added_elements>0:
-            added_elements = 0
-            new_matrix = matrix**n
-            if not np.any([x==new_matrix for x in all_elements]):
-                all_elements.append(new_matrix)
-                added_elements=1
-        self.matrix = np.sum(all_elements)
-        self.vector = self.matrix@vector
-        
-        if return_monoid:
-            return self,all_elements
-        else:
-            return self
+    def get_multidigraph(self):
+        """Returns a multidigraph from the matrix network
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        An instance of networkx MultiDigraph, the nodes of which having an 'element'
+        attribute indicating the musical objects on this node, the edges of which
+        having an 'operations' attribute indicating the operations between them.
+        """
+
+        N_nodes,_ = self.matrix.matrix.shape
+        DG = nx.MultiDiGraph()
+        for i in range(N_nodes):
+            DG.add_node(i,element=list(self.vector.vector[i,0].element))
+        for i in range(N_nodes):
+            for j in range(N_nodes):
+                if len(self.matrix.matrix[j,i].element):
+                    for op in self.matrix.matrix[j,i].element:
+                        DG.add_edge(i,j,operations=[op])
+                    
+        return DG
+
         
         
     def apply_categoryactionfunctor(self,catactionfunctor):
@@ -181,7 +268,6 @@ class MatrixNetwork(object):
     
         
 ####################################################
-
 
 
 class MonoidRigMatrix(object):
@@ -299,7 +385,7 @@ class SetRigVector(object):
             raise Exception("Vector dimension mismatch")
         new_setrigvector = SetRigVector(self.n,self.monoid)
         new_setrigvector.vector = self.vector+rhs.vector
-        return new_monoidrigmatrix
+        return new_setrigvector
 
     def __eq__(self,rhs):
         return np.array_equal(self.vector,rhs.vector)
@@ -308,304 +394,4 @@ class SetRigVector(object):
         return str(self.vector)
         
     def __str__(self):
-        return str(self.vector)    
-
-class MatrixRigMonoid(object):
-    def __init__(self,dict_gens):
-        shape_check=[]
-        for name,m in dict_gens.items():
-            n = m.shape[0]
-            monoid = m.monoid
-            if not m.shape[0]==m.shape[1]:
-                raise Exception("Matrices should be square")
-            shape_check.append(m.shape)
-        if len(set(shape_check))>1:
-            raise Exception("Matrices should be of the same shape")
-        self.n = n
-        self.monoid = monoid
-        self.morphisms = {}
-        self.generators = dict_gens
-        self.generate_category()
-
-    def get_morphisms(self):
-        """Returns the morphisms in the monoid.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        A list of pairs (x,y), where:
-            - x is the name of the morphism
-            - y is the corresponding MonoidRigMatrix
-        """
-        return list(sorted(self.morphisms.items()))
-
-    def _add_identities(self):
-        """Automatically add identity morphisms on each object of the category
-        action
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-        """
-        iid = MonoidRigElement(self.monoid)
-        iid.set_value(["id_."])
-
-        ID = MonoidRigMatrix(shape=(self.n,self.n),monoid=self.monoid)
-        ID = ID.set_value([[k,k,iid] for k in range(self.n)])
-        
-        self.morphisms["e"] = ID
-
-    def generate_category(self):
-        """Generates all morphisms in the monoid based on the given list of
-        generators. The generation proceeds by successive multiplication of
-        generators and morphisms until completion. This is suited to small
-        monoids, but the performance would be prohibitive for very
-        large monoids containing many morphisms.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-        """
-        self.morphisms = self.generators.copy()
-        self._add_identities()
-        new_liste = self.generators.copy()
-        added_liste = self.generators.copy()
-        while(len(added_liste)>0):
-            added_liste = {}
-            for name_x,morphism_x in sorted(new_liste.items()):
-                for name_g,morphism_g in self.get_generators():
-                    new_morphism = morphism_g*morphism_x
-                    if not new_morphism is None:
-                        c=0
-                        for name_y,morphism_y in self.get_morphisms():
-                            if new_morphism==morphism_y:
-                                c=1
-                        if c==0:
-                            added_liste[name_g+name_x] = new_morphism
-                            self.morphisms[name_g+name_x] = new_morphism
-            new_liste = added_liste
-
-    def get_generators(self):
-        """Returns the generators in the monoid.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        A list of pairs (x,y), where:
-            - x is the name of the generator
-            - y is the corresponding instance of MonoidRigMatrix
-        """
-        return list(sorted(self.generators.items()))
-
-    def mult(self,name_g,name_f):
-        """Multiplies two morphisms and returns the corresponding morphism.
-
-        Parameters
-        ----------
-        name_g, name_f: a string representing the names of the morphisms
-                        to be multiplied.
-
-        Returns
-        -------
-        A string representing the name of the morphism corresponding
-        to name_g*name_f.
-        """
-        new_morphism = self.morphisms[name_g]*self.morphisms[name_f]
-        if new_morphism is None:
-            return new_morphism
-        else:
-            return [name_x for name_x,x in self.get_morphisms() if x==new_morphism][0]
-
-    def element_Rclass(self,op_name):
-        """Generates the R class for a given operation x in the monoid,
-        i.e. all elements y of the monoid such that
-        we have xRy for Green's R relation.
-        Recall that we have xRy if xS=yS where S is the monoid.
-
-
-        Parameters
-        ----------
-        op_name : a string describing an operation of the monoid.
-
-        Returns
-        -------
-        A list of operations related to op_name by Green's R relation.
-        """
-        list_Req = []
-        I1 = np.unique([self.mult(op_name,name_x) for name_x,x in self.get_morphisms()])
-        for name_g,g in self.get_morphisms():
-            I2 = np.unique([self.mult(name_g,name_x) for name_x,x in self.get_morphisms()])
-            if sorted(I2) == sorted(I1):
-                list_Req.append(name_g)
-        return list_Req
-
-    def element_Lclass(self,op_name):
-        """Generates the L class for a given operation x in the monoid,
-        i.e. all elements y of the monoid such that
-        we have xLy for Green's L relation.
-        Recall that we have xLy if Sx=Sy where S is the monoid.
-
-
-        Parameters
-        ----------
-        op_name : a string describing an operation of the monoid.
-
-        Returns
-        -------
-        A list of operations related to op_name by Green's L relation.
-        """
-        list_Req = []
-        I1 = np.unique([self.mult(name_x,op_name) for name_x,x in self.get_morphisms()])
-        for name_g,g in self.get_morphisms():
-            I2 = np.unique([self.mult(name_x,name_g) for name_x,x in self.get_morphisms()])
-            if sorted(I2) == sorted(I1):
-                list_Req.append(name_g)
-        return list_Req
-
-    def get_Rclasses(self):
-        """Computes all R classes for the monoid.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        A list of lists, each list being an R class.
-        """
-        list_op = list(zip(sorted(self.morphisms.keys()),
-                           [0]*len(self.morphisms.keys())))
-        R_classes = []
-        for x,visited in list_op:
-            if not visited:
-                R_class = self.element_Rclass(x)
-                R_classes.append(R_class)
-                for i,(y,flag) in enumerate(list_op):
-                    if y in R_class:
-                        list_op[i]=(y,1)
-        return R_classes
-
-    def get_Lclasses(self):
-        """Computes all L classes for the monoid.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        A list of lists, each list being an L class.
-        """
-        list_op = list(zip(sorted(self.morphisms.keys()),
-                           [0]*len(self.morphisms.keys())))
-        L_classes = []
-        for x,visited in list_op:
-            if not visited:
-                L_class = self.element_Lclass(x)
-                L_classes.append(L_class)
-                for i,(y,flag) in enumerate(list_op):
-                    if y in L_class:
-                        list_op[i]=(y,1)
-        return L_classes
-
-    def get_leftIdeals(self):
-        """Computes all left ideals for the monoid.
-        A left ideal is a subset X of the monoid S, such that for any operation
-        m in the monoid, we have mX included in X.
-        In other words, if x belongs to X, then Sx is included in X. Thus, any
-        left ideal can be decomposed as the union of distinct L classes.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        A list of lists, each list being a left ideal of the monoid.
-        """
-        leftIdeals = []
-
-        L_classes = self.get_Lclasses()
-        for i in range(len(L_classes)+1):
-            for x in itertools.combinations(L_classes, i):
-                subset = list(itertools.chain.from_iterable(x))
-                if self.is_leftIdeal(subset):
-                    leftIdeals.append(subset)
-
-        return leftIdeals
-
-    def is_leftIdeal(self,S):
-        """Checks if a subset S is a left ideal.
-
-        Parameters
-        ----------
-        S : list of operations in the monoid.
-
-        Returns
-        -------
-        A boolean indicating if S is a left ideal.
-        """
-        for m in S:
-            for name_f,f in self.get_morphisms():
-                t = self.mult(name_f,m)
-                if not t in S:
-                    return False
-        return True
-
-    def get_rightIdeals(self):
-        """Computes all right ideals for the monoid.
-        A right ideal is a subset X of the monoid S, such that for any operation
-        m in the monoid, we have Xm included in X.
-        In other words, if x belongs to X, then xS is included in X.
-        Thus, any right ideal can be decomposed as the union of distinct R classes.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        A list of lists, each list being a right ideal of the monoid.
-        """
-        rightIdeals = []
-
-        R_classes = self.get_Rclasses()
-        for i in range(len(R_classes)+1):
-            for x in itertools.combinations(R_classes, i):
-                subset = list(itertools.chain.from_iterable(x))
-                if self.is_rightIdeal(subset):
-                    rightIdeals.append(subset)
-
-        return rightIdeals
-
-    def is_rightIdeal(self,S):
-        """Checks if a subset S is a right ideal.
-
-        Parameters
-        ----------
-        S : list of operations in the monoid.
-
-        Returns
-        -------
-        A boolean indicating if S is a right ideal.
-        """
-        for m in S:
-            for name_f,f in self.get_morphisms():
-                t = self.mult(m,name_f)
-                if not t in S:
-                    return False
-        return True
+        return str(self.vector)   
