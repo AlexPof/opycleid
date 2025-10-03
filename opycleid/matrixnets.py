@@ -721,7 +721,7 @@ class MatrixNetwork(object):
             image_elements = [y for x in (self.vector.vector)[i,0].element for y in catactionfunctor.nat_transform["."](x) ]
             new_vector.set_values([i],[set(image_elements)])
                 
-        return new_matrix,new_vector
+        return MatrixNetwork(matrix=new_matrix,vector=new_vector)
         
     
     def is_conjugated(self,matnet,P):
