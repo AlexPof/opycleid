@@ -18,6 +18,7 @@ Opycleid requires:
 
 - Python (>= 3.4)
 - NumPy (>= 1.8.2)
+- networkx (>=3.3)
 
 ### User installation
 

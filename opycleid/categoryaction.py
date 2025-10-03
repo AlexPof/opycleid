@@ -816,8 +816,10 @@ class MonoidAction(CategoryAction):
     SIMPLY_TRANSITIVE: boolean, indicating whether the action is
                         simply transitive or not.
     """
-    def __init__(self):
+    def __init__(self,use_cayley_table=False):
         super(MonoidAction,self).__init__()
+        self.cayley_table = None
+        self.use_cayley_table = use_cayley_table
 
     def set_objects(self,list_objects):
         """Add musical objects to the monoid action.
@@ -850,6 +852,26 @@ class MonoidAction(CategoryAction):
         The unique object of the monoid.
         """
         return self.get_objects()[0]
+
+    def generate_category(self):
+        super().generate_category()
+        self.cayley_table = None
+        if self.use_cayley_table:
+            self._build_cayley_table()
+
+    def _build_cayley_table(self):
+        d={}
+        for name_f,f in self.get_morphisms():
+            for name_g,g in self.get_morphisms():
+                d[(name_f,name_g)] = self.mult(name_f,name_g)
+        self.cayley_table = d
+
+    def mult(self,name_g,name_f):
+        if self.cayley_table is None:
+            return super().mult(name_g,name_f)
+        else:
+            return self.cayley_table[(name_g,name_f)]
+
 
     def is_simplytransitive(self):
         """Checks if the monoid action is simply transitive.
