@@ -276,7 +276,7 @@ class MonoidRigMatrix(object):
         """
         object_name = self.monoid.get_objects()[0][0]
         for i in range(self.shape[0]):
-            self.set_value((i,i),["id_"+object_name])
+            self.set_values((i,i),["id_"+object_name])
         return self
         
     def set_zero(self):
@@ -605,7 +605,7 @@ class MatrixNetwork(object):
             X = SetRigVector(n=N_nodes,monoid=monoid)
             
             for idx_node,node in enumerate(multidigraph.nodes):
-                X.set_value([idx_node],[multidigraph.nodes[node]["element"]])
+                X.set_values([idx_node],[multidigraph.nodes[node]["element"]])
             
             for i in range(N_nodes):
                 for j in range(N_nodes):
@@ -614,7 +614,7 @@ class MatrixNetwork(object):
                         src,trgt,_ = edge
                         if src==dict_idx2nodes[i] and trgt==dict_idx2nodes[j]:
                             operations.append(*multidigraph.edges[edge]["operations"])
-                    M = M.set_value([(j,i)],[operations])
+                    M = M.set_values([(j,i)],[operations])
 
             generators[digraph_name] = M
             vectors[digraph_name] = X
@@ -715,11 +715,11 @@ class MatrixNetwork(object):
         for i in range(self.matrix.shape[0]):
             for j in range(self.matrix.shape[1]):
                 image_elements = [catactionfunctor.cat_functor(x) for x in (self.matrix.matrix)[i,j].element]
-                new_matrix.set_value((i,j),set(image_elements))
+                new_matrix.set_values((i,j),set(image_elements))
                 
         for i in range(self.vector.n):
             image_elements = [y for x in (self.vector.vector)[i,0].element for y in catactionfunctor.nat_transform["."](x) ]
-            new_vector.set_value([i],[set(image_elements)])
+            new_vector.set_values([i],[set(image_elements)])
                 
         return new_matrix,new_vector
         
